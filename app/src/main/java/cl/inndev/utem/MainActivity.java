@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +20,8 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private FragmentManager fm = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView nombre = (TextView) headerView.findViewById(R.id.nombreText);
         nombre.setText(getIntent().getStringExtra("USERNAME"));
+        fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -88,13 +92,26 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_horario) {
+        //FragmentManager fm = getSupportFragmentManager();
+        if (id == R.id.nav_inicio) {
+
+            fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
+
+        } else if (id == R.id.nav_horario) {
+
+            fm.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
 
         } else if (id == R.id.nav_notas) {
 
+            fm.beginTransaction().replace(R.id.mainlayout, new NotaFragment()).commit();
+
         } else if (id == R.id.nav_asignaturas) {
 
+            fm.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
+
         } else if (id == R.id.nav_sesaes) {
+
+            fm.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
 
         } else if (id == R.id.nav_salir) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
