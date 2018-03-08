@@ -15,7 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
@@ -49,7 +52,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView nombre = (TextView) headerView.findViewById(R.id.nombreText);
-        nombre.setText(getIntent().getStringExtra("USERNAME"));
+        TextView correo = (TextView) headerView.findViewById(R.id.correoText);
+        nombre.setText(getIntent().getStringExtra("NOMBRE"));
+        correo.setText(getIntent().getStringExtra("CORREO"));
         fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -92,7 +97,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //FragmentManager fm = getSupportFragmentManager();
         if (id == R.id.nav_inicio) {
 
             fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
@@ -125,4 +129,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }
