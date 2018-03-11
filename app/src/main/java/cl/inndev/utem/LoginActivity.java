@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,19 +59,25 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(LoginActivity.this, "Iniciando sesión...", Toast.LENGTH_SHORT).show();
+            ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
+            cargando.setVisibility(View.VISIBLE);
+
+            //Toast.makeText(LoginActivity.this, "Iniciando sesión...", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(String respuesta) {
             super.onPostExecute(respuesta);
             if (respuesta == null) {
+                ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
+                cargando.setVisibility(View.GONE);
+
                 Toast.makeText(LoginActivity.this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
             } else {
                 // Toast.makeText(LoginActivity.this, respuesta, Toast.LENGTH_LONG).show();
                 try {
                     JSONObject jObject = new JSONObject(respuesta);
-                    Toast.makeText(LoginActivity.this, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show();
                     new Estudiante().execute("estudiantes/" + rut.getText(), jObject.getString("token"));
 
                 } catch (JSONException e) {
@@ -86,13 +93,16 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected void onPreExecute() {
-                Toast.makeText(LoginActivity.this, "Cargando datos...", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LoginActivity.this, "Cargando datos...", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             protected void onPostExecute(String respuesta) {
                 super.onPostExecute(respuesta);
                 if (respuesta == null) {
+                    ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
+                    cargando.setVisibility(View.GONE);
+
                     Toast.makeText(LoginActivity.this, "No se pudo cargar los datos: " + respuesta, Toast.LENGTH_SHORT).show();
                 } else {
                     try {
@@ -112,7 +122,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 }

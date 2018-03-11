@@ -6,12 +6,4 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="SESAES"
-        android:textAlignment="center"
-        android:textSize="30sp" />
-
 </FrameLayout>

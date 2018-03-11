@@ -15,4 +15,11 @@ public class InicioFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_inicio, container, false);
     }
+
+    public void onResume(){
+        super.onResume();
+        // Set title bar
+        ((MainActivity) getActivity()).setActionBarTitle("Inicio");
+
+    }
 }
