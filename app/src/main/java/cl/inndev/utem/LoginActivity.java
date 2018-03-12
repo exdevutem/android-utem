@@ -1,12 +1,16 @@
 package cl.inndev.utem;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -21,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText contrasenia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -61,9 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPreExecute() {
             ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
             cargando.setVisibility(View.VISIBLE);
+            Button entrar = (Button) findViewById(R.id.entrarButton);
+            entrar.setClickable(false);
 
             //Toast.makeText(LoginActivity.this, "Iniciando sesión...", Toast.LENGTH_SHORT).show();
         }
+
+
 
         @Override
         protected void onPostExecute(String respuesta) {
@@ -71,45 +80,45 @@ public class LoginActivity extends AppCompatActivity {
             if (respuesta == null) {
                 ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
                 cargando.setVisibility(View.GONE);
+                Button entrar = (Button) findViewById(R.id.entrarButton);
+                entrar.setClickable(true);
 
                 Toast.makeText(LoginActivity.this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
             } else {
                 // Toast.makeText(LoginActivity.this, respuesta, Toast.LENGTH_LONG).show();
                 try {
+                    SharedPreferences preferences = getSharedPreferences("alumno", Context.MODE_PRIVATE);
+                    preferences.getString("token", "No existe");
                     JSONObject jObject = new JSONObject(respuesta);
-                    //Toast.makeText(LoginActivity.this, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show();
-                    new Estudiante().execute("estudiantes/" + rut.getText(), jObject.getString("token"));
+                    guardarString("alumno", "token", jObject.getString("token"));
+                    //Toast.makeText(LoginActivity.this, getSharedPreferences("alumno", Context.MODE_PRIVATE).getString("token", "No existe"), Toast.LENGTH_SHORT).show();
+                    new Estudiante().execute("estudiantes/" + preferences.getString("rut", "").substring(0, 8), preferences.getString("token", ""));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-
-
         }
 
         private class Estudiante extends ConexionApi.Get {
-
-            @Override
-            protected void onPreExecute() {
-                //Toast.makeText(LoginActivity.this, "Cargando datos...", Toast.LENGTH_SHORT).show();
-            }
-
             @Override
             protected void onPostExecute(String respuesta) {
                 super.onPostExecute(respuesta);
                 if (respuesta == null) {
                     ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
                     cargando.setVisibility(View.GONE);
+                    Button entrar = (Button) findViewById(R.id.entrarButton);
+                    entrar.setClickable(true);
 
                     Toast.makeText(LoginActivity.this, "No se pudo cargar los datos: " + respuesta, Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         JSONObject jObject = new JSONObject(respuesta);
+                        guardarString("alumno", "nombre", jObject.getString("nombre"));
+                        guardarString("alumno", "rut", jObject.getString("rut"));
+                        guardarString("alumno", "email", jObject.getString("email"));;
+
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("NOMBRE", jObject.getString("nombre"));
-                        intent.putExtra("CORREO", jObject.getString("rut"));
                         startActivity(intent);
                         finish();
                     } catch (JSONException e) {
@@ -121,5 +130,12 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void guardarString(String preferencias, String clave, String valor) {
+        SharedPreferences preferences = getSharedPreferences(preferencias, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(clave, valor);
+        editor.commit();
     }
 }

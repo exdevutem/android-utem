@@ -1,9 +1,9 @@
 package cl.inndev.utem;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -15,11 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,8 +39,9 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView nombre = (TextView) headerView.findViewById(R.id.nombreText);
         TextView correo = (TextView) headerView.findViewById(R.id.correoText);
-        nombre.setText(getIntent().getStringExtra("NOMBRE"));
-        correo.setText(getIntent().getStringExtra("CORREO"));
+        SharedPreferences preferences = getSharedPreferences("alumno", Context.MODE_PRIVATE);
+        nombre.setText(preferences.getString("nombre", "No existe"));
+        correo.setText(preferences.getString("correo", "No configurado"));
         fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -100,9 +96,9 @@ public class MainActivity extends AppCompatActivity
 
             fm.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
 
-        } else if (id == R.id.nav_notas) {
+        } else if (id == R.id.nav_malla) {
 
-            fm.beginTransaction().replace(R.id.mainlayout, new NotaFragment()).commit();
+            fm.beginTransaction().replace(R.id.mainlayout, new MallaFragment()).commit();
 
         } else if (id == R.id.nav_asignaturas) {
 

@@ -7,19 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class NotaFragment extends Fragment {
+public class MallaFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nota, container, false);
+        return inflater.inflate(R.layout.fragment_malla, container, false);
     }
 
     public void onResume(){
         super.onResume();
         // Set title bar
-        ((MainActivity) getActivity()).setActionBarTitle("Notas");
+        ((MainActivity) getActivity()).setActionBarTitle("Malla curricular");
 
     }
 }
