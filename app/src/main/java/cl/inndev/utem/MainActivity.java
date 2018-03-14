@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         TextView correo = (TextView) headerView.findViewById(R.id.correoText);
         SharedPreferences preferences = getSharedPreferences("alumno", Context.MODE_PRIVATE);
         nombre.setText(preferences.getString("nombre", "No existe"));
-        correo.setText(preferences.getString("correo", "No configurado"));
+        correo.setText(preferences.getString("rut", "No configurado"));
         fm.beginTransaction().replace(R.id.mainlayout, new InicioFragment()).commit();
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
 
             fm.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
 
-        } else if (id == R.id.nav_malla) {
+        } else if (id == R.id.nav_carreras) {
 
             fm.beginTransaction().replace(R.id.mainlayout, new MallaFragment()).commit();
 
@@ -112,8 +112,9 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_acerca) {
-
+        } else if (id == R.id.nav_ajustes) {
+            Intent intent = new Intent(MainActivity.this, AjustesActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

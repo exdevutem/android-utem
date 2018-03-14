@@ -8,9 +8,31 @@
             android:icon="@drawable/ic_home"
             android:title="Inicio" />
         <item
-            android:id="@+id/nav_malla"
-            android:icon="@drawable/ic_school"
-            android:title="Malla curricular" />
+            android:id="@+id/nav_perfil"
+            android:checked="true"
+            android:icon="@drawable/ic_profile"
+            android:title="Perfil" />
+        <item
+            android:id="@+id/nav_aranceles"
+            android:checked="true"
+            android:icon="@drawable/ic_balance"
+            android:title="Aranceles" />
+        <item
+            android:id="@+id/nav_becas"
+            android:checked="true"
+            android:icon="@drawable/ic_heart"
+            android:title="Becas" />
+        <item
+            android:id="@+id/nav_sesaes"
+            android:icon="@drawable/ic_sesaes"
+            android:title="SESAES" />
+    </group>
+
+    <group android:id="@+id/academico" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_carreras"
+            android:icon="@drawable/ic_work"
+            android:title="Carreras" />
         <item
             android:id="@+id/nav_horario"
             android:icon="@drawable/ic_time"
@@ -20,13 +42,23 @@
             android:icon="@drawable/ic_book"
             android:title="Asignaturas" />
         <item
-            android:id="@+id/nav_sesaes"
-            android:icon="@drawable/ic_sesaes"
-            android:title="SESAES" />
+            android:id="@+id/nav_certificados"
+            android:icon="@drawable/ic_paper"
+            android:title="Certificados" />
+        <item
+            android:id="@+id/nav_titulacion"
+            android:icon="@drawable/ic_school"
+            android:title="Titulación" />
     </group>
 
-    <item android:title="">
+
+
+    <item android:title="Académico">
         <menu>
+            <item
+                android:id="@+id/nav_ajustes"
+                android:icon="@drawable/ic_settings"
+                android:title="Ajustes" />
             <item
                 android:id="@+id/nav_acerca"
                 android:icon="@drawable/ic_info"
@@ -38,5 +70,4 @@
 
         </menu>
     </item>
-
 </menu>

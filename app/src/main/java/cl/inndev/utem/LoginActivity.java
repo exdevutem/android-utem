@@ -23,6 +23,7 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
     private EditText rut;
     private EditText contrasenia;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -88,12 +89,14 @@ public class LoginActivity extends AppCompatActivity {
                 // Toast.makeText(LoginActivity.this, respuesta, Toast.LENGTH_LONG).show();
                 try {
                     SharedPreferences preferences = getSharedPreferences("alumno", Context.MODE_PRIVATE);
-                    preferences.getString("token", "No existe");
                     JSONObject jObject = new JSONObject(respuesta);
                     guardarString("alumno", "token", jObject.getString("token"));
-                    //Toast.makeText(LoginActivity.this, getSharedPreferences("alumno", Context.MODE_PRIVATE).getString("token", "No existe"), Toast.LENGTH_SHORT).show();
-                    new Estudiante().execute("estudiantes/" + preferences.getString("rut", "").substring(0, 8), preferences.getString("token", ""));
 
+                    rut = (EditText) findViewById(R.id.rutInput);
+
+                    String token = preferences.getString("token", null);
+                    String valorRut = rut.getText().toString().substring(0, 8);
+                    new Estudiante().execute("estudiantes/" + valorRut + "/", token);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -116,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject jObject = new JSONObject(respuesta);
                         guardarString("alumno", "nombre", jObject.getString("nombre"));
                         guardarString("alumno", "rut", jObject.getString("rut"));
-                        guardarString("alumno", "email", jObject.getString("email"));;
+                        guardarString("alumno", "email", "dzdf");;
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);

@@ -91,7 +91,7 @@
         app:layout_constraintVertical_bias="0.843" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/logoImage"
         android:layout_width="254dp"
         android:layout_height="78dp"
         android:layout_marginBottom="8dp"
@@ -103,7 +103,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.145"
-        app:srcCompat="@drawable/ic_utem_logo" />
+        app:layout_constraintVertical_bias="0.152"
+        app:srcCompat="@drawable/ic_utem_logo"
+        app:layout_constraintHorizontal_bias="0.587" />
 
 </android.support.constraint.ConstraintLayout>
