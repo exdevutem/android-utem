@@ -34,6 +34,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cl.inndev.utem.MainActivity" />
         </activity>
+        <activity android:name=".PerfilActivity"></activity>
     </application>
 
 </manifest>

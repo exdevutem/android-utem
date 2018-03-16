@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_ajustes) {
-            Intent intent = new Intent(MainActivity.this, AjustesActivity.class);
+            Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
             startActivity(intent);
         }
 
