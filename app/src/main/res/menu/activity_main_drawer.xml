@@ -53,8 +53,8 @@
 
 
 
-    <item android:title="Académico">
-        <menu>
+    <item android:title="Académico" android:checkableBehavior="single">
+        <menu android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_ajustes"
                 android:icon="@drawable/ic_settings"

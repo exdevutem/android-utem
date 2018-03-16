@@ -4,13 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.design.widget.NavigationView;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -23,6 +20,8 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
     private EditText rut;
     private EditText contrasenia;
+    private ProgressBar cargando;
+    private Button entrar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,36 +44,67 @@ public class LoginActivity extends AppCompatActivity {
         recuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                rut.setText(Rut.Formatear(rut.getText().toString()));
                 String url = "https://mi.utem.cl/";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
             }
         });
+
+        rut.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (!rut.getText().toString().isEmpty()) {
+                        rut.setText(Rut.Formatear(rut.getText().toString()));
+                    }
+                }
+            }
+        });
     }
 
-    private void validar(String rut, String pass) {
-        if (rut == null || rut.isEmpty() || pass == null || pass.isEmpty()) {
-
+    private void validar(String valorRut, String valorContrasenia) {
+        rut = (EditText) findViewById(R.id.rutInput);
+        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
+        if ((valorRut == null || valorRut.isEmpty()) && (valorContrasenia == null || valorContrasenia.isEmpty())) {
+            rut.setError("Debe ingresar un RUT");
+            contrasenia.setError("Debe ingresar una contraseña");
+        } else if (valorRut == null || valorRut.isEmpty()) {
+            rut.setError("Debe ingresar un RUT");
+        } else if (valorContrasenia == null || valorContrasenia.isEmpty()) {
+            contrasenia.setError("Debe ingresar una contraseña");
+        } else if (!Rut.Validar(valorRut) || valorRut.length() < 8) {
+            rut.setError("El RUT ingresado no es válido");
         } else {
-            new Autenticar().execute("autenticacion", rut, pass);
+            rut.setText(Rut.Formatear(rut.getText().toString()));
+            configurarFormulario(false);
+            new Autenticar().execute("autenticacion", Rut.Numerico(valorRut), valorContrasenia);
         }
     }
 
-    private class Autenticar extends ConexionApi.Post {
+    private void configurarFormulario(boolean interruptor) {
+        rut = (EditText) findViewById(R.id.rutInput);
+        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
+        cargando = (ProgressBar) findViewById(R.id.iniciandoProgress);
+        entrar = (Button) findViewById(R.id.entrarButton);
 
-        @Override
-        protected void onPreExecute() {
-            ProgressBar cargando = (ProgressBar)findViewById(R.id.iniciandoProgress);
+        if (interruptor) {
+            rut.setEnabled(true);
+            contrasenia.setEnabled(true);
+            cargando.setVisibility(View.GONE);
+            entrar.setClickable(true);
+            entrar.setEnabled(true);
+        } else {
+            rut.setEnabled(false);
+            contrasenia.setEnabled(false);
             cargando.setVisibility(View.VISIBLE);
-            Button entrar = (Button) findViewById(R.id.entrarButton);
             entrar.setClickable(false);
-
-            //Toast.makeText(LoginActivity.this, "Iniciando sesión...", Toast.LENGTH_SHORT).show();
+            entrar.setEnabled(false);
         }
+    }
 
-
-
+    private class Autenticar extends ApiUtem.Post {
         @Override
         protected void onPostExecute(String respuesta) {
             super.onPostExecute(respuesta);
@@ -83,10 +113,8 @@ public class LoginActivity extends AppCompatActivity {
                 cargando.setVisibility(View.GONE);
                 Button entrar = (Button) findViewById(R.id.entrarButton);
                 entrar.setClickable(true);
-
                 Toast.makeText(LoginActivity.this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
             } else {
-                // Toast.makeText(LoginActivity.this, respuesta, Toast.LENGTH_LONG).show();
                 try {
                     SharedPreferences preferences = getSharedPreferences("alumno", Context.MODE_PRIVATE);
                     JSONObject jObject = new JSONObject(respuesta);
@@ -95,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                     rut = (EditText) findViewById(R.id.rutInput);
 
                     String token = preferences.getString("token", null);
-                    String valorRut = rut.getText().toString().substring(0, 8);
+                    String valorRut = Rut.Numerico(rut.getText().toString());
                     new Estudiante().execute("estudiantes/" + valorRut + "/", token);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -103,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        private class Estudiante extends ConexionApi.Get {
+        private class Estudiante extends ApiUtem.Get {
             @Override
             protected void onPostExecute(String respuesta) {
                 super.onPostExecute(respuesta);

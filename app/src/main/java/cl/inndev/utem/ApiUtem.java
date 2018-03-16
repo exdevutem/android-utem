@@ -28,7 +28,7 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
  * Created by mapache on 07-03-18.
  */
 
-abstract class ConexionApi {
+abstract class ApiUtem {
     static abstract class Get extends AsyncTask<String, Void, String> {
         String BASE_URL = "https://api-dirdoc-utem.herokuapp.com/";
 
@@ -187,4 +187,6 @@ abstract class ConexionApi {
 
         return result.toString();
     }
+
+
 }
