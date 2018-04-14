@@ -1,116 +1,329 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cl.inndev.utem.PerfilActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true"
-        >
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="350dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleTextAppearance="@android:color/transparent"
-            android:fitsSystemWindows="true">
-
-            <ImageView
-                android:src="@drawable/background"
-                app:layout_collapseMode="parallax"
-                android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
-                android:layout_width="match_parent"
-                android:layout_height="350dp" />
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbarActivity"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:title="@string/title_activity_perfil"
-                app:layout_collapseMode="pin"
-                >
-
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-    </android.support.design.widget.AppBarLayout>
-
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/prueba"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true">
-            
-            <LinearLayout
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                app:layout_anchor="@id/prueba"
+                app:layout_anchorGravity="top|center_horizontal"
+                app:layout_scrollFlags="scroll"
+                />
+
+            <TextView
+                android:id="@+id/nombreText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-                
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/correoUtemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp">
+
                 <TextView
-                    android:text="@string/app_name"
-                    android:padding="12dp"
-                    android:textSize="20sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:padding="12dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ingresó el"
+                    android:textAlignment="center"
+                    android:textSize="12sp" />
 
-                    <ImageView
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ic_time"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="#bdbdbd" />
 
-                    <TextView
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/app_name"
-                        android:padding="12dp"
-                        android:textSize="14sp"
-                        android:layout_marginTop="12dp"
-                        android:layout_width="0dp"
-                        android:layout_weight="9"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Carreras"
+                    android:textAlignment="center"
+                    android:textSize="12sp" />
 
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="#bdbdbd" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Matriculado al"
+                    android:textAlignment="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ingresoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="#bdbdbd" />
+
+                <TextView
+                    android:id="@+id/carrerasText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="#bdbdbd" />
+
+                <TextView
+                    android:id="@+id/matriculaText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="#000"
+                    android:text="Datos personales"/>
+
+                <!-- RUT -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="RUT"/>
+
+                <TextView
+                    android:id="@+id/rutText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!-- Edad -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="Edad"/>
+
+                <TextView
+                    android:id="@+id/edadText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!-- Correo personal -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="Correo personal"/>
+
+                <TextView
+                    android:id="@+id/correoPersonalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!-- Teléfono móvil -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="Teléfono movil"/>
+
+                <TextView
+                    android:id="@+id/movilText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!-- Teléfono fijo -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="Teléfono fijo"/>
+
+                <TextView
+                    android:id="@+id/fijoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!-- Dirección -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="Dirección"/>
+
+                <TextView
+                    android:id="@+id/direccionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+
+                <!---
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sexo"
+                    android:textSize="14dp" />
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nacionalidad"
+                    android:textSize="14dp" />
+
+                <Spinner
+                    android:id="@+id/nacionalidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comuna"
+                    android:textSize="14dp" />
+
+                <Spinner
+                    android:id="@+id/comuna"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" /> -->
+
+                <Button
+                    android:id="@+id/editarButton"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_background"
+                    android:text="Editar perfil"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
-            <TextView
-                android:text="@string/app_name"
-                android:padding="12dp"
-                android:textSize="13sp"
-                android:lineSpacingMultiplier="1.5"
-                android:layout_marginTop="12dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
-        </android.support.v7.widget.CardView>
+        </LinearLayout>
+
 
     </android.support.v4.widget.NestedScrollView>
+
+
 
     <!--<android.support.design.widget.FloatingActionButton
         android:src="@drawable/ic_info"
@@ -122,4 +335,4 @@
         app:layout_anchorGravity="bottom|right|end"
         />-->
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

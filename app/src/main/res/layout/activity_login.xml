@@ -1,145 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="32dp"
+    android:orientation="vertical"
     tools:context="LoginActivity">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/perfilImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center|center"
+        android:src="@drawable/profile" />
+
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/bienvenidaMensaje"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="RUT"
         android:paddingTop="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.328"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.187" />
+        android:text="Bienvenida otra vez"
+        android:textAlignment="center"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/nombreBienvenida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Javiera Vergara"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/correoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Correo UTEM"
+        android:layout_marginTop="24dp"
+        android:textAllCaps="true"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
 
     <EditText
-        android:id="@+id/rutInput"
-        android:layout_width="240dp"
+        android:id="@+id/correoInput"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:digits="Kk1234567890.-"
-        android:ems="10"
-        android:hint="12.345.678-9"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.382" />
+        android:hint="nombre@utem.cl"
+        android:inputType="textEmailAddress"
+        android:text="jorge.verdugoc@utem.cl"
+        android:paddingVertical="16dp"/>
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:textSize="14sp"
         android:layout_marginTop="8dp"
-        android:paddingTop="8dp"
-        android:text="Contraseña DIRDOC"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.261"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.458" />
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:text="Contraseña"/>
 
     <EditText
         android:id="@+id/contraseniaInput"
-        android:layout_width="240dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
         android:hint="••••••••"
         android:inputType="textPassword"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.523" />
+        android:text="g9Klc@zEvd6%5!cV"
+        android:paddingVertical="16dp"/>
 
     <Button
         android:id="@+id/entrarButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_background"
+        android:text="Iniciar sesión"
+        android:textColor="#fff"
+        android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/iniciandoProgress"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="validar()"
-        android:text="Entrar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.681" />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/recuperarText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="¿Olvidaste tu contraseña?"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.912" />
+        android:textAlignment="center"/>
 
-    <ProgressBar
-        android:id="@+id/iniciandoProgress"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/cambiarUsuarioText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.843" />
-
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="254dp"
-        android:layout_height="78dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.152"
-        app:srcCompat="@drawable/ic_utem_logo" />
+        android:gravity="center|bottom"
+        android:text="¿No eres usuario?" />
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_inicio) {
             mostrarInicio();
+        } else if (id == R.id.nav_perfil) {
+            Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_horario) {
             fm.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
         } else if (id == R.id.nav_carreras) {
@@ -113,7 +116,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_ajustes) {
-            Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+            Intent intent = new Intent(MainActivity.this, AjustesActivity.class);
             startActivity(intent);
         }
 
