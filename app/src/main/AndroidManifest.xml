@@ -15,7 +15,7 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
@@ -38,10 +38,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cl.inndev.utem.MainActivity" />
         </activity>
-        <activity android:name=".PerfilActivity"
+        <activity
+            android:name=".PerfilActivity"
             android:label="Perfil"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity android:name=".WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

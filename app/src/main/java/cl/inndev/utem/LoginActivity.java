@@ -253,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                         preferencias.putBoolean("primera-vez", false);
                         preferencias.apply();
 
-                        Intent intent = new Intent(LoginActivity.this, PerfilActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, WelcomeActivity.class);
                         startActivity(intent);
                         finish();
                         break;
