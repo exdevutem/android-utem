@@ -8,111 +8,119 @@
     android:orientation="vertical"
     tools:context="LoginActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/perfilImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center|center"
-        android:src="@drawable/profile" />
-
-    <TextView
-        android:id="@+id/bienvenidaMensaje"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="Bienvenida otra vez"
-        android:textAlignment="center"
-        android:textSize="14sp" />
+        android:layout_weight="1"
+        android:gravity="center|center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/nombreBienvenida"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/perfilImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center|center" />
+
+        <TextView
+            android:id="@+id/bienvenidaMensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Bienvenido/a otra vez"
+            android:textAlignment="center"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/nombreBienvenida"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:layout_marginBottom="16dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/correoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Correo UTEM"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/correoInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="nombre@utem.cl"
+            android:inputType="textEmailAddress"
+            android:paddingVertical="16dp"
+            android:text="jorge.verdugoc@utem.cl" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Contraseña"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/contraseniaInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="••••••••"
+            android:inputType="textPassword"
+            android:paddingVertical="16dp"
+            android:text="g9Klc@zEvd6%5!cV" />
+
+        <Button
+            android:id="@+id/entrarButton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/button_background"
+            android:text="Iniciar sesión"
+            android:textColor="#fff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/recuperarText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="¿Olvidaste tu contraseña?"
+            android:textAlignment="center" />
+
+        <ProgressBar
+            android:id="@+id/iniciandoProgress"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginVertical="8dp"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Javiera Vergara"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:gravity="center|bottom">
 
-    <TextView
-        android:id="@+id/correoText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Correo UTEM"
-        android:layout_marginTop="24dp"
-        android:textAllCaps="true"
-        android:textSize="14sp"
-        android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/cambiarUsuarioText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:textAlignment="center"/>
 
-    <EditText
-        android:id="@+id/correoInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="nombre@utem.cl"
-        android:inputType="textEmailAddress"
-        android:text="jorge.verdugoc@utem.cl"
-        android:paddingVertical="16dp"/>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp"
-        android:textAllCaps="true"
-        android:textStyle="bold"
-        android:text="Contraseña"/>
 
-    <EditText
-        android:id="@+id/contraseniaInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="••••••••"
-        android:inputType="textPassword"
-        android:text="g9Klc@zEvd6%5!cV"
-        android:paddingVertical="16dp"/>
-
-    <Button
-        android:id="@+id/entrarButton"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/button_background"
-        android:text="Iniciar sesión"
-        android:textColor="#fff"
-        android:textSize="16sp" />
-
-    <ProgressBar
-        android:id="@+id/iniciandoProgress"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/recuperarText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="¿Olvidaste tu contraseña?"
-        android:textAlignment="center"/>
-
-    <TextView
-        android:id="@+id/cambiarUsuarioText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center|bottom"
-        android:text="¿No eres usuario?" />
 
 
 </LinearLayout>

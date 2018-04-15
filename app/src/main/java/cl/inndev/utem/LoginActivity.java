@@ -56,6 +56,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (!esPrimeraVez()) {
+            SharedPreferences usuario = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+            new DownloadImageTask((CircleImageView) findViewById(R.id.perfilImage))
+                    .execute(usuario.getString("foto-url", null));
+        }
+
         correoText = (TextView) findViewById(R.id.correoText);
         correo = (EditText) findViewById(R.id.correoInput);
         contrasenia = (EditText) findViewById(R.id.contraseniaInput);
