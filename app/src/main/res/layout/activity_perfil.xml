@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cl.inndev.utem.PerfilActivity">
+    tools:context="cl.inndev.utem.PerfilActivity"
+    android:orientation="vertical">
 
-    <!--
-    <android.support.design.widget.AppBarLayout  ...>
-        ...
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ToolBarStyle"
+            app:title="Perfil"/>
+
     </android.support.design.widget.AppBarLayout>
-    -->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
@@ -20,8 +30,7 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,13 +163,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
                         android:layout_marginBottom="16dp"
+                        android:text="Datos personales"
                         android:textColor="#000"
-                        android:text="Datos personales"/>
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <!-- RUT -->
+
                     <TextView
                         android:id="@+id/rut"
                         android:layout_width="match_parent"
@@ -170,15 +180,16 @@
                         android:textStyle="bold"
                         android:text="RUT"/>
 
-                    <TextView
+                    <EditText
                         android:id="@+id/rutText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:layout_weight="1"
-                        android:paddingVertical="8dp"
+                        android:paddingBottom="16dp"
                         android:textColor="#000"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:enabled="false"/>
 
                     <!-- Correo UTEM -->
                     <TextView
@@ -190,15 +201,16 @@
                         android:textStyle="bold"
                         android:text="Correo UTEM"/>
 
-                    <TextView
+                    <EditText
                         android:id="@+id/correoUtemText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:layout_weight="1"
-                        android:paddingVertical="8dp"
+                        android:paddingBottom="16dp"
                         android:textColor="#000"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:enabled="false"/>
 
                     <!-- Correo personal -->
                     <TextView
@@ -220,31 +232,9 @@
                         android:paddingBottom="16dp"
                         android:textColor="#000"
                         android:visibility="gone"
-                        android:enabled="false"
-                        android:textSize="16sp" />
-
-                    <!-- Edad -->
-                    <TextView
-                        android:id="@+id/edad"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        android:text="Edad"/>
-
-                    <EditText
-                        android:id="@+id/edadText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="1"
-                        android:paddingBottom="16dp"
-                        android:textColor="#000"
-                        android:visibility="gone"
-                        android:enabled="false"
-                        android:textSize="16sp" />
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"
+                        android:enabled="false"/>
 
                     <!-- Teléfono móvil -->
                     <TextView
@@ -269,25 +259,25 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone"
                             android:layout_marginTop="8dp"
-                            app:ccp_clickable="false"
                             app:ccp_defaultNameCode="CL"
                             app:ccp_countryPreference="CL,AR,PE,BO,MX"
                             app:ccp_defaultLanguage="SPANISH"
                             app:ccp_autoDetectCountry="true"
                             app:ccp_autoDetectLanguage="true"
                             app:ccpDialog_allowSearch="false"
+                            app:ccp_clickable="false"
                             app:ccp_showArrow="false"/>
 
                         <EditText
                             android:id="@+id/movilText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:layout_marginTop="8dp"
                             android:paddingVertical="16dp"
                             android:textColor="#000"
-
                             android:visibility="gone"
+                            android:inputType="phone"
+                            android:digits="1234567890"
+                            android:maxLength="9"
                             android:enabled="false"
                             android:textSize="18sp" />
 
@@ -317,28 +307,118 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone"
                             android:layout_marginTop="8dp"
-                            app:ccp_clickable="false"
                             app:ccp_defaultNameCode="CL"
                             app:ccp_countryPreference="CL,AR,PE,BO,MX"
                             app:ccp_defaultLanguage="SPANISH"
                             app:ccp_autoDetectCountry="true"
                             app:ccp_autoDetectLanguage="true"
                             app:ccpDialog_allowSearch="false"
-                            app:ccp_showArrow="false" />
+                            app:ccp_clickable="false"
+                            app:ccp_showArrow="false"/>
 
                         <EditText
                             android:id="@+id/fijoText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:layout_marginTop="8dp"
                             android:paddingVertical="16dp"
                             android:textColor="#000"
                             android:visibility="gone"
+                            android:digits="1234567890"
+                            android:maxLength="9"
                             android:enabled="false"
+                            android:inputType="phone"
                             android:textSize="18sp" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <!-- Edad -->
+                        <TextView
+                            android:id="@+id/edad"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Edad"
+                            android:textAllCaps="true"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/sexo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="1"
+                            android:text="Sexo"
+                            android:textAllCaps="true"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <!-- Edad -->
+
+                        <EditText
+                            android:id="@+id/edadText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"
+                            android:enabled="false"
+                            android:paddingBottom="16dp"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:visibility="visible" />
+
+                        <Spinner
+                            android:id="@+id/sexoSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/pais"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
+                        android:text="País"
+                        android:textAllCaps="true"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/paisPicker"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
+                        android:visibility="visible"
+                        app:ccpDialog_allowSearch="false"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_autoDetectLanguage="true"
+                        app:ccp_clickable="false"
+                        app:ccp_countryPreference="CL,AR,PE,BO,MX"
+                        app:ccp_defaultLanguage="SPANISH"
+                        app:ccp_defaultNameCode="CL"
+                        app:ccp_showArrow="false"
+                        app:ccp_showFullName="true"
+                        app:ccp_showNameCode="false"
+                        app:ccp_showPhoneCode="false"
+                        app:ccp_textGravity="LEFT" />
 
                     <!-- Dirección -->
                     <TextView
@@ -362,48 +442,16 @@
                         android:paddingHorizontal="0dp"
                         android:textColor="#000"
                         android:visibility="gone"
+                        android:inputType="textPostalAddress"
                         android:enabled="false"
                         android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/pais"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="8dp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:text="País"/>
 
-                    <com.hbb20.CountryCodePicker
-                        android:id="@+id/paisPicker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:ccp_defaultNameCode="CL"
-                        app:ccp_countryPreference="CL,AR,PE,BO,MX"
-                        app:ccp_defaultLanguage="SPANISH"
-                        app:ccp_autoDetectCountry="true"
-                        app:ccp_autoDetectLanguage="true"
-                        app:ccpDialog_allowSearch="false"
-                        app:ccp_showPhoneCode="false"
-                        app:ccp_showNameCode="false"
-                        app:ccp_textGravity="LEFT"
-                        app:ccp_showFullName="true"
-                        app:ccp_clickable="false"
-                        app:ccp_showArrow="false"/>
+                    <!-- app:ccp_customMasterCountries="CL,AR,ES,DK,CH,
+                        PE,CU,BO,EC,IT,AU,BR,BG,CN,CO,FR,LB,MX,SE,TW,
+                        UY,VE,DZ" -->
 
                     <!---
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sexo"
-                        android:textSize="14dp" />
-
-                    <Spinner
-                        android:id="@+id/spinner1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -434,7 +482,7 @@
                         style="@style/Widget.AppCompat.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginVertical="16dp"
                         android:background="@drawable/button_background"
                         android:text="Editar perfil"
                         android:textColor="#fff"
@@ -449,7 +497,6 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-
     <!--<android.support.design.widget.FloatingActionButton
         android:src="@drawable/ic_info"
         android:layout_width="wrap_content"
@@ -460,4 +507,4 @@
         app:layout_anchorGravity="bottom|right|end"
         />-->
 
-</RelativeLayout>
+</LinearLayout>

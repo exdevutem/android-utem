@@ -1,5 +1,7 @@
 package cl.inndev.utem;
 
+import android.support.annotation.Nullable;
+
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -18,5 +20,20 @@ public interface RestClient {
     Call<Estudiante> obtenerPerfil(
             @Path("rut") String rut,
             @Header("Authorization") String auth
+    );
+
+    @FormUrlEncoded
+    @PUT("estudiantes/{rut}")
+    Call<Estudiante> actualizarPerfil(
+            @Path("rut") String rut,
+            @Header("Authorization") String auth,
+            @Field("correo") String correo,
+            @Field("nacimiento") String nacimiento,
+            @Field("movil") Long movil,
+            @Field("fijo") Long fijo,
+            @Field("sexo") Integer sexo,
+            @Field("nacionalidad") Integer nacioanlidad,
+            @Field("comuna") Integer comuna,
+            @Field("direccion") String direccion
     );
 }

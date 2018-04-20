@@ -4,6 +4,7 @@ package cl.inndev.utem;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class BienvenidaActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -35,6 +36,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     //private PrefManager prefManager;
+
+    private TextView nombreSaludo;
 
     private Calendar myCalendar;
     private EditText edittext;
@@ -130,7 +133,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         //prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+        startActivity(new Intent(BienvenidaActivity.this, PerfilActivity.class));
         finish();
     }
 
@@ -141,6 +144,14 @@ public class WelcomeActivity extends AppCompatActivity {
         public void onPageSelected(int position) {
             addBottomDots(position);
             // changing the next button text 'NEXT' / 'GOT IT'
+            SharedPreferences usuario = getSharedPreferences("usuario", MODE_PRIVATE);
+            if (position == 0) {
+                String nombre = usuario.getString("nombre", null);
+                nombre = nombre != null ? nombre.substring(0, nombre.indexOf(' ')) : null;
+                nombreSaludo = (TextView) findViewById(R.id.nombreSaludo);
+                nombreSaludo.setText("Hola " + nombre + ",");
+            }
+
             if (position == 1) {
                 myCalendar = Calendar.getInstance();
                 edittext = (EditText) findViewById(R.id.Birthday);
@@ -160,7 +171,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // TODO Auto-generated method stub
-                        new DatePickerDialog(WelcomeActivity.this, date, myCalendar
+                        new DatePickerDialog(BienvenidaActivity.this, date, myCalendar
                                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                     }

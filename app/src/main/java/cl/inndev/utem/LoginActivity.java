@@ -3,14 +3,9 @@ package cl.inndev.utem;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,13 +17,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,15 +27,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static cl.inndev.utem.RestClient.BASE_URL;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextView correoText;
-    private EditText correo;
-    private EditText contrasenia;
-    private ProgressBar cargando;
-    private Button entrar;
-    private CircleImageView perfilImage;
-    private TextView bienvenidaMensaje;
-    private TextView bienvenidaNombre;
-    private TextView cambiarUsuario;
+    private TextView textCorreo;
+    private TextView textBienvenida;
+    private TextView textNombre;
+    private TextView textCambiar;
+    private EditText editCorreo;
+    private EditText editContrasenia;
+    private ProgressBar progressIniciando;
+    private Button buttonEntrar;
+    private CircleImageView imagePerfil;
+
 
 
     @Override
@@ -56,52 +45,50 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        textCorreo = (TextView) findViewById(R.id.text_correo);
+        textBienvenida = (TextView) findViewById(R.id.text_bienvenida);
+        textNombre = (TextView) findViewById(R.id.text_nombre);
+        textCambiar = (TextView) findViewById(R.id.text_cambiar);
+        editCorreo = (EditText) findViewById(R.id.edit_correo);
+        editContrasenia = (EditText) findViewById(R.id.edit_contrasenia);
+        progressIniciando = (ProgressBar) findViewById(R.id.progress_iniciando);
+        buttonEntrar = (Button) findViewById(R.id.button_entrar);
+        // perfilImage = (CircleImageView) findViewById(R.id.image_perfil);
+
+        configurarFormulario(true);
+
+        /*
         if (!esPrimeraVez()) {
             SharedPreferences usuario = getSharedPreferences("usuario", Context.MODE_PRIVATE);
             new DownloadImageTask((CircleImageView) findViewById(R.id.perfilImage))
                     .execute(usuario.getString("foto-url", null));
-        }
+        }*/
 
-        correoText = (TextView) findViewById(R.id.correoText);
-        correo = (EditText) findViewById(R.id.correoInput);
-        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
-        perfilImage = (CircleImageView) findViewById(R.id.perfilImage);
-        bienvenidaMensaje = (TextView) findViewById(R.id.bienvenidaMensaje);
-        bienvenidaNombre = (TextView) findViewById(R.id.nombreBienvenida);
-        cambiarUsuario = (TextView) findViewById(R.id.cambiarUsuarioText);
-        cargando = (ProgressBar) findViewById(R.id.iniciandoProgress);
-        entrar = (Button) findViewById(R.id.entrarButton);
 
-        configurarFormulario(true);
-
-        entrar.setOnClickListener(new View.OnClickListener() {
+        buttonEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (esPrimeraVez()) {
-                    validar(correo.getText().toString(), contrasenia.getText().toString());
+                    validarFormulario(correo.getText().toString(), contrasenia.getText().toString());
                 } else {
                     SharedPreferences usuario = getSharedPreferences("usuario", Context.MODE_PRIVATE);
-                    new DownloadImageTask((CircleImageView) findViewById(R.id.perfilImage))
-                            .execute(usuario.getString("foto-url", null));
-                    validar(usuario.getString("correo-utem", null), contrasenia.getText().toString());
+                    /*new DownloadImageTask((CircleImageView) findViewById(R.id.perfilImage))
+                            .execute(usuario.getString("foto-url", null));*/
+                    validarFormulario(usuario.getString("correo-utem", null), contrasenia.getText().toString());
                 }
 
             }
         });
 
-        TextView cambiar = (TextView) findViewById(R.id.cambiarUsuarioText);
-        cambiar.setOnClickListener(new View.OnClickListener() {
+        textCambiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(LoginActivity.this, "" + esPrimeraVez(), Toast.LENGTH_SHORT).show();
                 eliminarUsuario();
-                //Toast.makeText(LoginActivity.this, "" + esPrimeraVez(), Toast.LENGTH_SHORT).show();
                 configurarFormulario(true);
 
             }
         });
 
-        // Recuperar contraseña
         TextView recuperar = (TextView) findViewById(R.id.recuperarText);
         recuperar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,33 +103,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean esPrimeraVez() {
         SharedPreferences preferences = getSharedPreferences("preferencias", Context.MODE_PRIVATE);
-        if (preferences.contains("primera-vez") && preferences.getBoolean("primera-vez", false)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preferences.getBoolean("primera-vez", true);
     }
-
-    private void validar(String valorCorreo, String valorContrasenia) {
-        correo = (EditText) findViewById(R.id.correoInput);
-        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
-        if ((valorCorreo == null || valorCorreo.isEmpty()) && (valorContrasenia == null || valorContrasenia.isEmpty())) {
-            correo.setError("Debe ingresar un RUT");
-            contrasenia.setError("Debe ingresar una contraseña");
-        } else if (valorCorreo == null || valorCorreo.isEmpty()) {
-            correo.setError("Debe ingresar un RUT");
-        } else if (valorContrasenia == null || valorContrasenia.isEmpty()) {
-            contrasenia.setError("Debe ingresar una contraseña");
-        } else {
-            configurarFormulario(false);
-            login(valorCorreo, valorContrasenia);
-        }
-    }
-
 
     private void configurarFormulario(boolean interruptor) {
         if (esPrimeraVez()) {
-            perfilImage.setVisibility(View.GONE);
+            //perfilImage.setVisibility(View.GONE);
             bienvenidaMensaje.setVisibility(View.GONE);
             bienvenidaNombre.setVisibility(View.GONE);
             cambiarUsuario.setVisibility(View.GONE);
@@ -151,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             correo.setVisibility(View.VISIBLE);
         } else {
             SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
-            perfilImage.setVisibility(View.VISIBLE);
+            //perfilImage.setVisibility(View.VISIBLE);
             bienvenidaMensaje.setVisibility(View.VISIBLE);
             bienvenidaNombre.setVisibility(View.VISIBLE);
             cambiarUsuario.setVisibility(View.VISIBLE);
@@ -174,6 +140,23 @@ public class LoginActivity extends AppCompatActivity {
             cargando.setVisibility(View.VISIBLE);
             entrar.setClickable(false);
             entrar.setEnabled(false);
+        }
+
+    }
+
+    private void validarFormulario(String valorCorreo, String valorContrasenia) {
+        correo = (EditText) findViewById(R.id.correoInput);
+        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
+        if ((valorCorreo == null || valorCorreo.isEmpty()) && (valorContrasenia == null || valorContrasenia.isEmpty())) {
+            correo.setError("Debe ingresar un RUT");
+            contrasenia.setError("Debe ingresar una contraseña");
+        } else if (valorCorreo == null || valorCorreo.isEmpty()) {
+            correo.setError("Debe ingresar un RUT");
+        } else if (valorContrasenia == null || valorContrasenia.isEmpty()) {
+            contrasenia.setError("Debe ingresar una contraseña");
+        } else {
+            configurarFormulario(false);
+            login(valorCorreo, valorContrasenia);
         }
     }
 
@@ -252,15 +235,21 @@ public class LoginActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Estudiante usuario = response.body();
-                        //Toast.makeText(LoginActivity.this, usuario.getEdad() != null ? usuario.getEdad().toString() : "null", Toast.LENGTH_SHORT).show();
                         usuario.guardarDatos(getApplicationContext());
+
+                        Boolean eraPrimeraVez = esPrimeraVez();
 
                         SharedPreferences.Editor preferencias = getSharedPreferences("preferencias", MODE_PRIVATE).edit();
                         preferencias.putBoolean("primera-vez", false);
                         preferencias.apply();
 
-                        Intent intent = new Intent(LoginActivity.this, WelcomeActivity.class);
-                        startActivity(intent);
+                        /*
+                        if (eraPrimeraVez) {
+                            startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
+                        } else {
+                            startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
+                        }*/
+                        startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
                         finish();
                         break;
                     default:
@@ -272,12 +261,13 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Estudiante> call, Throwable t) {
-                configurarFormulario(true);
+                //configurarFormulario(true);
                 Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /*
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         CircleImageView bmImage;
 
@@ -301,5 +291,5 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
+    } */
 }

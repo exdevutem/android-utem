@@ -15,15 +15,17 @@
         android:gravity="center|center"
         android:orientation="vertical">
 
+        <!--
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/perfilImage"
+            android:id="@+id/image_perfil"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center|center" />
+            -->
 
         <TextView
-            android:id="@+id/bienvenidaMensaje"
+            android:id="@+id/text_bienvenida"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -32,7 +34,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/nombreBienvenida"
+            android:id="@+id/text_nombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -41,7 +43,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/correoText"
+            android:id="@+id/text_correo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Correo UTEM"
@@ -50,13 +52,12 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/correoInput"
+            android:id="@+id/edit_correo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="nombre@utem.cl"
             android:inputType="textEmailAddress"
-            android:paddingVertical="16dp"
-            android:text="jorge.verdugoc@utem.cl" />
+            android:paddingVertical="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -68,16 +69,15 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/contraseniaInput"
+            android:id="@+id/edit_contrasenia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="••••••••"
             android:inputType="textPassword"
-            android:paddingVertical="16dp"
-            android:text="g9Klc@zEvd6%5!cV" />
+            android:paddingVertical="16dp"/>
 
         <Button
-            android:id="@+id/entrarButton"
+            android:id="@+id/button_entrar"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/recuperarText"
+            android:id="@+id/text_recuperar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -96,7 +96,7 @@
             android:textAlignment="center" />
 
         <ProgressBar
-            android:id="@+id/iniciandoProgress"
+            android:id="@+id/progress_iniciando"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
         android:gravity="center|bottom">
 
         <TextView
-            android:id="@+id/cambiarUsuarioText"
+            android:id="@+id/text_cambiar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
