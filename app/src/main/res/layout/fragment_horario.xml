@@ -1,9 +1,411 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cl.inndev.utem.HorarioFragment">
+    android:orientation="vertical">
+    <ScrollView
+        android:id="@+id/layout"
+        android:layout_height="match_parent"
+        android:scrollbars="horizontal|vertical"
+        android:layout_width="match_parent"
+        android:scrollbarStyle="outsideInset"
+        android:fillViewport="true">
 
-    <!-- TODO: Update blank fragment layout -->
+        <HorizontalScrollView
+            android:id="@+id/horizontalView"
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal|vertical"
+            android:layout_width="match_parent">
 
-</FrameLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#bdbdbd">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_weight="0.33"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_weight="0.33"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_weight="0.33"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_weight="0.33"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#9575CD">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Ecuaciones Diferenciales" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M3-301" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_weight="0.33"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp">
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#009688">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Cálculo Avanzado" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M10 - 10" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#9575CD">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Ecuaciones Diferenciales" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M3-301" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp">
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#9575CD">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Ecuaciones Diferenciales" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M3-301" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#009688">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Cálculo Avanzado" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M10 - 10" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#009688">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Cálculo Avanzado" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M10 - 10" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp">
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+                    <LinearLayout
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:background="#7CB342">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:text="Teoría" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Ingles II" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="14sp"
+                            android:textColor="#fff"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="M1-306" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="128dp"
+                        android:layout_height="96dp"
+                        android:layout_marginRight="1dp"
+                        android:background="#fff" />
+
+
+                </TableRow>
+
+
+            </TableLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+</RelativeLayout>

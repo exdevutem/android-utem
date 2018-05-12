@@ -2,8 +2,12 @@ package cl.inndev.utem;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -12,38 +16,15 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class Estudiante {
-    private String token;
-    private String nombre;
-    private Rut rut;
-    private String fotoUrl;
-    private String tipo;
-    private Integer edad;
-    private LocalDate nacimiento;
-    private String sexo;
-    private Integer sexoCodigo;
-    private String nacionalidad;
-    private Integer nacionalidadCodigo;
-    private String correoUtem;
-    private String correoPersonal;
-    private Long telefonoMovil;
-    private Long telefonoFijo;
-    private Float puntajePsu;
-    private String comuna;
-    private Integer comunaCodigo;
-    private String direccion;
-    private Integer anioIngreso;
-    private Integer ultimaMatricula;
-    private Integer carrerasCursadas;
-
-    public class Rut {
+    static public class Rut {
         private Long cuerpo;
         private Character dv;
 
         public Rut(String rut) {
             String auxRut = limpiar(rut);
             if (auxRut.length() >= 8 && auxRut.length() <= 9) {
-                this.cuerpo = Long.valueOf(auxRut).longValue();
-                this.dv = rut.substring(rut.length() - 1).charAt(0);
+                this.cuerpo = Long.valueOf(auxRut.substring(0, auxRut.length() - 1)).longValue();
+                this.dv = auxRut.substring(auxRut.length() - 1).charAt(0);
                 if (!this.esValido()) {
                     this.cuerpo = null;
                     this.dv = null;
@@ -99,7 +80,7 @@ public class Estudiante {
             return false;
         }
 
-        private String limpiar(String rut) {
+        static public String limpiar(String rut) {
             String auxRut = rut.trim();
             auxRut = rut.replaceAll("[.-]", "");
             auxRut.toUpperCase();
@@ -134,6 +115,113 @@ public class Estudiante {
         }
     }
 
+    public class Sexo {
+        String sexoTexto;
+        Integer sexoCodigo;
+
+        public Sexo() { /* void constructor */ }
+
+        public Sexo(Integer sexoCodigo) {
+            switch (sexoCodigo) {
+                case 1:
+                    this.sexoTexto = "Masculino";
+                    this.sexoCodigo = sexoCodigo;
+                    break;
+                case 2:
+                    this.sexoTexto = "Femenino";
+                    this.sexoCodigo = sexoCodigo;
+                    break;
+                case 0:
+                    this.sexoTexto = "Sin específicar";
+                    this.sexoCodigo = sexoCodigo;
+                    break;
+                default:
+                    this.sexoTexto = null;
+                    this.sexoCodigo = null;
+                    break;
+            }
+        }
+
+        public String getSexoTexto() {
+            return this.sexoTexto;
+        }
+        public void setSexoTexto(String sexoTexto) {
+            this.sexoTexto = sexoTexto;
+        }
+
+
+        public Integer getSexoCodigo() {
+            return this.sexoCodigo;
+        }
+        public void setSexoCodigo(Integer sexoCodigo) {
+            this.sexoCodigo = sexoCodigo;
+        }
+
+    }
+
+    private class Nacionalidad {
+        String nacionalidadTexto;
+        Integer nacionalidadCodigo;
+
+        public String getNacionalidadTexto() {
+            return this.nacionalidadTexto;
+        }
+        public void setNacionalidadTexto(String nacionalidadTexto) {
+            this.nacionalidadTexto = nacionalidadTexto;
+        }
+
+        public Integer getNacionalidadCodigo() {
+            return this.nacionalidadCodigo;
+        }
+        public void setNacionalidadCodigo(Integer nacionalidadCodigo) {
+            this.nacionalidadCodigo = nacionalidadCodigo;
+        }
+
+    }
+
+    private class Comuna  {
+        String comunaTexto;
+        Integer comunaCódigo;
+
+        public String getComunaTexto() {
+            return this.comunaTexto;
+        }
+        public void setComunaTexto(String comunaTexto) {
+            this.comunaTexto = comunaTexto;
+        }
+
+        public Integer getComunaCódigo() {
+            return this.comunaCódigo;
+        }
+        public void setComunaCódigo(Integer comunaCódigo) {
+            this.comunaCódigo = comunaCódigo;
+        }
+    }
+
+    private String token;
+    private String nombre;
+    private String rut;
+    private String fotoUrl;
+    private String tipo;
+    private Integer edad;
+    //private LocalDate nacimiento;
+    private Sexo sexo;
+    //private Nacionalidad nacionalidad;
+    private String correoUtem;
+    private String correoPersonal;
+    private Long telefonoMovil;
+    private Long telefonoFijo;
+    private Float puntajePsu;
+    //private Comuna comuna;
+    private String direccion;
+    private Integer anioIngreso;
+    private Integer ultimaMatricula;
+    private Integer carrerasCursadas;
+
+    private ArrayList<Asignatura> avanceDeMalla;
+
+    public Estudiante() {/*void constructor*/}
+
     public String getToken() {
         return token;
     }
@@ -150,13 +238,9 @@ public class Estudiante {
         this.nombre = nombre;
     }
 
-    public String getRut(Boolean conPuntos) {
-        return rut.getRut(conPuntos);
-    }
+    public String getRut() { return rut; }
 
-    public void setRut(String rut) {
-        this.rut = new Rut(rut);
-    }
+    public void setRut(String rut) { this.rut = rut; }
 
     public String getFotoUrl() {
         return fotoUrl;
@@ -178,6 +262,7 @@ public class Estudiante {
 
     public void setEdad(Integer edad) { this.edad = edad; }
 
+    /*
     public void setNacimiento(LocalDate nacimiento) {
         LocalDate hoy = LocalDate.now();
         LocalDate birthday = LocalDate.of(1960, Month.JANUARY, 1);
@@ -188,7 +273,6 @@ public class Estudiante {
         this.edad =
     }
 
-    /*
     public void setEdad(String fecha) throws ParseException {
         SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
         this.nacimiento = formateador.parse(fecha);
@@ -196,36 +280,6 @@ public class Estudiante {
 
     }
     */
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        switch (sexo) {
-            case "Masculino":
-                this.sexo = sexo;
-                this.sexoCodigo = 1;
-                break;
-            case "Femenino":
-                this.sexo = sexo;
-                this.sexoCodigo = 2;
-                break;
-            default:
-                this.sexo = "Sin Información";
-                this.sexoCodigo = 0;
-                break;
-        }
-    }
-
-
-    public String getNacionalidad() {
-        return nacionalidad;
-    }
-
-    public void setNacionalidad(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
-    }
 
     public String getCorreoUtem() {
         return correoUtem;
@@ -267,12 +321,16 @@ public class Estudiante {
         this.telefonoFijo = telefonoFijo;
     }
 
-    public String getComuna() {
-        return comuna;
+    public Sexo getSexo() {
+        return sexo;
     }
 
-    public void setComuna(String comuna) {
-        this.comuna = comuna;
+    public void setSexo(Sexo sexo) {
+        this.sexo = sexo;
+    }
+
+    public void setSexo(Integer sexo) {
+        this.sexo = new Sexo(sexo);
     }
 
     public String getDireccion() {
@@ -295,8 +353,6 @@ public class Estudiante {
         return ultimaMatricula;
     }
 
-    public Estudiante() {/*void constructor*/}
-
     public void setUltimaMatricula(Integer ultimaMatricula) {
         this.ultimaMatricula = ultimaMatricula;
     }
@@ -309,66 +365,113 @@ public class Estudiante {
         this.carrerasCursadas = carrerasCursadas;
     }
 
+    static public Map<String, String> getCredenciales(Context contexto) {
+        Map<String, String> lista = new LinkedHashMap();
+        lista.put("rut", PrefManager.getCredentials(contexto, "rut"));
+        lista.put("token", PrefManager.getCredentials(contexto, "token"));
+        lista.put("correo", PrefManager.getCredentials(contexto, "correo"));
+        return lista;
+    }
+
+    static public Boolean setCredenciales(Context contexto, String token, String rut, String correo) {
+        String rutLimpio = new Estudiante.Rut(rut).getCuerpo().toString();
+        String tokenListo = token;
+
+        if (!token.startsWith("Bearer ")) {
+            tokenListo = "Bearer " + token;
+        }
+
+        Boolean resultado = PrefManager.setCredentials(contexto, "token", tokenListo);
+        resultado = resultado && PrefManager.setCredentials(contexto, "rut", rutLimpio);
+        resultado = resultado && PrefManager.setCredentials(contexto, "correo", correo);
+        return resultado;
+    }
+
+
+
     public void guardarDatos(Context contexto) {
-        SharedPreferences.Editor editor = contexto.getSharedPreferences("usuario", MODE_PRIVATE).edit();
-
         if (nombre  != null) {
-            editor.putString("nombre", nombre);
+            PrefManager.setUser(contexto, "nombre", nombre);
         }
 
-        if (rut  != null) {
-            editor.putString("rut", rut.getRut(true));
+        if (rut != null) {
+            PrefManager.setUser(contexto, "rut", rut);
         }
 
-        if (correoUtem  != null) {
-            editor.putString("correo-utem", correoUtem);
+        if (sexo != null) {
+            PrefManager.setUser(contexto, "sexo", sexo.sexoCodigo);
+        }
+
+        if (correoUtem != null) {
+            PrefManager.setUser(contexto, "correo_utem", correoUtem);
         }
 
         if (correoPersonal  != null) {
-            editor.putString("correo-personal", correoPersonal);
+            PrefManager.setUser(contexto, "correo_personal", correoPersonal);
         }
 
         if (tipo  != null) {
-            editor.putString("tipo", tipo);
+            PrefManager.setUser(contexto, "tipo", tipo);
         }
 
         if (fotoUrl  != null) {
-            editor.putString("foto-url", fotoUrl);
+            PrefManager.setUser(contexto, "foto_url", fotoUrl);
         }
 
         if (direccion  != null) {
-            editor.putString("direccion", direccion);
+            PrefManager.setUser(contexto, "direccion", direccion);
         }
 
         if (edad != null) {
-            editor.putInt("edad", edad);
+            PrefManager.setUser(contexto, "edad", edad);
         }
 
         if (telefonoFijo != null) {
-            editor.putLong("telefono-fijo", telefonoFijo);
+            PrefManager.setUser(contexto, "telefono_fijo", telefonoFijo);
         }
 
         if (telefonoMovil != null) {
-            editor.putLong("telefono-movil", telefonoMovil);
+            PrefManager.setUser(contexto, "telefono_movil", telefonoMovil);
         }
 
         if (puntajePsu != null) {
-            editor.putFloat("puntaje-psu", puntajePsu);
+            PrefManager.setUser(contexto, "puntaje_psu", puntajePsu);
         }
 
         if (anioIngreso != null) {
-            editor.putInt("anio-ingreso", anioIngreso);
+            PrefManager.setUser(contexto, "anio_ingreso", anioIngreso);
         }
 
         if (ultimaMatricula != null) {
-            editor.putInt("ultima-matricula", ultimaMatricula);
+            PrefManager.setUser(contexto, "ultima_matricula", ultimaMatricula);
         }
 
         if (carrerasCursadas != null) {
-            editor.putInt("carreras-cursadas", carrerasCursadas);
+            PrefManager.setUser(contexto, "carreras_cursadas", carrerasCursadas);
         }
+    }
 
-        editor.apply();
-
+    public Estudiante convertirPreferencias(Context context) {
+        Estudiante usuario = new Estudiante();
+        usuario.setNombre(PrefManager.getStringUser(context, "nombre", null));
+        usuario.setTipo(PrefManager.getStringUser(context, "tipo", null));
+        usuario.setFotoUrl(PrefManager.getStringUser(context, "foto_url", null));
+        usuario.setAnioIngreso(PrefManager.getIntUser(context, "anio_ingreso"));
+        usuario.setUltimaMatricula(PrefManager.getIntUser(context, "ultima_matricula"));
+        usuario.setCarrerasCursadas(PrefManager.getIntUser(context, "carreras_cursadas"));
+        usuario.setRut(PrefManager.getStringUser(context, "rut", null));
+        usuario.setDireccion(PrefManager.getStringUser(context, "direccion", null));
+        usuario.setCorreoUtem(PrefManager.getStringUser(context, "correo_utem", null));
+        usuario.setCorreoPersonal(PrefManager.getStringUser(context, "correo_personal", null));
+        //usuario.setComuna(PrefManager.getStringUser(context, "rut", null));
+        usuario.setTelefonoFijo(PrefManager.getLongUser(context, "telefono_fijo", new Long(0)));
+        usuario.setTelefonoMovil(PrefManager.getLongUser(context, "telefono_movil", new Long(0)));
+        if (PrefManager.getFloatUser(context, "puntaje_psu") != new Float(0)) {
+            usuario.setPuntajePsu(PrefManager.getFloatUser(context, "puntaje_psu"));
+        }
+        if (PrefManager.getIntUser(context, "sexo") != null) {
+            usuario.setSexo(PrefManager.getIntUser(context, "sexo"));
+        }
+        return usuario;
     }
 }

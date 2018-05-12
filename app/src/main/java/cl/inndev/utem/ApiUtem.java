@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import retrofit2.Call;
 import retrofit2.http.*;
 
-public interface RestClient {
+public interface ApiUtem {
     public String BASE_URL = "https://api-utem.herokuapp.com/";
 
     @FormUrlEncoded
@@ -28,12 +28,11 @@ public interface RestClient {
             @Path("rut") String rut,
             @Header("Authorization") String auth,
             @Field("correo") String correo,
-            @Field("nacimiento") String nacimiento,
             @Field("movil") Long movil,
             @Field("fijo") Long fijo,
             @Field("sexo") Integer sexo,
-            @Field("nacionalidad") Integer nacioanlidad,
             @Field("comuna") Integer comuna,
+            @Field("nacionalidad") Integer nacionalidad,
             @Field("direccion") String direccion
     );
 }

@@ -19,8 +19,17 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PerfilActivity"
+            android:label="Perfil"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BienvenidaActivity" />
+        <activity android:name=".PortadaActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,15 +37,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name=".PerfilActivity"
-            android:label="Perfil"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".BienvenidaActivity"/>
+            android:name=".AsignaturaActivity"
+            android:label="@string/title_activity_asignatura"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

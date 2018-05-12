@@ -12,6 +12,7 @@
             android:checked="true"
             android:icon="@drawable/ic_profile"
             android:title="Perfil" />
+
         <item
             android:id="@+id/nav_aranceles"
             android:checked="true"
@@ -28,46 +29,48 @@
             android:title="SESAES" />
     </group>
 
-    <group android:id="@+id/academico" android:checkableBehavior="single">
+    <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_carreras"
-            android:icon="@drawable/ic_work"
-            android:title="Carreras" />
-        <item
-            android:id="@+id/nav_horario"
-            android:icon="@drawable/ic_time"
-            android:title="Horario" />
-        <item
-            android:id="@+id/nav_asignaturas"
-            android:icon="@drawable/ic_book"
-            android:title="Asignaturas" />
-        <item
-            android:id="@+id/nav_certificados"
-            android:icon="@drawable/ic_paper"
-            android:title="Certificados" />
-        <item
-            android:id="@+id/nav_titulacion"
-            android:icon="@drawable/ic_school"
-            android:title="Titulación" />
+            android:id="@+id/academico"
+            android:checkableBehavior="single"
+            android:title="Académico" >
+            <menu android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_horario"
+                    android:icon="@drawable/ic_time"
+                    android:title="Horario" />
+                <item
+                    android:id="@+id/nav_certificados"
+                    android:icon="@drawable/ic_paper"
+                    android:title="Certificados" />
+                <item
+                    android:id="@+id/nav_asignaturas"
+                    android:icon="@drawable/ic_book"
+                    android:title="Asignaturas" />
+                <item
+                    android:id="@+id/nav_carreras"
+                    android:icon="@drawable/ic_work"
+                    android:title="Carreras" />
+                <item
+                    android:id="@+id/nav_titulacion"
+                    android:icon="@drawable/ic_school"
+                    android:title="Titulación" />
+            </menu>
+        </item>
     </group>
 
-
-
-    <item android:title="Académico" android:checkableBehavior="single">
-        <menu android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_ajustes"
-                android:icon="@drawable/ic_settings"
-                android:title="Ajustes" />
-            <item
-                android:id="@+id/nav_acerca"
-                android:icon="@drawable/ic_info"
-                android:title="Acerca de" />
-            <item
-                android:id="@+id/nav_salir"
-                android:icon="@drawable/ic_power"
-                android:title="Salir" />
-
-        </menu>
-    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_ajustes"
+            android:icon="@drawable/ic_settings"
+            android:title="Ajustes" />
+        <item
+            android:id="@+id/nav_acerca"
+            android:icon="@drawable/ic_info"
+            android:title="Acerca de" />
+        <item
+            android:id="@+id/nav_salir"
+            android:icon="@drawable/ic_power"
+            android:title="Salir" />
+    </group>
 </menu>

@@ -73,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="••••••••"
+            android:text="g9Klc@zEvd6%5!cV"
             android:inputType="textPassword"
             android:paddingVertical="16dp"/>
 
@@ -84,6 +85,7 @@
             android:layout_marginTop="24dp"
             android:background="@drawable/button_background"
             android:text="Iniciar sesión"
+            android:enabled="false"
             android:textColor="#fff"
             android:textSize="16sp" />
 

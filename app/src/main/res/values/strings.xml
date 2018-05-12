@@ -107,4 +107,58 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
+    <string name="title_activity_asignatura">AsignaturaActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string-array name="motivos_certificados">
+        <item>Certificado genérico</item>
+        <item>Beneficio</item>
+        <item>Beca</item>
+        <item>Beca Indígena</item>
+        <item>Bono de escolaridad</item>
+        <item>Beca Presidente de la República</item>
+        <item>Cantón de reclutamiento</item>
+        <item>Crédito CORFO</item>
+        <item>Equivalencia de asignaturas</item>
+        <item>Otros fines</item>
+        <item>Homologación de asignaturas</item>
+        <item>Pensión de orfandad</item>
+        <item>Rebaja de pasajes</item>
+        <item>Tarjeta Nacional Estudiantil (TNE)</item>
+        <item>FONASA</item>
+        <item>CCAF 18 de Septiembre</item>
+        <item>CCAF Los Andes</item>
+        <item>CCAF Los Héroes</item>
+        <item>CCAF Javiera Carrera</item>
+        <item>CCAF La Araucana</item>
+        <item>Transferencia de carrera</item>
+        <item>Ministerio de Educación</item>
+        <item>Pensión alimenticia</item>
+        <item>Biblioteca UTEM</item>
+        <item>Deportes</item>
+        <item>Servicio de Salud Estudiantil (SESAES)</item>
+        <item>Asignación familiar</item>
+        <item>Certificado de notas</item>
+    </string-array>
+
+    <string-array name="sexos">
+        <item>Sin especificar</item>
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+
+    <string-array name="etiquetas_perfil">
+        <item>RUT</item>
+        <item>Correo UTEM</item>
+        <item>Correo personal</item>
+        <item>Puntaje PSU</item>
+        <item>Sexo</item>
+        <item>Edad</item>
+        <item>Teléfono movil</item>
+        <item>Teléfono fijo</item>
+        <item>Dirección</item>
+    </string-array>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
 </resources>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ToolBarStyle"
+            app:title="Edita tu información" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar">
+
+        <EditText
+            android:id="@+id/edit_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_horizontal"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#eee"
+        app:layout_constraintBottom_toTopOf="@+id/view_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_cancelar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:text="Cancelar"
+        android:textColor="#212121"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_guardar"
+        app:layout_constraintWidth_default="spread" />
+
+    <View
+        android:id="@+id/view_vertical"
+        android:layout_width="1dp"
+        android:layout_height="48dp"
+        android:background="#eee"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_guardar"
+        app:layout_constraintStart_toEndOf="@+id/button_cancelar" />
+
+    <Button
+        android:id="@+id/button_guardar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="?selectableItemBackground"
+        android:text="Guardar"
+        android:textColor="#212121"
+        android:focusable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_cancelar"
+        app:layout_constraintWidth_default="spread" />
+
+</android.support.constraint.ConstraintLayout>

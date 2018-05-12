@@ -3,14 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="168dp"
-    android:background="@drawable/background"
-    android:gravity="bottom"
+    android:layout_height="200dp"
+    android:background="@color/colorPrimary"
+    android:gravity="center"
     android:orientation="vertical"
-    android:paddingBottom="8dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,20 +16,25 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+        android:layout_gravity="center"
         android:src="@drawable/profile" />
 
     <TextView
         android:id="@+id/nombreText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Nombre del alumno"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_gravity="center"
+        android:text="Javiera Vergara"
+        android:textStyle="bold"
+        android:textColor="#FFF"
+        android:paddingTop="8dp"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/correoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="correoelectronico@utem.cl" />
 
 </LinearLayout>

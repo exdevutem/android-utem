@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -64,13 +64,6 @@ public class MainActivity extends AppCompatActivity
     private void mostrarInicio() {
         fragment = new InicioFragment();
         fm.beginTransaction().replace(R.id.mainlayout, fragment, fragment.getTag()).commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
     @Override
@@ -103,24 +96,27 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_perfil) {
             Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
             startActivity(intent);
+            mostrarInicio();
         } else if (id == R.id.nav_horario) {
             fm.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
-        } else if (id == R.id.nav_carreras) {
-            fm.beginTransaction().replace(R.id.mainlayout, new MallaFragment()).commit();
+        } else if (id == R.id.nav_certificados) {
+            fm.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
         } else if (id == R.id.nav_asignaturas) {
             fm.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
+        } else if (id == R.id.nav_carreras) {
+            fm.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
         } else if (id == R.id.nav_sesaes) {
             fm.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
+        } else if (id == R.id.nav_ajustes) {
+            //Intent intent = new Intent(MainActivity.this, AjustesActivity.class);
+            //startActivity(intent);
         } else if (id == R.id.nav_salir) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_ajustes) {
-            //Intent intent = new Intent(MainActivity.this, AjustesActivity.class);
-            //startActivity(intent);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

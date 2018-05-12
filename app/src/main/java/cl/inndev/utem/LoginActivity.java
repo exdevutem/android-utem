@@ -2,10 +2,11 @@ package cl.inndev.utem;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,10 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.net.SocketTimeoutException;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,20 +29,19 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static cl.inndev.utem.RestClient.BASE_URL;
+import static cl.inndev.utem.ApiUtem.BASE_URL;
 
 public class LoginActivity extends AppCompatActivity {
     private TextView textCorreo;
     private TextView textBienvenida;
     private TextView textNombre;
     private TextView textCambiar;
+    private TextView textRecuperar;
     private EditText editCorreo;
     private EditText editContrasenia;
     private ProgressBar progressIniciando;
     private Button buttonEntrar;
     private CircleImageView imagePerfil;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +49,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        textCorreo = (TextView) findViewById(R.id.text_correo);
-        textBienvenida = (TextView) findViewById(R.id.text_bienvenida);
-        textNombre = (TextView) findViewById(R.id.text_nombre);
-        textCambiar = (TextView) findViewById(R.id.text_cambiar);
-        editCorreo = (EditText) findViewById(R.id.edit_correo);
-        editContrasenia = (EditText) findViewById(R.id.edit_contrasenia);
-        progressIniciando = (ProgressBar) findViewById(R.id.progress_iniciando);
-        buttonEntrar = (Button) findViewById(R.id.button_entrar);
+        textCorreo = findViewById(R.id.text_correo);
+        textBienvenida = findViewById(R.id.text_bienvenida);
+        textNombre = findViewById(R.id.text_nombre);
+        textCambiar = findViewById(R.id.text_cambiar);
+        textRecuperar = findViewById(R.id.text_recuperar);
+        editCorreo = findViewById(R.id.edit_correo);
+        editContrasenia = findViewById(R.id.edit_contrasenia);
+        progressIniciando = findViewById(R.id.progress_iniciando);
+        buttonEntrar = findViewById(R.id.button_entrar);
         // perfilImage = (CircleImageView) findViewById(R.id.image_perfil);
 
         configurarFormulario(true);
+        buttonEntrar.setEnabled(false);
 
         /*
         if (!esPrimeraVez()) {
@@ -69,12 +75,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (esPrimeraVez()) {
-                    validarFormulario(correo.getText().toString(), contrasenia.getText().toString());
+                    validarFormulario(editCorreo.getText().toString(),
+                            editContrasenia.getText().toString());
                 } else {
-                    SharedPreferences usuario = getSharedPreferences("usuario", Context.MODE_PRIVATE);
-                    /*new DownloadImageTask((CircleImageView) findViewById(R.id.perfilImage))
-                            .execute(usuario.getString("foto-url", null));*/
-                    validarFormulario(usuario.getString("correo-utem", null), contrasenia.getText().toString());
+                    validarFormulario(
+                            PrefManager.getStringUser(getApplicationContext(), "correo_utem", null),
+                            editContrasenia.getText().toString());
                 }
 
             }
@@ -85,12 +91,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 eliminarUsuario();
                 configurarFormulario(true);
+                buttonEntrar.setEnabled(false);
 
             }
         });
 
-        TextView recuperar = (TextView) findViewById(R.id.recuperarText);
-        recuperar.setOnClickListener(new View.OnClickListener() {
+        textRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = "https://pasaporte.utem.cl/reset";
@@ -99,81 +105,120 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        editCorreo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editContrasenia.getText().toString().length() > 0 && editCorreo.getText().toString().length() > 0) {
+                    buttonEntrar.setEnabled(true);
+                } else {
+                    buttonEntrar.setEnabled(false);
+                }
+            }
+        });
+
+        editContrasenia.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!esPrimeraVez()) {
+                    if (editContrasenia.getText().toString().length() > 0) {
+                        buttonEntrar.setEnabled(true);
+                    } else {
+                        buttonEntrar.setEnabled(false);
+                    }
+                } else {
+                    if (editContrasenia.getText().toString().length() > 0 && editCorreo.getText().toString().length() > 0) {
+                        buttonEntrar.setEnabled(true);
+                    } else {
+                        buttonEntrar.setEnabled(false);
+                    }
+                }
+
+            }
+        });
     }
 
     private boolean esPrimeraVez() {
-        SharedPreferences preferences = getSharedPreferences("preferencias", Context.MODE_PRIVATE);
-        return preferences.getBoolean("primera-vez", true);
+        return PrefManager.getBoolPreference(getApplicationContext(),
+                "primera_vez",
+                true);
     }
 
     private void configurarFormulario(boolean interruptor) {
         if (esPrimeraVez()) {
             //perfilImage.setVisibility(View.GONE);
-            bienvenidaMensaje.setVisibility(View.GONE);
-            bienvenidaNombre.setVisibility(View.GONE);
-            cambiarUsuario.setVisibility(View.GONE);
+            textBienvenida.setVisibility(View.GONE);
+            textNombre.setVisibility(View.GONE);
+            textCambiar.setVisibility(View.GONE);
 
-            correoText.setVisibility(View.VISIBLE);
-            correo.setVisibility(View.VISIBLE);
+            textCorreo.setVisibility(View.VISIBLE);
+            editCorreo.setVisibility(View.VISIBLE);
         } else {
-            SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+            String nombre = PrefManager.getStringUser(getApplicationContext(), "nombre", null);
             //perfilImage.setVisibility(View.VISIBLE);
-            bienvenidaMensaje.setVisibility(View.VISIBLE);
-            bienvenidaNombre.setVisibility(View.VISIBLE);
-            cambiarUsuario.setVisibility(View.VISIBLE);
-            bienvenidaNombre.setText(preferences.getString("nombre", "Usuario desconocido"));
-            cambiarUsuario.setText("¿No eres " + preferences.getString("nombre", "usuario") + "?");
+            textBienvenida.setVisibility(View.VISIBLE);
+            textNombre.setVisibility(View.VISIBLE);
+            textCambiar.setVisibility(View.VISIBLE);
 
-            correoText.setVisibility(View.GONE);
-            correo.setVisibility(View.GONE);
+            textCorreo.setVisibility(View.GONE);
+            editCorreo.setVisibility(View.GONE);
+
+            textNombre.setText(nombre);
+            textCambiar.setText("¿No eres " + nombre + "?");
         }
 
         if (interruptor) {
-            correo.setEnabled(true);
-            contrasenia.setEnabled(true);
-            cargando.setVisibility(View.GONE);
-            entrar.setClickable(true);
-            entrar.setEnabled(true);
+            editCorreo.setEnabled(true);
+            editContrasenia.setEnabled(true);
+            progressIniciando.setVisibility(View.GONE);
+            buttonEntrar.setClickable(true);
+            buttonEntrar.setEnabled(true);
         } else {
-            correo.setEnabled(false);
-            contrasenia.setEnabled(false);
-            cargando.setVisibility(View.VISIBLE);
-            entrar.setClickable(false);
-            entrar.setEnabled(false);
+            editCorreo.setEnabled(false);
+            editContrasenia.setEnabled(false);
+            progressIniciando.setVisibility(View.VISIBLE);
+            buttonEntrar.setClickable(false);
+            buttonEntrar.setEnabled(false);
         }
 
     }
 
     private void validarFormulario(String valorCorreo, String valorContrasenia) {
-        correo = (EditText) findViewById(R.id.correoInput);
-        contrasenia = (EditText) findViewById(R.id.contraseniaInput);
         if ((valorCorreo == null || valorCorreo.isEmpty()) && (valorContrasenia == null || valorContrasenia.isEmpty())) {
-            correo.setError("Debe ingresar un RUT");
-            contrasenia.setError("Debe ingresar una contraseña");
+            editCorreo.setError("Este campo no puede estar vacío");
+            editContrasenia.setError("Este campo no puede estar vacío");
         } else if (valorCorreo == null || valorCorreo.isEmpty()) {
-            correo.setError("Debe ingresar un RUT");
+            editCorreo.setError("Este campo no puede estar vacío");
         } else if (valorContrasenia == null || valorContrasenia.isEmpty()) {
-            contrasenia.setError("Debe ingresar una contraseña");
+            editContrasenia.setError("Este campo no puede estar vacío");
+        } else if (!valorCorreo.endsWith("@utem.cl")) {
+            editCorreo.setError("Debe ingresar un correo UTEM válido");
         } else {
             configurarFormulario(false);
-            login(valorCorreo, valorContrasenia);
+            iniciarSesion(valorCorreo, valorContrasenia);
         }
     }
 
     private void eliminarUsuario() {
-        SharedPreferences.Editor credenciales = getSharedPreferences("credenciales", MODE_PRIVATE).edit();
-        credenciales.clear();
-        credenciales.apply();
-        SharedPreferences.Editor usuario = getSharedPreferences("usuario", MODE_PRIVATE).edit();
-        usuario.clear();
-        usuario.apply();
+        Context context = getApplicationContext();
+        PrefManager.clearAll(context);
 
-        SharedPreferences.Editor preferencias = getSharedPreferences("preferencias", MODE_PRIVATE).edit();
-        preferencias.putBoolean("primera-vez", true);
-        preferencias.apply();
+        PrefManager.setPreference(context,"primera_vez", true);
     }
 
-    private void login(String correo, String contrasenia) {
+    private void iniciarSesion(final String correo, final String contrasenia) {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
@@ -183,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        RestClient restClient = retrofit.create(RestClient.class);
+        ApiUtem restClient = retrofit.create(ApiUtem.class);
         Call<Estudiante> call = restClient.autenticar(correo, contrasenia);
 
         call.enqueue(new Callback<Estudiante>() {
@@ -191,32 +236,33 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<Estudiante> call, Response<Estudiante> response) {
                 switch (response.code()) {
                     case 200:
-                        String rutAux = response.body().getRut().replaceAll("[.-]", "");
-                        rutAux = rutAux.substring(0, rutAux.length() - 1);
-
-                        SharedPreferences.Editor credenciales = getSharedPreferences("credenciales", MODE_PRIVATE).edit();
-                        credenciales.putString("rut", rutAux);
-                        credenciales.putString("token", response.body().getToken());
-                        credenciales.apply();
-
-                        obtenerPerfil(rutAux, "Bearer " + response.body().getToken());
+                        Estudiante.setCredenciales(LoginActivity.this,response.body().getToken(), response.body().getRut(), correo);
+                        obtenerPerfil();
+                        break;
+                    case 401:
+                        configurarFormulario(true);
+                        Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         configurarFormulario(true);
-                        Toast.makeText(LoginActivity.this, "Ocurrió un problema con el login", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<Estudiante> call, Throwable t) {
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                }
                 configurarFormulario(true);
-                Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void obtenerPerfil(String rut, String token) {
+    private void obtenerPerfil() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
@@ -226,8 +272,11 @@ public class LoginActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        RestClient restClient = retrofit.create(RestClient.class);
-        Call<Estudiante> call = restClient.obtenerPerfil(rut, token);
+        ApiUtem client = retrofit.create(ApiUtem.class);
+
+        Map<String, String> credenciales = Estudiante.getCredenciales(LoginActivity.this);
+
+        Call<Estudiante> call = client.obtenerPerfil(credenciales.get("rut"), credenciales.get("token"));
 
         call.enqueue(new Callback<Estudiante>() {
             @Override
@@ -235,13 +284,11 @@ public class LoginActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Estudiante usuario = response.body();
-                        usuario.guardarDatos(getApplicationContext());
+                        usuario.guardarDatos(LoginActivity.this);
 
-                        Boolean eraPrimeraVez = esPrimeraVez();
+                        // Boolean eraPrimeraVez = esPrimeraVez();
 
-                        SharedPreferences.Editor preferencias = getSharedPreferences("preferencias", MODE_PRIVATE).edit();
-                        preferencias.putBoolean("primera-vez", false);
-                        preferencias.apply();
+                        PrefManager.setPreference(LoginActivity.this, "primera_vez", false);
 
                         /*
                         if (eraPrimeraVez) {
@@ -249,20 +296,25 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
                         }*/
-                        startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
+
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                         break;
                     default:
                         configurarFormulario(true);
-                        Toast.makeText(LoginActivity.this, "Ocurrió un problema con el login", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<Estudiante> call, Throwable t) {
-                //configurarFormulario(true);
-                Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                if (t instanceof TimeoutException) {
+                    Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+                configurarFormulario(true);
             }
         });
     }

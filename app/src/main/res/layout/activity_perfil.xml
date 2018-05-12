@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cl.inndev.utem.PerfilActivity"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -13,12 +12,12 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_perfil"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:theme="@style/ToolBarStyle"
-            app:title="Perfil"/>
+            app:title="Perfil" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -26,7 +25,7 @@
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="#eee">
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -34,464 +33,144 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="8dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_gravity="center_horizontal"
-                    app:layout_anchorGravity="top|center_horizontal"
-                    app:layout_scrollFlags="scroll"
-                    />
-
-                <TextView
-                    android:id="@+id/nombreText"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textAlignment="center"
-                    android:textColor="#000"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tipoText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="14sp"
-                    android:textAllCaps="true"
-                    android:textStyle="bold"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="24dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ingresó el"
-                        android:textAlignment="center"
-                        android:textSize="14sp" />
-
-                    <View
-                        android:layout_width="0.5dp"
-                        android:layout_height="match_parent"
-                        android:background="#bdbdbd" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Carreras"
-                        android:textAlignment="center"
-                        android:textSize="14sp" />
-
-                    <View
-                        android:layout_width="0.5dp"
-                        android:layout_height="match_parent"
-                        android:background="#bdbdbd" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Matriculado al"
-                        android:textAlignment="center"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="24dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/ingresoText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
-                        android:textColor="#000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <View
-                        android:layout_width="0.5dp"
-                        android:layout_height="match_parent"
-                        android:background="#bdbdbd" />
-
-                    <TextView
-                        android:id="@+id/carrerasText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
-                        android:textColor="#000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <View
-                        android:layout_width="0.5dp"
-                        android:layout_height="match_parent"
-                        android:background="#bdbdbd" />
-
-                    <TextView
-                        android:id="@+id/matriculaText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
-                        android:textColor="#000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/white">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/image_perfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="104dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_gravity="center_horizontal"
+                        app:layout_anchorGravity="top|center_horizontal"
+                        app:layout_scrollFlags="scroll" />
 
                     <TextView
+                        android:id="@+id/text_nombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="Datos personales"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"
                         android:textColor="#000"
                         android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <!-- RUT -->
+                        android:textStyle="bold"/>
 
                     <TextView
-                        android:id="@+id/rut"
+                        android:id="@+id/text_tipo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAlignment="center"
                         android:textSize="14sp"
                         android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:text="RUT"/>
-
-                    <EditText
-                        android:id="@+id/rutText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="1"
-                        android:paddingBottom="16dp"
-                        android:textColor="#000"
-                        android:textSize="16sp"
-                        android:enabled="false"/>
-
-                    <!-- Correo UTEM -->
-                    <TextView
-                        android:id="@+id/correoUtem"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:text="Correo UTEM"/>
-
-                    <EditText
-                        android:id="@+id/correoUtemText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="1"
-                        android:paddingBottom="16dp"
-                        android:textColor="#000"
-                        android:textSize="16sp"
-                        android:enabled="false"/>
-
-                    <!-- Correo personal -->
-                    <TextView
-                        android:id="@+id/correoPersonal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        android:text="Correo personal"/>
-
-                    <EditText
-                        android:id="@+id/correoPersonalText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="1"
-                        android:paddingBottom="16dp"
-                        android:textColor="#000"
-                        android:visibility="gone"
-                        android:inputType="textEmailAddress"
-                        android:textSize="16sp"
-                        android:enabled="false"/>
-
-                    <!-- Teléfono móvil -->
-                    <TextView
-                        android:id="@+id/telefonoMovil"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="8dp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        android:text="Teléfono movil"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.hbb20.CountryCodePicker
-                            android:id="@+id/codigoMovil"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_marginTop="8dp"
-                            app:ccp_defaultNameCode="CL"
-                            app:ccp_countryPreference="CL,AR,PE,BO,MX"
-                            app:ccp_defaultLanguage="SPANISH"
-                            app:ccp_autoDetectCountry="true"
-                            app:ccp_autoDetectLanguage="true"
-                            app:ccpDialog_allowSearch="false"
-                            app:ccp_clickable="false"
-                            app:ccp_showArrow="false"/>
-
-                        <EditText
-                            android:id="@+id/movilText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="16dp"
-                            android:textColor="#000"
-                            android:visibility="gone"
-                            android:inputType="phone"
-                            android:digits="1234567890"
-                            android:maxLength="9"
-                            android:enabled="false"
-                            android:textSize="18sp" />
-
-                    </LinearLayout>
-
-
-                    <!-- Teléfono fijo -->
-                    <TextView
-                        android:id="@+id/telefonoFijo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="8dp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        android:text="Teléfono fijo"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.hbb20.CountryCodePicker
-                            android:id="@+id/codigoFijo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_marginTop="8dp"
-                            app:ccp_defaultNameCode="CL"
-                            app:ccp_countryPreference="CL,AR,PE,BO,MX"
-                            app:ccp_defaultLanguage="SPANISH"
-                            app:ccp_autoDetectCountry="true"
-                            app:ccp_autoDetectLanguage="true"
-                            app:ccpDialog_allowSearch="false"
-                            app:ccp_clickable="false"
-                            app:ccp_showArrow="false"/>
-
-                        <EditText
-                            android:id="@+id/fijoText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="16dp"
-                            android:textColor="#000"
-                            android:visibility="gone"
-                            android:digits="1234567890"
-                            android:maxLength="9"
-                            android:enabled="false"
-                            android:inputType="phone"
-                            android:textSize="18sp" />
-
-                    </LinearLayout>
+                        android:textStyle="bold"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <!-- Edad -->
-                        <TextView
-                            android:id="@+id/edad"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Edad"
-                            android:textAllCaps="true"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:visibility="visible" />
+                        android:orientation="horizontal"
+                        android:layout_marginTop="24dp">
 
                         <TextView
-                            android:id="@+id/sexo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:layout_weight="1"
-                            android:text="Sexo"
-                            android:textAllCaps="true"
-                            android:textSize="14sp"
-                            android:textStyle="bold"/>
+                            android:text="Ingresó el"
+                            android:textAlignment="center"
+                            android:textSize="14sp" />
 
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="match_parent"
+                            android:background="#bdbdbd" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Carreras"
+                            android:textAlignment="center"
+                            android:textSize="14sp" />
+
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="match_parent"
+                            android:background="#bdbdbd" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Matriculado al"
+                            android:textAlignment="center"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <!-- Edad -->
-
-                        <EditText
-                            android:id="@+id/edadText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:layout_weight="1"
-                            android:enabled="false"
-                            android:paddingBottom="16dp"
-                            android:textColor="#000"
-                            android:textSize="16sp"
-                            android:visibility="visible" />
-
-                        <Spinner
-                            android:id="@+id/sexoSpinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="20sp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/pais"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:text="País"
-                        android:textAllCaps="true"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:visibility="visible" />
-
-                    <com.hbb20.CountryCodePicker
-                        android:id="@+id/paisPicker"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:visibility="visible"
-                        app:ccpDialog_allowSearch="false"
-                        app:ccp_autoDetectCountry="true"
-                        app:ccp_autoDetectLanguage="true"
-                        app:ccp_clickable="false"
-                        app:ccp_countryPreference="CL,AR,PE,BO,MX"
-                        app:ccp_defaultLanguage="SPANISH"
-                        app:ccp_defaultNameCode="CL"
-                        app:ccp_showArrow="false"
-                        app:ccp_showFullName="true"
-                        app:ccp_showNameCode="false"
-                        app:ccp_showPhoneCode="false"
-                        app:ccp_textGravity="LEFT" />
-
-                    <!-- Dirección -->
-                    <TextView
-                        android:id="@+id/direccion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="8dp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        android:text="Dirección"/>
-
-                    <EditText
-                        android:id="@+id/direccionText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:layout_weight="1"
-                        android:paddingVertical="16dp"
-                        android:paddingHorizontal="0dp"
-                        android:textColor="#000"
-                        android:visibility="gone"
-                        android:inputType="textPostalAddress"
-                        android:enabled="false"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/text_ingreso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <!-- app:ccp_customMasterCountries="CL,AR,ES,DK,CH,
-                        PE,CU,BO,EC,IT,AU,BR,BG,CN,CO,FR,LB,MX,SE,TW,
-                        UY,VE,DZ" -->
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="match_parent"
+                            android:background="#bdbdbd" />
 
-                    <!---
+                        <TextView
+                            android:id="@+id/text_carreras"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nacionalidad"
-                        android:textSize="14dp" />
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="match_parent"
+                            android:background="#bdbdbd" />
 
-                    <Spinner
-                        android:id="@+id/nacionalidad"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Comuna"
-                        android:textSize="14dp" />
-
-                    <Spinner
-                        android:id="@+id/comuna"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp" /> -->
-
-                    <Button
-                        android:id="@+id/editarButton"
-                        style="@style/Widget.AppCompat.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="16dp"
-                        android:background="@drawable/button_background"
-                        android:text="Editar perfil"
-                        android:textColor="#fff"
-                        android:textSize="16sp" />
+                        <TextView
+                            android:id="@+id/text_matricula"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
+                <cl.inndev.utem.NonScrollListView
+                    android:id="@+id/list_datos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:background="@color/white"/>
 
             </LinearLayout>
+
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
