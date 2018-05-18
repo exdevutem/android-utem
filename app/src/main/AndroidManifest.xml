@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cl.inndev.utem">
+    package="cl.inndev.miutem">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.screen.portrait" />
 
@@ -17,19 +19,20 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".PerfilActivity"
+            android:name=".activities.PerfilActivity"
             android:label="Perfil"
             android:screenOrientation="portrait" />
-        <activity android:name=".BienvenidaActivity" />
-        <activity android:name=".PortadaActivity">
+        <activity android:name=".activities.BienvenidaActivity" />
+        <activity android:name=".activities.PortadaActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,9 +40,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AsignaturaActivity"
+            android:name=".activities.AsignaturaActivity"
             android:label="@string/title_activity_asignatura"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".activities.CarreraActivity"></activity>
     </application>
 
 </manifest>

@@ -1,14 +1,11 @@
 <resources>
     <string name="app_name">Mi UTEM</string>
-    <string name="title_activity_navegador">Navegador</string>
+    <string name="institution_name">Universidad Tecnológica Metropolitana</string>
 
     <string name="title_activity_perfil">Perfil</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Abrir menú lateral</string>
+    <string name="navigation_drawer_close">Cerrar menú lateral</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -156,9 +153,10 @@
         <item>Edad</item>
         <item>Teléfono movil</item>
         <item>Teléfono fijo</item>
+        <item>Nacionalidad</item>
+        <item>Región</item>
+        <item>Provincia</item>
+        <item>Comuna</item>
         <item>Dirección</item>
     </string-array>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
 </resources>

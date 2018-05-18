@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="32dp"
-    tools:context="cl.inndev.utem.CertificadosFragment">
+    tools:context="cl.inndev.miutem.fragments.CertificadosFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,13 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:background="@drawable/button_background"
+            android:background="@drawable/solid_button"
             android:text="Generar y descargar" />
 
         <Button
             android:id="@+id/button_no_descargar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/border_button"
             android:text="Sólo enviar por correo" />
 
     </LinearLayout>

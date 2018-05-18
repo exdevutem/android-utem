@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginVertical="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@+id/button"> -->
+        android:layout_marginHorizontal="16dp"
+        android:layout_toLeftOf="@+id/button_editar">
 
         <TextView
             android:id="@+id/text_etiqueta"

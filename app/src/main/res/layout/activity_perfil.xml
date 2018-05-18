@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
@@ -34,156 +35,208 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="8dp"
+                    android:layout_margin="8dp"
                     android:background="@color/white">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image_perfil"
-                        android:layout_width="match_parent"
-                        android:layout_height="104dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_gravity="center_horizontal"
-                        app:layout_anchorGravity="top|center_horizontal"
-                        app:layout_scrollFlags="scroll" />
-
-                    <TextView
-                        android:id="@+id/text_nombre"
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textAlignment="center"
-                        android:textColor="#000"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/text_tipo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="14sp"
-                        android:textAllCaps="true"
-                        android:textStyle="bold"/>
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image_perfil"
+                            android:layout_width="104dp"
+                            android:layout_height="104dp"
+                            android:layout_marginTop="16dp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="24dp">
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/fab_cambiar_foto"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:scaleType="center"
+                            android:tint="@color/white"
+                            app:elevation="8dp"
+                            app:layout_constraintBottom_toBottomOf="@id/image_perfil"
+                            app:layout_constraintRight_toRightOf="@id/image_perfil"
+                            app:srcCompat="@drawable/ic_camera"/>
 
                         <TextView
+                            android:id="@+id/text_nombre"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Ingresó el"
+                            android:text="Sin nombre"
+                            android:layout_marginTop="8dp"
                             android:textAlignment="center"
-                            android:textSize="14sp" />
+                            android:textColor="#212121"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toBottomOf="@+id/image_perfil"/>
+
+                        <TextView
+                            android:id="@+id/text_tipo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Usuario"
+                            android:textAlignment="center"
+                            android:textAllCaps="true"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toBottomOf="@+id/text_nombre" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_ingreso"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintWidth_default="spread"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/view1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/text_tipo">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Ingresó el"
+                                android:textAlignment="center"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/text_ingreso"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="#000"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
                         <View
-                            android:layout_width="0.5dp"
-                            android:layout_height="match_parent"
-                            android:background="#bdbdbd" />
+                            android:id="@+id/view1"
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="16dp"
+                            android:background="#e0e0e0"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/layout_carreras"
+                            app:layout_constraintHeight_default="spread"
+                            app:layout_constraintStart_toEndOf="@+id/layout_ingreso"
+                            app:layout_constraintTop_toBottomOf="@+id/text_tipo" />
 
-                        <TextView
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:id="@+id/layout_carreras"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Carreras"
-                            android:textAlignment="center"
-                            android:textSize="14sp" />
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintWidth_default="spread"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/view2"
+                            app:layout_constraintStart_toEndOf="@+id/view1"
+                            app:layout_constraintTop_toBottomOf="@+id/text_tipo">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Carreras"
+                                android:textAlignment="center"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/text_carreras"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="#000"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
                         <View
-                            android:layout_width="0.5dp"
-                            android:layout_height="match_parent"
-                            android:background="#bdbdbd" />
+                            android:id="@+id/view2"
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="16dp"
+                            android:background="#e0e0e0"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/layout_matricula"
+                            app:layout_constraintHeight_default="spread"
+                            app:layout_constraintStart_toEndOf="@+id/layout_carreras"
+                            app:layout_constraintTop_toBottomOf="@+id/text_tipo" />
 
-                        <TextView
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:id="@+id/layout_matricula"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Matriculado al"
-                            android:textAlignment="center"
-                            android:textSize="14sp" />
-                    </LinearLayout>
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintWidth_default="spread"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/view2"
+                            app:layout_constraintTop_toBottomOf="@+id/text_tipo">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="16dp"
-                        android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Matriculado al"
+                                android:textAlignment="center"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/text_ingreso"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="center"
-                            android:textColor="#000"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/text_matricula"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textColor="#000"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                        <View
-                            android:layout_width="0.5dp"
-                            android:layout_height="match_parent"
-                            android:background="#bdbdbd" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/text_carreras"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="center"
-                            android:textColor="#000"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                    </android.support.constraint.ConstraintLayout>
 
-                        <View
-                            android:layout_width="0.5dp"
-                            android:layout_height="match_parent"
-                            android:background="#bdbdbd" />
+                </android.support.v7.widget.CardView>
 
-                        <TextView
-                            android:id="@+id/text_matricula"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="center"
-                            android:textColor="#000"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <cl.inndev.utem.NonScrollListView
-                    android:id="@+id/list_datos"
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="8dp"
-                    android:background="@color/white"/>
+                    android:layout_margin="8dp"
+                    android:background="@color/white">
+
+                    <cl.inndev.miutem.NonScrollListView
+                        android:id="@+id/list_datos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
-    <!--<android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end"
-        />-->
 
 </LinearLayout>

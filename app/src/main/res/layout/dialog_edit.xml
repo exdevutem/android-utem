@@ -39,8 +39,7 @@
         <EditText
             android:id="@+id/edit_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:selectAllOnFocus="true"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
@@ -48,7 +47,7 @@
         android:id="@+id/view_horizontal"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#eee"
+        android:background="#dcdccd"
         app:layout_constraintBottom_toTopOf="@+id/view_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -69,7 +68,7 @@
         android:id="@+id/view_vertical"
         android:layout_width="1dp"
         android:layout_height="48dp"
-        android:background="#eee"
+        android:background="#dcdcdc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_guardar"
         app:layout_constraintStart_toEndOf="@+id/button_cancelar" />

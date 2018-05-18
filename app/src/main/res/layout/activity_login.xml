@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="32dp"
-    android:orientation="vertical"
-    tools:context="LoginActivity">
+    android:layout_margin="32dp"
+    android:maxWidth="328dp"
+    tools:context=".activities.LoginActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/layout_formulario"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center|center"
-        android:orientation="vertical">
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/progress_iniciando"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!--
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_perfil"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="center|center" />
-            -->
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/text_bienvenida"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
             android:text="Bienvenido/a otra vez"
             android:textAlignment="center"
             android:textSize="14sp" />
@@ -37,9 +39,11 @@
             android:id="@+id/text_nombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20sp"
             android:layout_marginBottom="16dp"
+            android:text="Sin nombre"
+            android:textAlignment="center"
+            android:textColor="#212121"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -47,45 +51,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Correo UTEM"
-            android:textAllCaps="true"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/edit_correo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="nombre@utem.cl"
-            android:inputType="textEmailAddress"
-            android:paddingVertical="16dp"/>
+            android:inputType="textEmailAddress" />
 
         <TextView
+            android:id="@+id/text_contrasenia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Contraseña"
-            android:textAllCaps="true"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/edit_contrasenia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:hint="••••••••"
-            android:text="g9Klc@zEvd6%5!cV"
-            android:inputType="textPassword"
-            android:paddingVertical="16dp"/>
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_entrar"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/button_background"
-            android:text="Iniciar sesión"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/solid_button"
             android:enabled="false"
+            android:text="Iniciar sesión"
             android:textColor="#fff"
             android:textSize="16sp" />
 
@@ -93,36 +92,34 @@
             android:id="@+id/text_recuperar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="¿Olvidaste tu contraseña?"
             android:textAlignment="center" />
 
-        <ProgressBar
-            android:id="@+id/progress_iniciando"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginVertical="8dp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progress_iniciando"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:gravity="center|bottom">
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/text_cambiar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_formulario" />
 
-        <TextView
-            android:id="@+id/text_cambiar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="8dp"
-            android:textAlignment="center"/>
+    <TextView
+        android:id="@+id/text_cambiar"
+        android:layout_width="match_parent"
+        android:layout_height="19dp"
+        android:text="¿No eres usuario?"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_iniciando" />
 
-    </LinearLayout>
 
-
-
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

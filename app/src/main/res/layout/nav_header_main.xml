@@ -1,40 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/colorPrimary"
-    android:gravity="center"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:layout_marginTop="48dp"
+    android:background="@drawable/border_header">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/perfilImage"
+        android:id="@+id/image_perfil"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginTop="@dimen/nav_header_vertical_spacing"
-        android:layout_gravity="center"
-        android:src="@drawable/profile" />
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
 
-    <TextView
-        android:id="@+id/nombreText"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/layout_dropdown"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Javiera Vergara"
-        android:textStyle="bold"
-        android:textColor="#FFF"
-        android:paddingTop="8dp"
-        android:textSize="16sp"/>
+        android:paddingLeft="16dp">
 
-    <TextView
-        android:id="@+id/correoText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="correoelectronico@utem.cl" />
+        <TextView
+            android:id="@+id/text_nombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/toggle_dropdown"
+            android:ellipsize="end"
+            android:layout_marginRight="8dp"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:text="Sin nombre"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_correo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="8dp"
+            android:layout_below="@+id/text_nombre"
+            android:layout_centerHorizontal="true"
+            android:layout_toLeftOf="@+id/toggle_dropdown"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="16dp"
+            android:text="nombre@utem.cl"
+            android:textColor="#656565" />
+
+        <ToggleButton
+            android:id="@+id/toggle_dropdown"
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/text_correo"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/text_nombre"
+            android:alpha=".54"
+            android:background="?selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:drawableRight="@drawable/toggle_dropdown"
+            android:padding="16dp"
+            android:textOff="@null"
+            android:textOn="@null" />
+
+    </RelativeLayout>
 
 </LinearLayout>

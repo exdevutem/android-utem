@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cl.inndev.utem.HorarioFragment">
+    tools:context="cl.inndev.miutem.fragments.HorarioFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
