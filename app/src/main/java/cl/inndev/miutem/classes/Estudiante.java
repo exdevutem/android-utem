@@ -2,8 +2,16 @@ package cl.inndev.miutem.classes;
 
 import android.content.Context;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import java.lang.reflect.Type;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -193,6 +201,24 @@ public class Estudiante {
         }
     }
 
+    static public class Horario {
+        List<List<Asignatura>> datos;
+
+        public Horario() {}
+
+        public Horario(List<List<Asignatura>> datos) {
+            this.datos = datos;
+        }
+
+        public List<List<Asignatura>> getDatos() {
+            return datos;
+        }
+
+        public void setDatos(List<List<Asignatura>> datos) {
+            this.datos = datos;
+        }
+    }
+
     private String token;
     private String nombre;
     private String rut;
@@ -213,8 +239,6 @@ public class Estudiante {
     private Integer anioIngreso;
     private Integer ultimaMatricula;
     private Integer carrerasCursadas;
-
-    private ArrayList<Asignatura> avanceDeMalla;
 
     public Estudiante() {/*void constructor*/}
 

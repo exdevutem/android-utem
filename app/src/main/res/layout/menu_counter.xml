@@ -14,7 +14,7 @@
         android:minWidth="24dp"
         android:paddingVertical="3dp"
         android:paddingHorizontal="6dp"
-        android:background="@drawable/solid_button_press"
+        android:background="@drawable/btn_solid_press"
         android:backgroundTint="@color/dot_dark_screen1"
         android:visibility="invisible"/>
 </LinearLayout>

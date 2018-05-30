@@ -3,11 +3,14 @@ package cl.inndev.miutem.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,16 +20,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.io.InputStream;
 
-import cl.inndev.miutem.fragments.CarrerasFragment;
-import cl.inndev.miutem.fragments.CertificadosFragment;
+import cl.inndev.miutem.fragments.AsignaturasFragment;
 import cl.inndev.miutem.fragments.HorarioFragment;
 import cl.inndev.miutem.fragments.InicioFragment;
 import cl.inndev.miutem.R;
@@ -42,14 +48,20 @@ public class MainActivity extends AppCompatActivity
     private TextView mTextNombre;
     private TextView mTextCorreo;
     private Toolbar mToolbar;
-    private ToggleButton mToggleDropdown;
+    private ImageButton mButtonMenu;
     private long mContadorVida = 0;
     private int mContadorAtras = 0;
+    private Boolean mToogle = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Window w = getWindow();
+            w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
 
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -67,17 +79,23 @@ public class MainActivity extends AppCompatActivity
         mTextNombre = headerView.findViewById(R.id.text_nombre);
         mTextCorreo = headerView.findViewById(R.id.text_correo);
         mImagePerfil = headerView.findViewById(R.id.image_perfil);
-        mToggleDropdown = headerView.findViewById(R.id.toggle_dropdown);
+        mButtonMenu = headerView.findViewById(R.id.button_menu);
 
-        mToggleDropdown.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mButtonMenu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mNavigationView.getMenu().clear();
-                if (b) {
+            public void onClick(View view) {
+                if (!mToogle) {
+                    mToogle = true;
+                    mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_up);
+                    mNavigationView.getMenu().clear();
                     mNavigationView.inflateMenu(R.menu.activity_main_drawer_secondary);
                     mNavigationView.getMenu().getItem(0).setChecked(false);
-                } else
+                } else {
+                    mToogle = false;
+                    mNavigationView.getMenu().clear();
+                    mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_down);
                     mNavigationView.inflateMenu(R.menu.activity_main_drawer);
+                }
             }
         });
 
@@ -89,6 +107,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, PerfilActivity.class));
             }
         });
+
+        mostrarInicio();
     }
 
     @Override
@@ -102,7 +122,6 @@ public class MainActivity extends AppCompatActivity
         Estudiante datos = new Estudiante().convertirPreferencias(this);
         mTextNombre.setText(datos.getNombre());
         mTextCorreo.setText(datos.getCorreoUtem());
-        mostrarInicio();
         new MainActivity.DownloadImageTask(mImagePerfil).execute(datos.getFotoUrl());
     }
 
@@ -168,28 +187,28 @@ public class MainActivity extends AppCompatActivity
             mostrarInicio();
         } else if (id == R.id.nav_perfil) {
             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+            mostrarInicio();
         } else if (id == R.id.nav_aranceles) {
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_horario) {
-            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
         } else if (id == R.id.nav_certificados) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_asignaturas) {
-            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
+            //Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_carreras) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_sesaes) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_configuracion) {
             //startActivity(new Intent(MainActivity.this, AjustesActivity.class));
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_ayuda) {
-            Toast.makeText(this, "Pronto estará disponible esta función", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_salir) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();

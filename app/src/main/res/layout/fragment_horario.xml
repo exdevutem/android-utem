@@ -3,14 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:background="#dcdcdc"
+    android:gravity="center">
 
-    <cn.zhouchaoyuan.excelpanel.ExcelPanel
-        android:id="@+id/content_container"
+    <ProgressBar
+        android:id="@+id/progress_cargando"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
+        android:id="@+id/table_horario"
+        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:left_cell_width="120dp"
-        app:normal_cell_width="120dp"
-        app:top_cell_height="120dp" />
+        android:layout_height="match_parent"
+        app:cellMargin="1dp"
+        app:fixedHeaders="true"
+        app:solidRowHeaders="true"
+        app:dragAndDropEnabled="false"/>
 
 </RelativeLayout>

@@ -25,7 +25,7 @@ public class AsignaturaActivity extends AppCompatActivity {
 
     private long mContadorVida = 0;
 
-    private final String CODIGO = getIntent().getStringExtra("codigo");
+    private final String CODIGO = getIntent().getExtras().getString("codigo");
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -51,6 +51,7 @@ public class AsignaturaActivity extends AppCompatActivity {
         mToolbarAsignatura = findViewById(R.id.toolbar_asignatura);
         setSupportActionBar(mToolbarAsignatura);
 
+        getSupportActionBar().setTitle(CODIGO);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -59,10 +60,10 @@ public class AsignaturaActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -80,6 +81,12 @@ public class AsignaturaActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         mContadorVida = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     /**
@@ -117,10 +124,6 @@ public class AsignaturaActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

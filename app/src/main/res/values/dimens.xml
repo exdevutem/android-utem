@@ -13,4 +13,9 @@
     <dimen name="slide_desc">16dp</dimen>
     <dimen name="desc_padding">40dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
+
+    <dimen name="column_width">120dp</dimen>
+    <dimen name="row_height">96dp</dimen>
+    <dimen name="column_header_height">32dp</dimen>
+    <dimen name="row_header_width">48dp</dimen>
 </resources>

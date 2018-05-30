@@ -44,17 +44,14 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import cl.inndev.miutem.classes.Chile;
-import cl.inndev.miutem.interfaces.ApiDpa;
 import cl.inndev.miutem.interfaces.ApiUtem;
-import cl.inndev.miutem.NonScrollListView;
+import cl.inndev.miutem.views.NonScrollListView;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -128,7 +125,7 @@ public class PerfilActivity extends AppCompatActivity {
         mListDatos = findViewById(R.id.list_datos);
 
         mDialogEditar.setCancelable(true);
-        mDialogEditar.setContentView(R.layout.dialog_edit);
+        mDialogEditar.setContentView(R.layout.dialog_perfil_editar);
         mDialogEditar
                 .getWindow()
                 .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -358,7 +355,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
 
-        Call<Estudiante> call = restClient.obtenerPerfil(credenciales.get("rut"), credenciales.get("token"));
+        Call<Estudiante> call = restClient.getPerfil(credenciales.get("rut"), credenciales.get("token"));
 
         call.enqueue(new Callback<Estudiante>() {
             @Override

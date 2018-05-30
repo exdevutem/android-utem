@@ -3,9 +3,27 @@
     <color name="colorPrimary">#06607a</color>
     <color name="colorPrimaryDark">#04475a</color>
     <color name="colorPrimaryLight">#0886ab</color>
-    <color name="colorAccent">#0a7d4f</color>
+    <color name="colorAccent">#1d8e5c</color>
+
+    <color name="colorTextWhite">#ffffffff</color>
+
+    <!--<color name="colorTable1">#8e44ad</color>-->
+    <!--<color name="colorTable2">#2ecc71</color>-->
+    <color name="charcoal">#FF394249</color>
+    <color name="medium_jungle_green">#FF273238</color>
+
 
     <color name="white">#fff</color>
+    <color name="md_grey_50">#FAFAFA</color>
+    <color name="md_grey_100">#F5F5F5</color>
+    <color name="md_grey_200">#EEEEEE</color>
+    <color name="md_grey_300">#E0E0E0</color>
+    <color name="md_grey_400">#BDBDBD</color>
+    <color name="md_grey_500">#9E9E9E</color>
+    <color name="md_grey_600">#757575</color>
+    <color name="md_grey_700">#616161</color>
+    <color name="md_grey_800">#424242</color>
+    <color name="md_grey_900">#212121</color>
     <color name="black">#000</color>
 
     <!-- Screens background color-->

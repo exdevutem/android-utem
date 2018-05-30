@@ -1,4 +1,4 @@
-package cl.inndev.miutem;
+package cl.inndev.miutem.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

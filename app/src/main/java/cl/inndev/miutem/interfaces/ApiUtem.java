@@ -1,5 +1,8 @@
 package cl.inndev.miutem.interfaces;
 
+import java.util.ArrayList;
+
+import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Estudiante;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -13,7 +16,7 @@ public interface ApiUtem {
     @POST("autenticacion")
     Call<Estudiante> autenticar(
             @Field("correo") String correo,
-            @Field("contrasenia_pasaporte") String contraseniaPasaporte
+            @Field("contrasenia") String contrasenia
     );
 
     @Multipart
@@ -25,7 +28,7 @@ public interface ApiUtem {
     );
 
     @GET("estudiantes/{rut}")
-    Call<Estudiante> obtenerPerfil(
+    Call<Estudiante> getPerfil(
             @Path("rut") String rut,
             @Header("Authorization") String auth
     );
@@ -42,5 +45,17 @@ public interface ApiUtem {
             @Field("comuna") Integer comuna,
             @Field("nacionalidad") Integer nacionalidad,
             @Field("direccion") String direccion
+    );
+
+    @GET("/estudiantes/{rut}/horarios")
+    Call<Estudiante.Horario> getHorarios(
+            @Path("rut") String rut,
+            @Header("Authorization") String auth
+    );
+
+    @GET("/estudiantes/{rut}/asignaturas")
+    Call<ArrayList<Asignatura>> getAsignaturas(
+            @Path("rut") String rut,
+            @Header("Authorization") String auth
     );
 }

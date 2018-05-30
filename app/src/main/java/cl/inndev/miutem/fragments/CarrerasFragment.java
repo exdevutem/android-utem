@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,24 +26,23 @@ public class CarrerasFragment extends Fragment {
     private ListView listAsignaturas;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         ((MainActivity) getActivity()).setActionBarTitle("Carreras");
         View view = inflater.inflate(R.layout.fragment_carreras, container, false);
 
         listAsignaturas = view.findViewById(R.id.asignaturasList);
 
         ArrayList<Asignatura> list = new ArrayList<>();
-        list.add(new Asignatura("Taller De Matemática", "MATC8010", "Aprobado", "Obligatorio", 1, 1, 5.2));
+        list.add(new Asignatura("Taller De Matemática", "MATC8010", "Aprobado",
+                "Obligatorio", 1, 1, 5.2));
 
         listAsignaturas.setAdapter(new CarrerasFragment.MallaAdapter(getActivity(), list));
 
         listAsignaturas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long s) {
-                Asignatura item = (Asignatura) parent.getAdapter().getItem(position);
-                Intent intent = new Intent(getActivity(), AsignaturaActivity.class);
-                //intent.putExtra("codigo",  item.getCodigo());
-                startActivity(intent);
+                Toast.makeText(getContext(), R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -1,33 +1,88 @@
 package cl.inndev.miutem.fragments;
 
-import android.content.Context;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+import com.cleveroad.adaptivetablelayout.OnItemClickListener;
+import com.cleveroad.adaptivetablelayout.OnItemLongClickListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cl.inndev.miutem.R;
+import cl.inndev.miutem.activities.AsignaturaActivity;
 import cl.inndev.miutem.activities.MainActivity;
+import cl.inndev.miutem.adapters.HorarioAdapter;
 import cl.inndev.miutem.classes.Asignatura;
-import cn.zhouchaoyuan.excelpanel.BaseExcelPanelAdapter;
-import cn.zhouchaoyuan.excelpanel.ExcelPanel;
+import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.interfaces.ApiUtem;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
+import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class HorarioFragment extends Fragment {
 
-    private ExcelPanel mPanelHorario;
+    private AdaptiveTableLayout mTableHorario;
+    private AlertDialog mDialogAsignatura;
+    private ProgressBar mProgressCargando;
+    private List<String> mRowHeaderList = new ArrayList<>();
+    private List<String> mColumnHeaderList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_horario, container, false);
-        mPanelHorario = view.findViewById(R.id.content_container);
+        mTableHorario = view.findViewById(R.id.table_horario);
+        mProgressCargando = view.findViewById(R.id.progress_cargando);
 
-        //HorarioAdapter adapter = new HorarioAdapter(getContext());
-        //mPanelHorario.setAdapter(adapter);
-        //adapter.setAllData(colTitles, rowTitles, cells);
+        mRowHeaderList.add("8:00 - 9:30");
+        mRowHeaderList.add("9:40 - 11:10");
+        mRowHeaderList.add("11:20 - 12:50");
+        mRowHeaderList.add("13:00 - 14:30");
+        mRowHeaderList.add("14:40 - 16:10");
+        mRowHeaderList.add("16:20 - 17:50");
+        mRowHeaderList.add("18:00 - 19:30");
+        mRowHeaderList.add("19:40 - 21:10");
+
+        mColumnHeaderList.add("Lunes");
+        mColumnHeaderList.add("Martes");
+        mColumnHeaderList.add("Miércoles");
+        mColumnHeaderList.add("Jueves");
+        mColumnHeaderList.add("Viernes");
+        mColumnHeaderList.add("Sábado");
+
+        getHorario();
 
         return view;
     }
@@ -39,138 +94,148 @@ public class HorarioFragment extends Fragment {
 
     }
 
-    /*
-    public class HorarioAdapter extends BaseExcelPanelAdapter<String, String, Asignatura> {
+    private void setDialog(Asignatura asignatura) {
+        View view = this.getLayoutInflater().inflate(R.layout.dialog_horario_asignatura, null);
+        TextView textCodigoAsignatura = view.findViewById(R.id.text_asignatura_codigo);
+        TextView textNombreAsignatura = view.findViewById(R.id.text_asignatura_nombre);
+        TextView textProfesorAsignatura = view.findViewById(R.id.text_asignatura_profesor);
+        TextView textTipoAsignatura = view.findViewById(R.id.text_asignatura_tipo);
+        TextView textSeccionAsignatura = view.findViewById(R.id.text_asignatura_seccion);
 
-        private Context context;
+        textCodigoAsignatura.setText(asignatura.getCodigo());
+        textNombreAsignatura.setText(asignatura.getNombre());
+        textProfesorAsignatura.setText(asignatura.getProfesor());
+        textTipoAsignatura.setText(asignatura.getTipo());
+        textSeccionAsignatura.setText(asignatura.getSeccion().toString());
+        mDialogAsignatura = new AlertDialog.Builder(getActivity()).setView(view).create();
+    }
 
-        public HorarioAdapter(Context context) {
-            super(context);
-            this.context = context;
-        }
-
-        //=========================================content's cell===========================================
-        @Override
-        public RecyclerView.ViewHolder onCreateCellViewHolder(ViewGroup parent, int viewType) {
-            View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.room_status_normal_cell, parent, false);
-            CellHolder cellHolder = new CellHolder(layout);
-            return cellHolder;
-        }
-
-        @Override
-        public void onBindCellViewHolder(RecyclerView.ViewHolder holder, int verticalPosition, int horizontalPosition) {
-            Cell cell = getMajorItem(verticalPosition, horizontalPosition);
-            if (null == holder || !(holder instanceof CellHolder) || cell == null) {
-                return;
-            }
-            CellHolder viewHolder = (CellHolder) holder;
-            viewHolder.cellContainer.setTag(cell);
-            viewHolder.cellContainer.setOnClickListener(blockListener);
-            if (cell.getStatus() == 0) {
-                viewHolder.bookingName.setText("");
-                viewHolder.channelName.setText("");
-                viewHolder.cellContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
-            } else {
-                viewHolder.bookingName.setText(cell.getBookingName());
-                viewHolder.channelName.setText(cell.getChannelName());
-                if (cell.getStatus() == 1) {
-                    viewHolder.cellContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.left));
-                } else if (cell.getStatus() == 2) {
-                    viewHolder.cellContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.staying));
-                } else {
-                    viewHolder.cellContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.booking));
+    private HorarioAdapter setHorarioClickListener(HorarioAdapter adapter, final Estudiante.Horario horario) {
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int row, int column) {
+                Asignatura clickeada = horario.getDatos().get(column - 1).get(row - 1);
+                if (clickeada != null) {
+                    //Intent intent = new Intent(getContext(), AsignaturaActivity.class);
+                    //intent.putExtra("codigo", clickeada.getCodigo() + "/" + clickeada.getSeccion());
+                    //startActivity(intent);
+                    Toast.makeText(getActivity(), R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
                 }
             }
-        }
 
-        static class CellHolder extends RecyclerView.ViewHolder {
+            @Override
+            public void onRowHeaderClick(int row) { }
 
-            public final TextView bookingName;
-            public final TextView channelName;
-            public final LinearLayout cellContainer;
+            @Override
+            public void onColumnHeaderClick(int column) { }
 
-            public CellHolder(View itemView) {
-                super(itemView);
-                bookingName = (TextView) itemView.findViewById(R.id.booking_name);
-                channelName = (TextView) itemView.findViewById(R.id.channel_name);
-                cellContainer = (LinearLayout) itemView.findViewById(R.id.pms_cell_container);
+            @Override
+            public void onLeftTopHeaderClick() { }
+        });
+
+        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(int row, int column) {
+                Asignatura clickeada = horario.getDatos().get(column).get(row);
+                if (clickeada != null) {
+                    setDialog(clickeada);
+                    mDialogAsignatura.show();
+                }
             }
-        }
 
+            @Override
+            public void onLeftTopHeaderLongClick() { }
+        });
+        return adapter;
+    }
 
-        //=========================================top cell===========================================
-        @Override
-        public RecyclerView.ViewHolder onCreateTopViewHolder(ViewGroup parent, int viewType) {
-            View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.room_status_top_header_item, parent, false);
-            TopHolder topHolder = new TopHolder(layout);
-            return topHolder;
-        }
+    private void getHorario() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Estudiante.Horario.class, new HorarioDeserializer())
+                .create();
 
-        @Override
-        public void onBindTopViewHolder(RecyclerView.ViewHolder holder, int position) {
-            RowTitle rowTitle = getTopItem(position);
-            if (null == holder || !(holder instanceof TopHolder) || rowTitle == null) {
-                return;
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem client = retrofit.create(ApiUtem.class);
+
+        Map<String, String> credenciales = Estudiante.getCredenciales(getActivity());
+
+        Call<Estudiante.Horario> call = client.getHorarios(credenciales.get("rut"), credenciales.get("token"));
+
+        call.enqueue(new Callback<Estudiante.Horario>() {
+            @Override
+            public void onResponse(Call<Estudiante.Horario> call, Response<Estudiante.Horario> response) {
+                switch (response.code()) {
+                    case 200:
+                        HorarioAdapter adapter = new HorarioAdapter(getContext(), mRowHeaderList, mColumnHeaderList, response.body());
+                        adapter = setHorarioClickListener(adapter, response.body());
+                        mTableHorario.setAdapter(adapter);
+                        mTableHorario.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        Toast.makeText(getContext(), "Ocurrió un error inesperado al cargar el horario", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                mProgressCargando.setVisibility(View.GONE);
             }
-            TopHolder viewHolder = (TopHolder) holder;
-            viewHolder.roomWeek.setText(rowTitle.getWeekString());
-            viewHolder.roomDate.setText(rowTitle.getDateString());
-            viewHolder.availableRoomCount.setText("剩余" + rowTitle.getAvailableRoomCount() + "间");
-        }
 
-        static class TopHolder extends RecyclerView.ViewHolder {
-
-            public final TextView roomDate;
-            public final TextView roomWeek;
-            public final TextView availableRoomCount;
-
-            public TopHolder(View itemView) {
-                super(itemView);
-                roomDate = (TextView) itemView.findViewById(R.id.data_label);
-                roomWeek = (TextView) itemView.findViewById(R.id.week_label);
-                availableRoomCount = (TextView) itemView.findViewById(R.id.available_room_count);
+            @Override
+            public void onFailure(Call<Estudiante.Horario> call, Throwable t) {
+                Toast.makeText(getActivity(), "No se pudo cargar el horario", Toast.LENGTH_SHORT).show();
+                mProgressCargando.setVisibility(View.GONE);
             }
-        }
+        });
+    }
 
-        //=========================================left cell===========================================
-        @Override
-        public RecyclerView.ViewHolder onCreateLeftViewHolder(ViewGroup parent, int viewType) {
-            View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.room_status_left_header_item, parent, false);
-            LeftHolder leftHolder = new LeftHolder(layout);
-            return leftHolder;
-        }
+    private class HorarioDeserializer implements JsonDeserializer<Estudiante.Horario> {
 
         @Override
-        public void onBindLeftViewHolder(RecyclerView.ViewHolder holder, int position) {
-            ColTitle colTitle = getLeftItem(position);
-            if (null == holder || !(holder instanceof LeftHolder) || colTitle == null) {
-                return;
+        public Estudiante.Horario deserialize(JsonElement json,
+                                              Type type,
+                                              JsonDeserializationContext context) throws JsonParseException {
+            Map<String, Asignatura> cursadas = new HashMap<>();
+            JsonArray carreras = (JsonArray) json;
+            // TODO: Agregar la posibilidad de multiples horarios
+            JsonObject carrera = (JsonObject) carreras.get(0);
+            JsonArray asignaturas = carrera.getAsJsonArray("asignaturas");
+            for (int j = 0; j < asignaturas.size(); j++) {
+                JsonObject asignatura = (JsonObject) asignaturas.get(j);
+                Asignatura nueva = new Asignatura(asignatura.get("nombre").getAsString(),
+                        asignatura.get("tipo").getAsString(),
+                        asignatura.get("profesor").getAsString(),
+                        asignatura.get("seccion").getAsInt());
+                cursadas.put(asignatura.get("codigo").getAsString() + "/" + nueva.getSeccion(),
+                        nueva);
             }
-            LeftHolder viewHolder = (LeftHolder) holder;
-            viewHolder.roomNumberLabel.setText(colTitle.getRoomNumber());
-            viewHolder.roomTypeLabel.setText(colTitle.getRoomTypeName());
-            ViewGroup.LayoutParams lp = viewHolder.root.getLayoutParams();
-            viewHolder.root.setLayoutParams(lp);
-        }
 
-        static class LeftHolder extends RecyclerView.ViewHolder {
 
-            public final TextView roomNumberLabel;
-            public final TextView roomTypeLabel;
-            public final View root;
-
-            public LeftHolder(View itemView) {
-                super(itemView);
-                root = itemView.findViewById(R.id.root);
-                roomNumberLabel = (TextView) itemView.findViewById(R.id.room_number_label);
-                roomTypeLabel = (TextView) itemView.findViewById(R.id.room_type_label);
+            JsonObject semana = carrera.getAsJsonObject("horario");
+            List<List<Asignatura>> horario = new ArrayList<>();
+            for (Map.Entry<String, JsonElement> dia : semana.entrySet()) {
+                JsonArray dias = (JsonArray) dia.getValue();
+                List<Asignatura> diaHorario = new ArrayList<>();
+                for (int j = 0; j < dias.size(); j++) {
+                    JsonObject periodo = (JsonObject) dias.get(j);
+                    JsonArray bloques = periodo.getAsJsonArray("bloques");
+                    if (!bloques.get(0).isJsonNull()) {
+                        JsonObject bloque = (JsonObject) bloques.get(0);
+                        Asignatura asignatura = cursadas.get(
+                                bloque.get("codigoAsignatura").getAsString() + "/" +
+                                        bloque.get("seccionAsignatura"));
+                        asignatura.setCodigo(bloque.get("codigoAsignatura").getAsString());
+                        asignatura.setSala(bloque.get("sala").getAsString());
+                        diaHorario.add(asignatura);
+                    } else {
+                        diaHorario.add(null);
+                    }
+                }
+                horario.add(diaHorario);
             }
-        }
 
-        //=========================================left-top cell===========================================
-        @Override
-        public View onCreateTopLeftView() {
-            return LayoutInflater.from(context).inflate(R.layout.room_status_normal_cell, null);
+            return new Estudiante.Horario(horario);
         }
-    } */
+    }
 }

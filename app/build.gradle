@@ -6,8 +6,8 @@ android {
         applicationId "cl.inndev.miutem"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 3
-        versionName "0.1.1" /* TODO: Cambiar */
+        versionCode 6
+        versionName "0.2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -21,6 +21,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -32,7 +34,7 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:26.+'
     implementation 'com.android.support:cardview-v7:26.+'
 
-    implementation 'cn.zhouchaoyuan:excelpanel:1.0.4'
+    implementation 'com.cleveroad:adaptivetablelayout:1.1.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.github.yalantis:ucrop:2.2.1'
     implementation 'com.squareup.okhttp3:okhttp:3.+'
@@ -41,3 +43,5 @@ dependencies {
     implementation 'com.hbb20:ccp:2.1.9'
     testImplementation 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

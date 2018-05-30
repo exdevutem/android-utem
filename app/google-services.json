@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "14221057506",
+    "firebase_url": "https://inndev-plataforma-utem.firebaseio.com",
+    "project_id": "inndev-plataforma-utem",
+    "storage_bucket": "inndev-plataforma-utem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14221057506:android:056fd1c17024fefa",
+        "android_client_info": {
+          "package_name": "cl.inndev.miutem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14221057506-jb04jd0oja2bu54hne7r7ut6llpspgee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cl.inndev.miutem",
+            "certificate_hash": "e83ebf8f0a3aa89b95c2a0cbd8b9c2a05da96d59"
+          }
+        },
+        {
+          "client_id": "14221057506-2r8sftbse9fiq2647qlh4796lm983u97.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cl.inndev.miutem",
+            "certificate_hash": "11bd012539e34241eb829a6e1005aeeb60380190"
+          }
+        },
+        {
+          "client_id": "14221057506-r8tfa222upgmfq22806nmt9l43at12o6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOBPZswOgNtRz0Wyy2P9tGPndaHsiuDQM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14221057506-r8tfa222upgmfq22806nmt9l43at12o6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

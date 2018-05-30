@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,6 +44,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class LoginActivity extends AppCompatActivity {
+    // Firebase Analytics
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private TextView textCorreo;
     private TextView textBienvenida;
     private TextView textNombre;
@@ -53,14 +57,17 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressIniciando;
     private Button buttonEntrar;
     private CircleImageView imagePerfil;
-    private int reintento = 0;
     private ConstraintLayout loginLayout;
+
+    private int reintento = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         loginLayout = findViewById(R.id.layout_activity_login);
         textCorreo = findViewById(R.id.text_correo);
@@ -72,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         editContrasenia = findViewById(R.id.edit_contrasenia);
         progressIniciando = findViewById(R.id.progress_iniciando);
         buttonEntrar = findViewById(R.id.button_entrar);
-        imagePerfil = (CircleImageView) findViewById(R.id.image_perfil);
+        imagePerfil = findViewById(R.id.image_perfil);
 
         configurarFormulario(true);
         buttonEntrar.setEnabled(false);
@@ -88,7 +95,6 @@ public class LoginActivity extends AppCompatActivity {
                             PreferencesManager.getStringUser(getApplicationContext(), "correo_utem", null),
                             editContrasenia.getText().toString());
                 }
-
             }
         });
 
@@ -245,6 +251,9 @@ public class LoginActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Estudiante.setCredenciales(LoginActivity.this,response.body().getToken(), response.body().getRut(), correo);
+                        Bundle event = new Bundle();
+                        event.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, "pasaporte");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, event);
                         obtenerPerfil();
                         break;
                     case 401:
@@ -301,7 +310,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Map<String, String> credenciales = Estudiante.getCredenciales(LoginActivity.this);
 
-        Call<Estudiante> call = client.obtenerPerfil(credenciales.get("rut"), credenciales.get("token"));
+        Call<Estudiante> call = client.getPerfil(credenciales.get("rut"), credenciales.get("token"));
 
         call.enqueue(new Callback<Estudiante>() {
             @Override

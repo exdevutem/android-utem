@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:background="@drawable/solid_button"
+            android:background="@drawable/btn_solid"
             android:text="Generar y descargar" />
 
         <Button
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/colorPrimary"
-            android:background="@drawable/border_button"
+            android:background="@drawable/btn_border"
             android:text="Sólo enviar por correo" />
 
     </LinearLayout>

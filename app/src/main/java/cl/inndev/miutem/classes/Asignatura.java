@@ -1,6 +1,9 @@
 package cl.inndev.miutem.classes;
 
+import java.util.List;
+
 public class Asignatura {
+
     private String nombre;
     private String codigo;
     private String estado;
@@ -8,6 +11,25 @@ public class Asignatura {
     private Integer oportunidad;
     private Integer nivel;
     private Double nota;
+    private String sala;
+    private Integer seccion;
+
+    private String profesor;
+
+    public Asignatura() {}
+
+    public Asignatura(String nombre, String tipo, String sala) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.sala = sala;
+    }
+
+    public Asignatura(String nombre, String tipo, String profesor, Integer seccion) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.profesor = profesor;
+        this.seccion = seccion;
+    }
 
     public Asignatura(String nombre, String codigo, String estado, String tipo, Integer oportunidad, Integer nivel, Double nota) {
         this.nombre = nombre;
@@ -71,4 +93,27 @@ public class Asignatura {
         this.nota = nota;
     }
 
+    public String getSala() {
+        return sala;
+    }
+
+    public void setSala(String sala) {
+        this.sala = sala;
+    }
+
+    public Integer getSeccion() {
+        return seccion;
+    }
+
+    public void setSeccion(Integer seccion) {
+        this.seccion = seccion;
+    }
+
+    public String getProfesor() {
+        return profesor;
+    }
+
+    public void setProfesor(String profesor) {
+        this.profesor = profesor;
+    }
 }
