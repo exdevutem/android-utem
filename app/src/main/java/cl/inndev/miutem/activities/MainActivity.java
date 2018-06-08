@@ -33,6 +33,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.InputStream;
 
 import cl.inndev.miutem.fragments.AsignaturasFragment;
+import cl.inndev.miutem.fragments.CertificadosFragment;
 import cl.inndev.miutem.fragments.HorarioFragment;
 import cl.inndev.miutem.fragments.InicioFragment;
 import cl.inndev.miutem.R;
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_horario) {
             mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
         } else if (id == R.id.nav_certificados) {
-            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
+            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_asignaturas) {
             mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();

@@ -570,7 +570,7 @@ public class PerfilActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             final Map.Entry<String, String> item = this.getItem(i);
             final String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
-            view = LayoutInflater.from(context).inflate(R.layout.activity_perfil_listitem, null);
+            view = LayoutInflater.from(context).inflate(R.layout.view_campo_perfil, null);
             TextView textEtiqueta = view.findViewById(R.id.text_etiqueta);
             TextView textValor = view.findViewById(R.id.text_valor);
             ImageButton buttonEditar = view.findViewById(R.id.button_editar);

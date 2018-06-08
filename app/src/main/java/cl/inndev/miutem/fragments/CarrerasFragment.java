@@ -1,7 +1,6 @@
 package cl.inndev.miutem.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,22 +12,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.ArrayList;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.AsignaturaActivity;
 import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.classes.Asignatura;
 
 
 public class CarrerasFragment extends Fragment {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
     private ListView listAsignaturas;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setActionBarTitle("Carreras");
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         View view = inflater.inflate(R.layout.fragment_carreras, container, false);
 
         listAsignaturas = view.findViewById(R.id.asignaturasList);
@@ -47,6 +48,16 @@ public class CarrerasFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        // Set title bar
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), CarrerasFragment.class.getSimpleName(),
+                CarrerasFragment.class.getSimpleName());
+        ((MainActivity) getActivity()).setActionBarTitle("Carreras");
+
     }
 
     private class MallaAdapter extends BaseAdapter {
@@ -78,7 +89,7 @@ public class CarrerasFragment extends Fragment {
         public View getView(int i, View view, ViewGroup viewGroup) {
             Asignatura item = getItem(i);
 
-            view = LayoutInflater.from(context).inflate(R.layout.malla_item, null);
+            view = LayoutInflater.from(context).inflate(R.layout.view_listitem_carrera, null);
             TextView textNota = view.findViewById(R.id.text_nota);
             TextView textEstado = view.findViewById(R.id.text_estado);
             TextView textTipo = view.findViewById(R.id.text_tipo);

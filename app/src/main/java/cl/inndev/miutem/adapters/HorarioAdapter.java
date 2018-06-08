@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,25 +58,25 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     @NonNull
     @Override
     public ViewHolderImpl onCreateItemViewHolder(@NonNull ViewGroup parent) {
-        return new TestViewHolder(mLayoutInflater.inflate(R.layout.item_card, parent, false));
+        return new TestViewHolder(mLayoutInflater.inflate(R.layout.view_celda_horario, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.item_header, parent, false));
+        return new TestHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.view_header_horario, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.item_header, parent, false));
+        return new TestHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.view_header_horario, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateLeftTopHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.item_header, parent, false));
+        return new TestHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.view_header_horario, parent, false));
     }
 
     @Override

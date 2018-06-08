@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.OnItemLongClickListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -53,6 +54,7 @@ import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class HorarioFragment extends Fragment {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
     private AdaptiveTableLayout mTableHorario;
     private AlertDialog mDialogAsignatura;
     private ProgressBar mProgressCargando;
@@ -62,6 +64,7 @@ public class HorarioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         View view = inflater.inflate(R.layout.fragment_horario, container, false);
         mTableHorario = view.findViewById(R.id.table_horario);
         mProgressCargando = view.findViewById(R.id.progress_cargando);
@@ -87,11 +90,13 @@ public class HorarioFragment extends Fragment {
         return view;
     }
 
+    @Override
     public void onResume(){
         super.onResume();
         // Set title bar
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), HorarioFragment.class.getSimpleName(),
+                HorarioFragment.class.getSimpleName());
         ((MainActivity) getActivity()).setActionBarTitle("Horario");
-
     }
 
     private void setDialog(Asignatura asignatura) {

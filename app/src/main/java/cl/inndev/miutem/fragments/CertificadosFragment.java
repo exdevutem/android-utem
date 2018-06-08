@@ -10,18 +10,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.MainActivity;
+import cl.inndev.miutem.dialogs.EditarDialog;
 
 
 public class CertificadosFragment extends Fragment {
-
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private EditarDialog mEditarDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        ((MainActivity) getActivity()).setActionBarTitle("Certificados");
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        mEditarDialog = new EditarDialog(getContext());
         View view = inflater.inflate(R.layout.fragment_certificados, container, false);
         Button buttonDescargar = view.findViewById(R.id.button_descargar);
         Button buttonNoDescargar = view.findViewById(R.id.button_no_descargar);
@@ -39,7 +43,7 @@ public class CertificadosFragment extends Fragment {
         buttonDescargar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mEditarDialog.show();
             }
         });
 
@@ -53,13 +57,14 @@ public class CertificadosFragment extends Fragment {
         return view;
     }
 
-
-
-
+    @Override
     public void onResume(){
         super.onResume();
         // Set title bar
-        ((MainActivity) getActivity()).setActionBarTitle("Inicio");
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), CertificadosFragment.class.getSimpleName(),
+                CertificadosFragment.class.getSimpleName());
+        ((MainActivity) getActivity()).setActionBarTitle("Certificados");
+
     }
 
 
