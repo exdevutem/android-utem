@@ -11,7 +11,10 @@ Aplicación **no oficial** para estudiantes de la Universidad Tecnológica Metro
 * 📱 Diseño y estructura completamente adaptable a dispositivos móviles (**NO** como [Academia.UTEM](https://academia.utem.cl/ "Academia UTEM") 🤭)
 
 ## Capturas
-<img src="https://user-images.githubusercontent.com/16374322/42404785-47d38b2a-815a-11e8-94df-f93b028f8d44.jpeg" width="300"/> <img src="https://user-images.githubusercontent.com/16374322/42404786-47f98956-815a-11e8-9aae-a000b89b53eb.jpeg" width="300"/> <img src="https://user-images.githubusercontent.com/16374322/42404787-481f820a-815a-11e8-9b2b-bfa569e35b8a.jpeg" width="300"/> <img src="https://user-images.githubusercontent.com/16374322/42404788-484e24ac-815a-11e8-9c6b-c2ada36d4e3b.jpeg" width="300"/>
+<img src="https://user-images.githubusercontent.com/16374322/42404785-47d38b2a-815a-11e8-94df-f93b028f8d44.jpeg" width="200"/> <img src="https://user-images.githubusercontent.com/16374322/42404786-47f98956-815a-11e8-9aae-a000b89b53eb.jpeg" width="200"/> <img src="https://user-images.githubusercontent.com/16374322/42404787-481f820a-815a-11e8-9b2b-bfa569e35b8a.jpeg" width="200"/> <img src="https://user-images.githubusercontent.com/16374322/42404788-484e24ac-815a-11e8-9c6b-c2ada36d4e3b.jpeg" width="200"/>
+
+## Descarga en Google Play
+[<img alt='Disponible en Google Play' src='https://play.google.com/intl/en_gb/badges/images/generic/es-419_badge_web_generic.png' width="200"/>](https://play.google.com/store/apps/details?id=cl.inndev.miutem&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1 "Descarga en Mi UTEM en Google Play")
 
 ## Repositorios geniales
 * [**API RESTful UTEM**](https://github.com/mapacheverdugo/api-utem "Repositorio de GitHub de API RESTful UTEM"): API RESTful no oficial de la UTEM
