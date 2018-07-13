@@ -21,7 +21,11 @@ public class PortadaActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         setContentView(R.layout.activity_portada);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         new Handler().postDelayed(new Runnable() {
             public void run(){
                 Intent intent = new Intent(PortadaActivity.this, LoginActivity.class);
@@ -29,6 +33,5 @@ public class PortadaActivity extends AppCompatActivity {
                 finish();
             };
         }, DURACION_SPLASH);
-
     }
 }

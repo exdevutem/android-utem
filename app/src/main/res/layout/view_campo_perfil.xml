@@ -1,32 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginVertical="8dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_toLeftOf="@+id/button_editar">
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toStartOf="@+id/button_editar">
 
         <TextView
             android:id="@+id/text_etiqueta"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nombre completo"/>
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/text_valor"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#000"
-            android:text="Jorge Andrés Verdugo Chacón"/>
+            android:orientation="horizontal">
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/ccp_pais"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:ccp_defaultNameCode="CL"
+                app:ccp_autoDetectCountry="true"
+                app:ccp_showNameCode="false"
+                app:ccp_showFullName="false"
+                app:ccp_clickable="false"
+                app:ccp_showPhoneCode="false"
+                app:ccp_autoDetectLanguage="true"
+                app:ccp_autoFormatNumber="true"
+                app:ccp_rememberLastSelection="true"
+                app:ccp_selectionMemoryTag="nacionalidad"
+                app:ccp_showArrow="false"
+                app:ccp_textGravity="LEFT"
+                app:ccpDialog_allowSearch="false"
+                app:ccpDialog_keyboardAutoPopup="false"
+                app:ccpDialog_showNameCode="false"/>
+
+            <TextView
+                android:id="@+id/text_valor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:textColor="#000"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -36,9 +64,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:contentDescription="@string/campo_editar"
         app:srcCompat="@drawable/ic_edit"
-        android:tint="@color/colorPrimary"
-        android:background="?selectableItemBackground" />
+        android:tint="@color/colorAccent"
+        android:background="?android:selectableItemBackground" />
 
 </RelativeLayout>

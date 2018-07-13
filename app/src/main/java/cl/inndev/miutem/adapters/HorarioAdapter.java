@@ -28,14 +28,14 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     private final LayoutInflater mLayoutInflater;
 
     private final List<List<Asignatura>> mTableData;
-    private final List<String> mRowHeaderData;
+    private final List<String[]> mRowHeaderData;
     private final List<String> mColumnHeaderData;
     private final int mColumnWidth;
     private final int mRowHeight;
     private final int mColumnHeaderHeight;
     private final int mRowHeaderWidth;
 
-    public HorarioAdapter(Context context, List<String> rh, List<String> ch, Estudiante.Horario c) {
+    public HorarioAdapter(Context context, List<String[]> rh, List<String> ch, Estudiante.Horario c) {
         mLayoutInflater = LayoutInflater.from(context);
         mTableData = c.getDatos();
         mRowHeaderData = rh;
@@ -70,7 +70,7 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     @NonNull
     @Override
     public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.view_header_horario, parent, false));
+        return new TestHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.view_horario_horas, parent, false));
     }
 
     @NonNull
@@ -114,7 +114,9 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     @Override
     public void onBindHeaderRowViewHolder(@NonNull ViewHolderImpl viewHolder, int row) {
         TestHeaderRowViewHolder vh = (TestHeaderRowViewHolder) viewHolder;
-        vh.tvText.setText(mRowHeaderData.get(row - 1));
+        vh.textInicioHora.setText(mRowHeaderData.get(row - 1)[0]);
+        vh.textMitadHora.setText(mRowHeaderData.get(row - 1)[1]);
+        vh.textTerminoHora.setText(mRowHeaderData.get(row - 1)[2]);
     }
 
     @Override
@@ -170,11 +172,15 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     }
 
     private class TestHeaderRowViewHolder extends ViewHolderImpl {
-        TextView tvText;
+        TextView textInicioHora;
+        TextView textMitadHora;
+        TextView textTerminoHora;
 
         TestHeaderRowViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvText = itemView.findViewById(R.id.tvText);
+            textInicioHora = itemView.findViewById(R.id.text_inicio_hora);
+            textMitadHora = itemView.findViewById(R.id.text_mitad_hora);
+            textTerminoHora = itemView.findViewById(R.id.text_termino_hora);
         }
     }
 

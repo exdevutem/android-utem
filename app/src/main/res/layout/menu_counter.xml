@@ -15,6 +15,6 @@
         android:paddingVertical="3dp"
         android:paddingHorizontal="6dp"
         android:background="@drawable/btn_solid_press"
-        android:backgroundTint="@color/dot_dark_screen1"
+        android:backgroundTint="@color/dot_inactive_activity_bienvenida"
         android:visibility="invisible"/>
 </LinearLayout>

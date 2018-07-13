@@ -19,52 +19,35 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import cl.inndev.miutem.R;
+import cl.inndev.miutem.fragments.AsignaturaFragment;
+import cl.inndev.miutem.fragments.BitacoraFragment;
+import cl.inndev.miutem.fragments.NotasFragment;
 
 public class AsignaturaActivity extends AppCompatActivity {
 
-    private long mContadorVida = 0;
-
-    private final String CODIGO = getIntent().getExtras().getString("codigo");
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+    private long mContadorVida = 0;
     private ViewPager mViewPager;
-    private Toolbar mToolbarAsignatura;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignatura);
 
-        mToolbarAsignatura = findViewById(R.id.toolbar_asignatura);
-        setSupportActionBar(mToolbarAsignatura);
-
-        getSupportActionBar().setTitle(CODIGO);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        mViewPager = findViewById(R.id.container);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
@@ -83,47 +66,6 @@ public class AsignaturaActivity extends AppCompatActivity {
         mContadorVida = System.currentTimeMillis();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_asignatura, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -132,15 +74,21 @@ public class AsignaturaActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return new NotasFragment();
+                case 1:
+                    return new BitacoraFragment();
+                case 2:
+                    return new AsignaturaFragment();
+            }
+
+            return null;
         }
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            return 3;
         }
     }
 }

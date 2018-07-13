@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="Taller de Matemáticas">
@@ -31,13 +31,19 @@
             android:layout_height="wrap_content">
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tabItem"
+                android:id="@+id/tab_resumen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resumen" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tab_notas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notas" />
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tabItem2"
+                android:id="@+id/tab_bitacora"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bitácora" />

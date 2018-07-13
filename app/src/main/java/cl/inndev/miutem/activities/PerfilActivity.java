@@ -1,64 +1,30 @@
 package cl.inndev.miutem.activities;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.yalantis.ucrop.UCrop;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
-
+import cl.inndev.miutem.adapters.CamposAdapter;
+import cl.inndev.miutem.dialogs.ErrorDialog;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.views.NonScrollListView;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -69,10 +35,8 @@ import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class PerfilActivity extends AppCompatActivity {
 
-    private Toolbar mToolbarPerfil;
-    private NonScrollListView mListDatos;
-    private AlertDialog.Builder mDialogSexo;
-    private Dialog mDialogEditar;
+    private long mContadorVida = 0;
+    private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeContainer;
     private TextView mTextNombre;
     private TextView mTextTipo;
@@ -81,10 +45,204 @@ public class PerfilActivity extends AppCompatActivity {
     private TextView mTextCarreras;
     private CircleImageView mImagePerfil;
     private FloatingActionButton mFabCambiarFoto;
-    private DatePickerDialog mDialogFecha;
-    private Calendar mFechaActual;
-    private DatePickerDialog.OnDateSetListener dateListener;
-    private long mContadorVida = 0;
+    private NonScrollListView mListCampos;
+    private ErrorDialog mDialogError;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private ShimmerFrameLayout mShimmerViewContainer;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_perfil);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        mSwipeContainer = findViewById(R.id.swipe_container);
+        mTextNombre = findViewById(R.id.text_nombre);
+        mTextTipo = findViewById(R.id.text_tipo);
+        mTextIngreso = findViewById(R.id.text_ingreso);
+        mTextMatricula = findViewById(R.id.text_matricula);
+        mTextCarreras = findViewById(R.id.text_carreras);
+        mImagePerfil = findViewById(R.id.image_perfil);
+        mFabCambiarFoto = findViewById(R.id.fab_cambiar_foto);
+        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
+        mListCampos = findViewById(R.id.list_campos);
+        mToolbar = findViewById(R.id.toolbar);
+        mDialogError = new ErrorDialog(this);
+        mDialogError.show();
+
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                obtenerPerfil();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (System.currentTimeMillis() - mContadorVida >= 60 * 1000 && mContadorVida != 0)
+            finish();
+        else {
+            mShimmerViewContainer.startShimmer();
+            obtenerPerfil();
+        }
+        mContadorVida = 0;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mContadorVida = System.currentTimeMillis();
+        mShimmerViewContainer.stopShimmer();
+    }
+
+    // Cuando se presiona la flecha del toolbar
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void mostrarDatos() {
+        String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
+        Map<String, String> lista = new LinkedHashMap();
+        Estudiante valores = new Estudiante().convertirPreferencias(this);
+
+        /*
+        mDialogSexo.setSingleChoiceItems(R.array.sexos,
+                new Estudiante()
+                        .convertirPreferencias(PerfilActivity.this)
+                        .getSexo().getSexoCodigo(), null);
+
+        new DownloadImageTask(mImagePerfil).execute(valores.getFotoUrl());
+        */
+
+        mTextNombre.setText(valores.getNombre());
+        mTextTipo.setText(valores.getTipo());
+        mTextMatricula.setText(valores.getStringUltimaMatricula());
+        mTextCarreras.setText(valores.getStringCarrerasCursadas());
+        mTextIngreso.setText(valores.getStringAnioIngreso());
+
+        if (valores.getRut() != null)
+            lista.put(claves[0], valores.getRut());
+        if (valores.getCorreoUtem() != null)
+            lista.put(claves[1], valores.getCorreoUtem());
+        if (valores.getPuntajePsu() != null)
+            lista.put(claves[3], valores.getStringPuntajePsu());
+
+        lista.put(claves[2], valores.getCorreoPersonal());
+        lista.put(claves[4], valores.getSexo().getSexoTexto());
+        lista.put(claves[5], valores.getStringEdad());
+        lista.put(claves[6], valores.getStringTelefonoMovil());
+        lista.put(claves[7], valores.getStringTelefonoFijo());
+        lista.put(claves[8], null);
+        // lista.put(claves[9], null);
+        // lista.put(claves[10], null);
+        // lista.put(claves[11], null);
+        lista.put(claves[12], valores.getDireccion());
+
+        mListCampos.setAdapter(new CamposAdapter(this, lista));
+        mSwipeContainer.setVisibility(View.VISIBLE);
+
+    }
+
+    private void obtenerPerfil() {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem restClient = retrofit.create(ApiUtem.class);
+
+        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
+
+        Call<Estudiante> call = restClient.getPerfil(credenciales.get("rut"), credenciales.get("token"));
+
+        call.enqueue(new Callback<Estudiante>() {
+            @Override
+            public void onResponse(@NonNull Call<Estudiante> call, @NonNull Response<Estudiante> response) {
+                switch (response.code()) {
+                    case 200:
+                        Estudiante usuario = response.body();
+                        usuario.guardarDatos(PerfilActivity.this);
+                        mostrarDatos();
+                        break;
+                    default:
+                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                mSwipeContainer.setRefreshing(false);
+                mShimmerViewContainer.stopShimmer();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
+                mSwipeContainer.setRefreshing(false);
+                mShimmerViewContainer.stopShimmer();
+                if (t instanceof TimeoutException) {
+                    Toast.makeText(PerfilActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void actualizarPerfil(Estudiante usuario) {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem restClient = retrofit.create(ApiUtem.class);
+
+        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
+
+        Call<Estudiante> call = restClient.actualizarPerfil(credenciales.get("rut"), credenciales.get("token"),
+                usuario.getCorreoPersonal(), usuario.getTelefonoMovil(),
+                usuario.getTelefonoFijo(),
+                usuario.getSexo() != null ? usuario.getSexo().getSexoCodigo() : null,
+                null, null,
+                usuario.getDireccion());
+
+        call.enqueue(new Callback<Estudiante>() {
+            @Override
+            public void onResponse(@NonNull Call<Estudiante> call, @NonNull Response<Estudiante> response) {
+                switch (response.code()) {
+                    case 200:
+                        Toast.makeText(PerfilActivity.this, "Se actualizaron los datos correctamente", Toast.LENGTH_SHORT).show();
+                        obtenerPerfil();
+                        break;
+                    default:
+                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
+                Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /*
+
+
 
 
     private int CAMERA_REQUEST_CODE = 0;
@@ -94,6 +252,9 @@ public class PerfilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
         mToolbarPerfil = findViewById(R.id.toolbar_perfil);
         mSwipeContainer = findViewById(R.id.swipe_container);
@@ -124,12 +285,6 @@ public class PerfilActivity extends AppCompatActivity {
 
         mListDatos = findViewById(R.id.list_datos);
 
-        mDialogEditar.setCancelable(true);
-        mDialogEditar.setContentView(R.layout.dialog_perfil_editar);
-        mDialogEditar
-                .getWindow()
-                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         mDialogSexo.setTitle("Selecciona tu sexo");
         mDialogSexo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
@@ -141,12 +296,7 @@ public class PerfilActivity extends AppCompatActivity {
             }
         }).setNegativeButton("Cancelar", null);
 
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                obtenerPerfil();
-            }
-        });
+
 
         mFabCambiarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,28 +334,7 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mostrarDatos();
-        if (System.currentTimeMillis() - mContadorVida >= 60 * 1000 && mContadorVida != 0)
-            finish();
-        else
-            obtenerPerfil();
-        mContadorVida = 0;
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mContadorVida = System.currentTimeMillis();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -285,146 +414,7 @@ public class PerfilActivity extends AppCompatActivity {
         }
     }
 
-    private void mostrarDatos() {
-        String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
-        Map<String, String> lista = new LinkedHashMap();
-        Estudiante valores = new Estudiante().convertirPreferencias(this);
 
-        mDialogSexo.setSingleChoiceItems(R.array.sexos,
-                new Estudiante()
-                        .convertirPreferencias(PerfilActivity.this)
-                        .getSexo().getSexoCodigo(), null);
-
-        mTextNombre.setText(valores.getNombre());
-        mTextTipo.setText(valores.getTipo());
-
-        new DownloadImageTask(mImagePerfil).execute(valores.getFotoUrl());
-
-        if (valores.getAnioIngreso() != null)
-            mTextIngreso.setText(valores.getAnioIngreso().toString());
-        if (valores.getUltimaMatricula() != null)
-            mTextMatricula.setText(valores.getUltimaMatricula().toString());
-        if (valores.getCarrerasCursadas() != null)
-            mTextCarreras.setText(valores.getCarrerasCursadas().toString());
-        if (valores.getRut() != null)
-            lista.put(claves[0], valores.getRut());
-        if (valores.getCorreoUtem() != null)
-            lista.put(claves[1], valores.getCorreoUtem());
-        if (valores.getCorreoPersonal() != null)
-            lista.put(claves[2], valores.getCorreoPersonal());
-        if (valores.getPuntajePsu() != null)
-            lista.put(claves[3], valores.getPuntajePsu().toString());
-        if (valores.getSexo().getSexoTexto() != null)
-            lista.put(claves[4], valores.getSexo().getSexoTexto());
-        if (valores.getEdad() != null)
-            lista.put(claves[5], valores.getEdad().toString());
-        else
-            lista.put(claves[5], null);
-        if (valores.getTelefonoMovil() != null)
-            lista.put(claves[6], valores.getTelefonoMovil().toString());
-        else
-            lista.put(claves[6], null);
-        if (valores.getTelefonoFijo() != null)
-            lista.put(claves[7], valores.getTelefonoFijo().toString());
-        else
-            lista.put(claves[7], null);
-        /*lista.put(claves[8], null);
-        lista.put(claves[9], null);
-        lista.put(claves[10], null);
-        lista.put(claves[11], null);*/
-        if (valores.getDireccion() != null)
-            lista.put(claves[12], valores.getDireccion());
-        else
-            lista.put(claves[12], null);
-
-        mListDatos.setAdapter(new DatosAdapter(this, lista));
-
-    }
-
-    private void obtenerPerfil() {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ApiUtem restClient = retrofit.create(ApiUtem.class);
-
-        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
-
-        Call<Estudiante> call = restClient.getPerfil(credenciales.get("rut"), credenciales.get("token"));
-
-        call.enqueue(new Callback<Estudiante>() {
-            @Override
-            public void onResponse(Call<Estudiante> call, Response<Estudiante> response) {
-                switch (response.code()) {
-                    case 200:
-                        Estudiante usuario = response.body();
-                        usuario.guardarDatos(PerfilActivity.this);
-                        mostrarDatos();
-                        break;
-                    default:
-                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                mSwipeContainer.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(Call<Estudiante> call, Throwable t) {
-                mSwipeContainer.setRefreshing(false);
-                if (t instanceof TimeoutException) {
-                    Toast.makeText(PerfilActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void actualizarPerfil(Estudiante usuario) {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ApiUtem restClient = retrofit.create(ApiUtem.class);
-
-        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
-
-        Call<Estudiante> call = restClient.actualizarPerfil(credenciales.get("rut"), credenciales.get("token"),
-                usuario.getCorreoPersonal(), usuario.getTelefonoMovil(),
-                usuario.getTelefonoFijo(),
-                usuario.getSexo() != null ? usuario.getSexo().getSexoCodigo() : null,
-                null, null,
-                usuario.getDireccion());
-
-        call.enqueue(new Callback<Estudiante>() {
-            @Override
-            public void onResponse(Call<Estudiante> call, Response<Estudiante> response) {
-                switch (response.code()) {
-                    case 200:
-                        Toast.makeText(PerfilActivity.this, "Se actualizaron los datos correctamente", Toast.LENGTH_SHORT).show();
-                        obtenerPerfil();
-                        break;
-                    default:
-                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-            @Override
-            public void onFailure(Call<Estudiante> call, Throwable t) {
-                Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void cambiarFoto(Uri imagen, String rut) {
         File archivo = new File(imagen.getPath());
@@ -470,8 +460,6 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    /*
-
     private Chile obtenerDivisionPolitica() {
         final Chile lugares = new Chile();
         Gson gson = new GsonBuilder()
@@ -507,8 +495,6 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    */
-
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         CircleImageView bmImage;
 
@@ -532,143 +518,5 @@ public class PerfilActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
-
-    private class DatosAdapter extends BaseAdapter {
-
-        private Context context;
-        private Map<String, String> listItems;
-
-        public DatosAdapter(Context context, Map<String, String> listItems) {
-            this.context = context;
-            this.listItems = listItems;
-        }
-
-        @Override
-        public int getCount() {
-            return listItems.size();
-        }
-
-        @Override
-        public Map.Entry<String, String> getItem(int i) {
-            int c = 0;
-            for (Map.Entry<String, String> entry : listItems.entrySet()) {
-                if (c == i) {
-                    return entry;
-                }
-                 c++;
-            }
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            final Map.Entry<String, String> item = this.getItem(i);
-            final String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
-            view = LayoutInflater.from(context).inflate(R.layout.view_campo_perfil, null);
-            TextView textEtiqueta = view.findViewById(R.id.text_etiqueta);
-            TextView textValor = view.findViewById(R.id.text_valor);
-            ImageButton buttonEditar = view.findViewById(R.id.button_editar);
-
-            if (item.getKey().trim().equals(claves[0]) || item.getKey().trim().equals(claves[1]) || item.getKey().trim().equals(claves[3])) {
-                buttonEditar.setVisibility(View.GONE);
-                view.setClickable(false);
-            } else {
-                buttonEditar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final EditText editInfo = mDialogEditar.getWindow().getDecorView().findViewById(R.id.edit_info);
-                        final Button buttonGuardar = mDialogEditar.getWindow().getDecorView().findViewById(R.id.button_guardar);
-
-                        if (item.getKey().trim().equals(claves[2]) ||
-                                item.getKey().trim().equals(claves[6]) ||
-                                item.getKey().trim().equals(claves[7]) ||
-                                item.getKey().trim().equals(claves[12])) {
-                            editInfo.setText(item.getValue().trim());
-                            editInfo.setSelectAllOnFocus(true);
-                        }
-                        if (item.getKey().trim().equals(claves[2])) {
-                            editInfo.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                            buttonGuardar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Estudiante nuevo = new Estudiante();
-                                    nuevo.setCorreoPersonal(editInfo.getText().toString());
-                                    actualizarPerfil(nuevo);
-                                    mDialogEditar.dismiss();
-                                }
-                            });
-                            mDialogEditar.show();
-                        } else if (item.getKey().trim().equals(claves[4])) {
-                            mDialogSexo.show();
-                        } else if (item.getKey().trim().equals(claves[5])) {
-                            if (item.getValue() == null) {
-                                mDialogFecha = new DatePickerDialog(PerfilActivity.this, dateListener,
-                                        mFechaActual.get(Calendar.YEAR) - 17, 0, 1);
-                            } else {
-                                mDialogFecha = new DatePickerDialog(PerfilActivity.this, dateListener,
-                                        mFechaActual.get(Calendar.YEAR) - Integer.valueOf(item.getValue()), 0, 1);
-                            }
-                            mDialogFecha.setTitle("Selecciona tu fecha de nacimiento");
-
-                            mDialogFecha.show();
-                        } else if (item.getKey().trim().equals(claves[6])) {
-                            editInfo.setInputType(InputType.TYPE_CLASS_PHONE);
-                            buttonGuardar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Estudiante nuevo = new Estudiante();
-                                    nuevo.setTelefonoMovil(Long.parseLong(editInfo.getText().toString()));
-                                    actualizarPerfil(nuevo);
-                                    mDialogEditar.dismiss();
-                                }
-                            });
-                            mDialogEditar.show();
-                        } else if (item.getKey().trim().equals(claves[7])) {
-                            editInfo.setInputType(InputType.TYPE_CLASS_PHONE);
-                            buttonGuardar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Estudiante nuevo = new Estudiante();
-                                    nuevo.setTelefonoFijo(Long.parseLong(editInfo.getText().toString()));
-                                    actualizarPerfil(nuevo);
-                                    mDialogEditar.dismiss();
-                                }
-                            });
-                            mDialogEditar.show();
-                        } else if (item.getKey().trim().equals(claves[12])) {
-                            editInfo.setInputType(InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS);
-                            buttonGuardar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Estudiante nuevo = new Estudiante();
-                                    nuevo.setDireccion(editInfo.getText().toString());
-                                    actualizarPerfil(nuevo);
-                                    mDialogEditar.dismiss();
-                                }
-                            });
-                            mDialogEditar.show();
-                        }
-
-                        Button buttonCancelar = mDialogEditar.getWindow().getDecorView().findViewById(R.id.button_cancelar);
-                        buttonCancelar.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mDialogEditar.dismiss();
-                            }
-                        });
-                    }
-                });
-            }
-
-            textEtiqueta.setText(item.getKey());
-            textValor.setText(item.getValue());
-            return view;
-        }
-    }
+    } */
 }

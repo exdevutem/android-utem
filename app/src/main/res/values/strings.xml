@@ -2,16 +2,18 @@
     <string name="app_name">Mi UTEM</string>
     <string name="institution_name">Universidad Tecnológica Metropolitana</string>
 
+    <string name="facebook_app_id">197711340882379</string>
+    <string name="fb_login_protocol_scheme">fb197711340882379</string>
+
     <string name="title_activity_perfil">Perfil</string>
 
     <string name="navigation_drawer_open">Abrir menú lateral</string>
     <string name="navigation_drawer_close">Cerrar menú lateral</string>
 
-
-    <string name="title_activity_welcome">Home Screen</string>
-    <string name="next">SIGUIENTE</string>
-    <string name="skip">OMITIR</string>
-    <string name="start">ENTRAR</string>
+    <string name="title_activity_bienvenida">Home Screen</string>
+    <string name="next_activity_bienvenida">Siguiente</string>
+    <string name="skip_activity_bienvenida">Omitir todo</string>
+    <string name="start_activity_bienvenida">Entrar</string>
 
     <string name="slide_1_title">Hello Food!</string>
     <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
@@ -30,6 +32,15 @@
     <string name="play_again">Play Again</string>
     <string name="title_activity_asignatura">AsignaturaActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="anio_ingreso">Ingresó el</string>
+    <string name="carreras_cursadas">Carreras</string>
+    <string name="ultima_matricula">Matriculado al</string>
+
+    <string name="campo_editar">Editar</string>
+
+    <string name="mensaje_mach_dialog">No está instalada la aplicación MACH en tu dispositivo.
+        Si decides continuar, se te pedirá que la instales para continuar con el pago.</string>
 
     <string name="pronto_disponible">Pronto estará disponible esta función</string>
 
@@ -85,4 +96,12 @@
         <item>Comuna</item>
         <item>Dirección</item>
     </string-array>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -58,7 +58,7 @@ public class HorarioFragment extends Fragment {
     private AdaptiveTableLayout mTableHorario;
     private AlertDialog mDialogAsignatura;
     private ProgressBar mProgressCargando;
-    private List<String> mRowHeaderList = new ArrayList<>();
+    private List<String[]> mRowHeaderList = new ArrayList<>();
     private List<String> mColumnHeaderList = new ArrayList<>();
 
     @Override
@@ -69,14 +69,24 @@ public class HorarioFragment extends Fragment {
         mTableHorario = view.findViewById(R.id.table_horario);
         mProgressCargando = view.findViewById(R.id.progress_cargando);
 
-        mRowHeaderList.add("8:00 - 9:30");
-        mRowHeaderList.add("9:40 - 11:10");
-        mRowHeaderList.add("11:20 - 12:50");
-        mRowHeaderList.add("13:00 - 14:30");
-        mRowHeaderList.add("14:40 - 16:10");
-        mRowHeaderList.add("16:20 - 17:50");
-        mRowHeaderList.add("18:00 - 19:30");
-        mRowHeaderList.add("19:40 - 21:10");
+        String[] bloque = {"8:00", "8:45","9:30"};
+        mRowHeaderList.add(bloque);
+        String[] bloque1 = {"9:40", "10:25","11:10"};
+        mRowHeaderList.add(bloque1);
+        String[] bloque2 = {"11:20", "12:05","12:50"};
+        mRowHeaderList.add(bloque2);
+        String[] bloque3 = {"13:00", "13:45","14:30"};
+        mRowHeaderList.add(bloque3);
+        String[] bloque4 = {"14:40", "15:25","16:10"};
+        mRowHeaderList.add(bloque4);
+        String[] bloque5 = {"16:20", "17:05","17:50"};
+        mRowHeaderList.add(bloque5);
+        String[] bloque6 = {"18:00", "18:45","19:30"};
+        mRowHeaderList.add(bloque6);
+        String[] bloque7 = {"19:40", "20:25","21:10"};
+        mRowHeaderList.add(bloque7);
+        String[] bloque8 = {"21:20", "22:05","22:50"};
+        mRowHeaderList.add(bloque8);
 
         mColumnHeaderList.add("Lunes");
         mColumnHeaderList.add("Martes");

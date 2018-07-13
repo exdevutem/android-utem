@@ -3,14 +3,12 @@ package cl.inndev.miutem.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,13 +20,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.InputStream;
 
@@ -201,7 +195,8 @@ public class MainActivity extends AppCompatActivity
             //Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_carreras) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
-            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this, CarreraActivity.class));
+            //Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_sesaes) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();

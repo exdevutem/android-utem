@@ -1,8 +1,10 @@
 package cl.inndev.miutem.interfaces;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.classes.Estudiante;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -13,7 +15,7 @@ public interface ApiUtem {
     public String BASE_URL = "https://api-utem.herokuapp.com/";
 
     @FormUrlEncoded
-    @POST("autenticacion")
+    @POST("token")
     Call<Estudiante> autenticar(
             @Field("correo") String correo,
             @Field("contrasenia") String contrasenia
@@ -45,6 +47,19 @@ public interface ApiUtem {
             @Field("comuna") Integer comuna,
             @Field("nacionalidad") Integer nacionalidad,
             @Field("direccion") String direccion
+    );
+
+    @GET("/estudiantes/{rut}/carreras")
+    Call<List<Carrera>> getCarreras(
+            @Path("rut") String rut,
+            @Header("Authorization") String auth
+    );
+
+    @GET("/estudiantes/{rut}/carreras/{idCarrera}/malla")
+    Call<List<Carrera.Nivel>> getMalla(
+            @Path("rut") String rut,
+            @Path("idCarrera") Integer idCarrera,
+            @Header("Authorization") String auth
     );
 
     @GET("/estudiantes/{rut}/horarios")

@@ -2,6 +2,7 @@ package cl.inndev.miutem.classes;
 
 import android.content.Context;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -280,6 +281,13 @@ public class Estudiante {
         return edad;
     }
 
+    public String getStringEdad() {
+        if (edad != null) {
+            return edad.toString();
+        }
+        return null;
+    }
+
     public void setEdad(Integer edad) { this.edad = edad; }
 
     public String getNacimiento() {
@@ -329,6 +337,13 @@ public class Estudiante {
         return telefonoMovil;
     }
 
+    public String getStringTelefonoMovil() {
+        if (telefonoMovil != null) {
+            return telefonoMovil.toString();
+        }
+        return null;
+    }
+
     public void setTelefonoMovil(Long telefonoMovil) {
         this.telefonoMovil = telefonoMovil;
     }
@@ -337,12 +352,26 @@ public class Estudiante {
         return puntajePsu;
     }
 
+    public String getStringPuntajePsu() {
+        if (puntajePsu != null) {
+            return puntajePsu.toString();
+        }
+        return null;
+    }
+
     public void setPuntajePsu(Float puntajePsu) {
         this.puntajePsu = puntajePsu;
     }
 
     public Long getTelefonoFijo() {
         return telefonoFijo;
+    }
+
+    public String getStringTelefonoFijo() {
+        if (telefonoFijo != null) {
+            return telefonoFijo.toString();
+        }
+        return null;
     }
 
     public void setTelefonoFijo(Long telefonoFijo) {
@@ -373,6 +402,13 @@ public class Estudiante {
         return anioIngreso;
     }
 
+    public String getStringAnioIngreso() {
+        if (anioIngreso != null) {
+            return anioIngreso.toString();
+        }
+        return null;
+    }
+
     public void setAnioIngreso(Integer anioIngreso) {
         this.anioIngreso = anioIngreso;
     }
@@ -381,12 +417,26 @@ public class Estudiante {
         return ultimaMatricula;
     }
 
+    public String getStringUltimaMatricula() {
+        if (ultimaMatricula != null) {
+            return ultimaMatricula.toString();
+        }
+        return null;
+    }
+
     public void setUltimaMatricula(Integer ultimaMatricula) {
         this.ultimaMatricula = ultimaMatricula;
     }
 
     public Integer getCarrerasCursadas() {
         return carrerasCursadas;
+    }
+
+    public String getStringCarrerasCursadas() {
+        if (carrerasCursadas != null) {
+            return carrerasCursadas.toString();
+        }
+        return null;
     }
 
     public void setCarrerasCursadas(Integer carrerasCursadas) {
@@ -418,6 +468,8 @@ public class Estudiante {
 
 
     public void guardarDatos(Context contexto) {
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(contexto);
+
         if (nombre  != null) {
             PreferencesManager.setUser(contexto, "nombre", nombre);
         }
@@ -427,7 +479,8 @@ public class Estudiante {
         }
 
         if (sexo != null) {
-            PreferencesManager.setUser(contexto, "sexo", sexo.sexoCodigo);
+            // PreferencesManager.setUser(contexto, "sexo", sexo.sexoCodigo);
+            firebaseAnalytics.setUserProperty("sexo", sexo.sexoTexto);
         }
 
         if (correoUtem != null) {
@@ -472,14 +525,17 @@ public class Estudiante {
 
         if (anioIngreso != null) {
             PreferencesManager.setUser(contexto, "anio_ingreso", anioIngreso);
+            firebaseAnalytics.setUserProperty("anio_ingreso", anioIngreso.toString());
         }
 
         if (ultimaMatricula != null) {
             PreferencesManager.setUser(contexto, "ultima_matricula", ultimaMatricula);
+            firebaseAnalytics.setUserProperty("ultima_matricula", ultimaMatricula.toString());
         }
 
         if (carrerasCursadas != null) {
             PreferencesManager.setUser(contexto, "carreras_cursadas", carrerasCursadas);
+            firebaseAnalytics.setUserProperty("carreras_cursadas", carrerasCursadas.toString());
         }
     }
 

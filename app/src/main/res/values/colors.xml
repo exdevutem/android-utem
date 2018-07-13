@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#06607a</color>
-    <color name="colorPrimaryDark">#04475a</color>
-    <color name="colorPrimaryLight">#0886ab</color>
-    <color name="colorAccent">#1d8e5c</color>
+    <color name="colorPrimary">#009d9b</color>
+    <color name="colorPrimaryDark">#007f7b</color>
+    <color name="colorPrimaryLight">#45bbbc</color>
 
-    <color name="colorTextWhite">#ffffffff</color>
+    <color name="colorAccent">#364d62</color>
+    <color name="colorAccentDark">#24384a</color>
+    <color name="colorAccentLight">#456079</color>
 
-    <!--<color name="colorTable1">#8e44ad</color>-->
-    <!--<color name="colorTable2">#2ecc71</color>-->
-    <color name="charcoal">#FF394249</color>
-    <color name="medium_jungle_green">#FF273238</color>
-
+    <color name="azulUtem">#06607a</color>
+    <color name="verdeUtem">#1d8e5c</color>
 
     <color name="white">#fff</color>
     <color name="md_grey_50">#FAFAFA</color>
@@ -26,36 +24,13 @@
     <color name="md_grey_900">#212121</color>
     <color name="black">#000</color>
 
-    <!-- Screens background color-->
-    <color name="bg_screen1">#f64c73</color>
-    <color name="bg_screen2">#20d2bb</color>
-    <color name="bg_screen3">#3395ff</color>
-    <color name="bg_screen4">#c873f4</color>
+    <color name="divider">#dcdcdc</color>
+    <color name="placeholder">#e8e8e8</color>
 
-    <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#d1395c</color>
-    <color name="dot_dark_screen2">#14a895</color>
-    <color name="dot_dark_screen3">#2278d4</color>
-    <color name="dot_dark_screen4">#a854d4</color>
+    <color name="ramo_aprobado_carrera_activity">#8BC34A</color>
+    <color name="ramo_inscrito_carrera_activity">#3F51B5</color>
+    <color name="ramo_reprobado_carrera_activity">#EF5350</color>
 
-    <!-- dots active colors -->
-    <color name="dot_light_screen1">#f98da5</color>
-    <color name="dot_light_screen2">#8cf9eb</color>
-    <color name="dot_light_screen3">#93c6fd</color>
-    <color name="dot_light_screen4">#e4b5fc</color>
-    <color name="foreground_material_dark">#303030</color>
-
-    <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-        <item>@color/dot_light_screen4</item>
-    </array>
-
-    <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen3</item>
-        <item>@color/dot_dark_screen4</item>
-    </array>
+    <color name="dot_active_activity_bienvenida">#80ffffff</color>
+    <color name="dot_inactive_activity_bienvenida">#40000000</color>
 </resources>

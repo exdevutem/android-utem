@@ -23,7 +23,6 @@ import java.util.Map;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.MainActivity;
-import cl.inndev.miutem.adapters.MyRecyclerViewAdapter;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Estudiante;
 import cl.inndev.miutem.interfaces.ApiUtem;
