@@ -31,11 +31,18 @@ public class AsignaturaActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private long mContadorVida = 0;
     private ViewPager mViewPager;
+    public Integer mId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignatura);
+
+        mId = getIntent().getIntExtra("ASIGNATURA_ID", 0);
+
+        if (mId == 0) {
+            finish();
+        }
 
         mViewPager = findViewById(R.id.container);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

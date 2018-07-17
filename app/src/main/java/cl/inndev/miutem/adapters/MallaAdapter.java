@@ -79,17 +79,17 @@ public class MallaAdapter extends BaseAdapter {
 
             switch (actual.getEstado()) {
                 case "Aprobado":
-                    colorEstado = mContext.getResources().getColor(R.color.ramo_aprobado_carrera_activity);
+                    colorEstado = mContext.getResources().getColor(R.color.ramo_aprobado);
                     convertView.setEnabled(false);
                     convertView.setOnClickListener(null);
                     break;
                 case "Reprobado":
-                    colorEstado = mContext.getResources().getColor(R.color.ramo_reprobado_carrera_activity);
+                    colorEstado = mContext.getResources().getColor(R.color.ramo_reprobado);
                     convertView.setEnabled(false);
                     convertView.setOnClickListener(null);
                     break;
                 case "Inscrito":
-                    colorEstado = mContext.getResources().getColor(R.color.ramo_inscrito_carrera_activity);
+                    colorEstado = mContext.getResources().getColor(R.color.ramo_inscrito);
                     break;
                 default:
                     colorEstado = 0;

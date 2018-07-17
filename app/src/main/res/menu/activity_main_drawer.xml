@@ -22,17 +22,15 @@
             android:icon="@drawable/ic_balance"
             android:title="Aranceles"
             app:actionLayout="@layout/menu_counter"/>
-        <!--
-        <item
-            android:id="@+id/nav_becas"
-            android:checked="true"
-            android:icon="@drawable/ic_heart"
-            android:title="Becas"
-            app:actionLayout="@layout/menu_counter"/> -->
         <item
             android:id="@+id/nav_sesaes"
             android:icon="@drawable/ic_sesaes"
             android:title="SESAES"
+            app:actionLayout="@layout/menu_counter"/>
+        <item
+            android:id="@+id/nav_alimentacion"
+            android:icon="@drawable/ic_restaurant"
+            android:title="Alimentación"
             app:actionLayout="@layout/menu_counter"/>
     </group>
 
@@ -61,11 +59,11 @@
                     android:icon="@drawable/ic_work"
                     android:title="Carreras"
                     app:actionLayout="@layout/menu_counter"/>
-                <!--<item
-                    android:id="@+id/nav_titulacion"
+                <item
+                    android:id="@+id/nav_titulos"
                     android:icon="@drawable/ic_school"
-                    android:title="Titulación"
-                    app:actionLayout="@layout/menu_counter"/>-->
+                    android:title="Títulos"
+                    app:actionLayout="@layout/menu_counter"/>
             </group>
         </menu>
     </item>

@@ -2,6 +2,8 @@ package cl.inndev.miutem.classes;
 
 public class Asignatura {
 
+    private Integer id;
+    private Integer seccionId;
     private String nombre;
     private String codigo;
     private String estado;
@@ -35,6 +37,24 @@ public class Asignatura {
         this.tipo = tipo;
         this.oportunidades = oportunidades;
         this.nota = nota;
+    }
+
+    public Asignatura(Integer id, String codigo, String nombre, String profesor, String tipo, Integer seccionId, Integer seccion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.codigo = codigo;
+        this.tipo = tipo;
+        this.profesor = profesor;
+        this.seccionId = seccionId;
+        this.seccion = seccion;
+    }
+
+    public Integer getmId() {
+        return id;
+    }
+
+    public void setmId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {

@@ -1,55 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ListView xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.CarreraActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_malla"
+    android:visibility="invisible"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#eee"
-    tools:context=".activities.CarreraActivity">
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_view_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:orientation="vertical"
-        app:shimmer_duration="2000"
-        app:shimmer_base_alpha="0.5"
-        app:shimmer_highlight_alpha="1"
-        app:shimmer_intensity="0.5">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-            <include layout="@layout/placeholder_carrera_malla" />
-
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <ListView
-        android:id="@+id/list_malla"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:dividerHeight="0dp"
-        android:divider="@null">
-
-    </ListView>
-
-</LinearLayout>
+    android:layout_height="wrap_content"
+    android:dividerHeight="0dp"
+    android:divider="@null"/>

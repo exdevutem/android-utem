@@ -57,19 +57,21 @@ public class Carrera {
         }
     }
 
+    private Integer mId;
     private String mCodigo;
     private String mNombre;
+    private Integer mCarreraId;
     private String mPlan;
+    private Integer mPlanId;
     private String mEstado;
-    private Integer mSemestreInicio;
     private Integer mAnioInicio;
+    private Integer mSemestreInicio;
+    private Integer mSemestreInicioId;
     private Integer mAnioTermino;
     private Integer mSemestreTermino;
-    private Integer mSemestreInicioId;
     private Integer mSemestreTerminoId;
-    private Integer mApeId;
-    private Integer mCarreraId;
-    private Integer mPlanId;
+
+    public Carrera() { }
 
     public String getCodigo() {
         return mCodigo;
@@ -151,12 +153,12 @@ public class Carrera {
         this.mSemestreTerminoId = mSemestreTerminoId;
     }
 
-    public Integer getApeId() {
-        return mApeId;
+    public Integer getmId() {
+        return mId;
     }
 
-    public void setApeId(Integer mApeId) {
-        this.mApeId = mApeId;
+    public void setmId(Integer mId) {
+        this.mId = mId;
     }
 
     public Integer getCarreraId() {

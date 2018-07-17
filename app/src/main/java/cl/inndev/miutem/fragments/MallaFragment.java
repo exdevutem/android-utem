@@ -25,14 +25,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
+import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.adapters.HorarioAdapter;
 import cl.inndev.miutem.adapters.MallaAdapter;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.deserializers.MallaDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,8 +68,8 @@ public class MallaFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.tab_carrera_malla, container, false);
 
         mListMalla = rootView.findViewById(R.id.list_malla);
-        mShimmerViewContainer = rootView.findViewById(R.id.shimmer_view_container);
-        mShimmerViewContainer.startShimmer();
+        // mShimmerViewContainer = rootView.findViewById(R.id.shimmer_view_container);
+        // mShimmerViewContainer.startShimmer();
 
         getMalla();
         return rootView;
@@ -76,8 +80,14 @@ public class MallaFragment extends Fragment {
                 .registerTypeAdapter(List.class, new MallaDeserializer())
                 .create();
 
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -85,7 +95,11 @@ public class MallaFragment extends Fragment {
 
         Map<String, String> credenciales = Estudiante.getCredenciales(getActivity());
 
-        Call<List<Carrera.Nivel>> call = client.getMalla(credenciales.get("rut"), 53654, credenciales.get("token"));
+        CarreraActivity carreraActivity = (CarreraActivity) getActivity();
+
+        Toast.makeText(carreraActivity, "" + carreraActivity.mId, Toast.LENGTH_SHORT).show();
+
+        Call<List<Carrera.Nivel>> call = client.getMalla(credenciales.get("rut"), carreraActivity.mId, credenciales.get("token"));
 
         call.enqueue(new Callback<List<Carrera.Nivel>>() {
             @Override
@@ -93,7 +107,7 @@ public class MallaFragment extends Fragment {
                 switch (response.code()) {
                     case 200:
                         MallaAdapter adapter = new MallaAdapter(getContext(), response.body());
-                        mShimmerViewContainer.stopShimmer();
+                        // mShimmerViewContainer.stopShimmer();
                         mListMalla.setAdapter(adapter);
                         mListMalla.setVisibility(View.VISIBLE);
                         /* adapter = setHorarioClickListener(adapter, response.body());
@@ -115,40 +129,5 @@ public class MallaFragment extends Fragment {
                 // mProgressCargando.setVisibility(View.GONE);
             }
         });
-    }
-
-    private class MallaDeserializer implements JsonDeserializer<List<Carrera.Nivel>> {
-
-        @Override
-        public List<Carrera.Nivel> deserialize(JsonElement json,
-                                          Type type,
-                                          JsonDeserializationContext context)
-                throws JsonParseException {
-
-            List<Carrera.Nivel> mallaFinal = new ArrayList<>();
-            JsonObject malla = (JsonObject) json;
-            JsonArray niveles = malla.getAsJsonArray("malla");
-            for (int i = 0; i < niveles.size(); i++) {
-                List<Asignatura> asignaturasNivel = new ArrayList<>();
-                JsonObject nivel = (JsonObject) niveles.get(i);
-                JsonArray asignaturas = nivel.getAsJsonArray("asignaturas");
-
-                for (int j = 0; j < asignaturas.size(); j++) {
-                    JsonObject asignatura = (JsonObject) asignaturas.get(j);
-
-                    Asignatura nueva = new Asignatura(
-                            asignatura.get("nombre").getAsString(),
-                            asignatura.get("codigo").getAsString(),
-                            asignatura.get("estado").getAsString(),
-                            asignatura.get("tipo").getAsString(),
-                            asignatura.get("oportunidades").isJsonNull() ? null : asignatura.get("oportunidades").getAsInt(),
-                            asignatura.get("nota").isJsonNull() ? null : asignatura.get("nota").getAsDouble());
-                    asignaturasNivel.add(nueva);
-                }
-                Carrera.Nivel nivelActual = new Carrera.Nivel(asignaturasNivel, nivel.get("nivel").isJsonNull() ? null : nivel.get("nivel").getAsString());
-                mallaFinal.add(nivelActual);
-            }
-            return mallaFinal;
-        }
     }
 }

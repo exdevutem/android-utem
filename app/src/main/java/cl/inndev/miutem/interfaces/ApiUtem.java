@@ -69,7 +69,7 @@ public interface ApiUtem {
     );
 
     @GET("/estudiantes/{rut}/asignaturas")
-    Call<ArrayList<Asignatura>> getAsignaturas(
+    Call<List<Asignatura>> getAsignaturas(
             @Path("rut") String rut,
             @Header("Authorization") String auth
     );

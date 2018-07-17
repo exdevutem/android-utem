@@ -24,12 +24,21 @@
     <color name="md_grey_900">#212121</color>
     <color name="black">#000</color>
 
+    <color name="green">#8BC34A</color>
+    <color name="blue">#3F51B5</color>
+    <color name="red">#EF5350</color>
+    <color name="yellow">#FFD600</color>
+
     <color name="divider">#dcdcdc</color>
     <color name="placeholder">#e8e8e8</color>
 
-    <color name="ramo_aprobado_carrera_activity">#8BC34A</color>
-    <color name="ramo_inscrito_carrera_activity">#3F51B5</color>
-    <color name="ramo_reprobado_carrera_activity">#EF5350</color>
+    <color name="carrera_normal">@color/colorPrimary</color>
+    <color name="carrera_advertencia">@color/yellow</color>
+    <color name="carrera_negativo">@color/red</color>
+
+    <color name="ramo_aprobado">@color/green</color>
+    <color name="ramo_inscrito">@color/blue</color>
+    <color name="ramo_reprobado">@color/red</color>
 
     <color name="dot_active_activity_bienvenida">#80ffffff</color>
     <color name="dot_inactive_activity_bienvenida">#40000000</color>

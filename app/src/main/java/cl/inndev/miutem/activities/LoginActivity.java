@@ -20,11 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.util.Map;
@@ -44,7 +47,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class LoginActivity extends AppCompatActivity {
-    // Firebase Analytics
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private TextView textCorreo;
@@ -66,7 +68,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Obtain the FirebaseAnalytics instance.
+        try {
+            Reservoir.init(this, 2048);
+        } catch (IOException e) {
+            Toast.makeText(this, "Error de Reservoir", Toast.LENGTH_SHORT).show();
+        }
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         loginLayout = findViewById(R.id.layout_activity_login);
@@ -178,18 +185,22 @@ public class LoginActivity extends AppCompatActivity {
             textCorreo.setVisibility(View.VISIBLE);
             editCorreo.setVisibility(View.VISIBLE);
         } else {
-            Estudiante valores = new Estudiante().convertirPreferencias(this);
-            imagePerfil.setVisibility(View.VISIBLE);
-            textBienvenida.setVisibility(View.VISIBLE);
-            textNombre.setVisibility(View.VISIBLE);
-            textCambiar.setVisibility(View.VISIBLE);
+            try {
+                Estudiante valores = Reservoir.get("estudiante", Estudiante.class);
+                imagePerfil.setVisibility(View.VISIBLE);
+                textBienvenida.setVisibility(View.VISIBLE);
+                textNombre.setVisibility(View.VISIBLE);
+                textCambiar.setVisibility(View.VISIBLE);
 
-            textCorreo.setVisibility(View.GONE);
-            editCorreo.setVisibility(View.GONE);
+                textCorreo.setVisibility(View.GONE);
+                editCorreo.setVisibility(View.GONE);
 
-            textNombre.setText(valores.getNombre());
-            textCambiar.setText("¿No eres " + valores.getNombre().substring(0,  valores.getNombre().indexOf(' ')) + "?");
-            new DownloadImageTask(imagePerfil).execute(valores.getFotoUrl());
+                textNombre.setText(valores.getNombre());
+                textCambiar.setText("¿No eres " + valores.getNombre().substring(0,  valores.getNombre().indexOf(' ')) + "?");
+                new DownloadImageTask(imagePerfil).execute(valores.getFotoUrl());
+            } catch (IOException e) {
+                //failure
+            }
         }
 
         if (interruptor) {
@@ -318,21 +329,28 @@ public class LoginActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Estudiante usuario = response.body();
-                        usuario.guardarDatos(LoginActivity.this);
+                        Reservoir.putAsync("estudiante", usuario, new ReservoirPutCallback() {
+                            @Override
+                            public void onSuccess() {
+                                PreferencesManager.setPreference(LoginActivity.this, "primera_vez", false);
+                                // Boolean eraPrimeraVez = esPrimeraVez();
 
-                        // Boolean eraPrimeraVez = esPrimeraVez();
+                                /*
+                                if (eraPrimeraVez) {
+                                    startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
+                                } else {
+                                    startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
+                                }*/
 
-                        PreferencesManager.setPreference(LoginActivity.this, "primera_vez", false);
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            }
 
-                        /*
-                        if (eraPrimeraVez) {
-                            startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
-                        } else {
-                            startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
-                        }*/
-
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(LoginActivity.this, "Error en el caché de los datos", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         break;
                     default:
                         configurarFormulario(true);
