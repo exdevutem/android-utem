@@ -1,9 +1,50 @@
 package cl.inndev.miutem.classes;
 
-public class Asignatura {
+import com.google.gson.annotations.SerializedName;
 
+public class Asignatura {
+    public class Seccion  {
+        @SerializedName("_id")
+        Integer id;
+        Integer numero;
+        Integer alumnoSeccionId;
+
+        public Seccion(Integer numero) {
+            this.numero = numero;
+        }
+
+        public Seccion(Integer id, Integer numero) {
+            this.id = id;
+            this.numero = numero;
+        }
+
+        public Integer getId() {
+            return this.id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public Integer getNumero() {
+            return this.numero;
+        }
+
+        public void setNumero(int numero) {
+            this.numero = numero;
+        }
+
+        public Integer getAlumnoSeccionId() {
+            return this.alumnoSeccionId;
+        }
+
+        public void setAlumnoSeccionId(int alumnoSeccionId) {
+            this.alumnoSeccionId = alumnoSeccionId;
+        }
+    }
+
+    @SerializedName("_id")
     private Integer id;
-    private Integer seccionId;
     private String nombre;
     private String codigo;
     private String estado;
@@ -12,8 +53,8 @@ public class Asignatura {
     private Integer nivel;
     private Double nota;
     private String sala;
-    private Integer seccion;
-    private String profesor;
+    private Seccion seccion;
+    private Docente docente;
 
     public Asignatura() {}
 
@@ -23,11 +64,11 @@ public class Asignatura {
         this.sala = sala;
     }
 
-    public Asignatura(String nombre, String tipo, String profesor, Integer seccion) {
+    public Asignatura(String nombre, String tipo, String nombreDocente, Integer seccionNumero) {
         this.nombre = nombre;
         this.tipo = tipo;
-        this.profesor = profesor;
-        this.seccion = seccion;
+        this.docente = new Docente(nombreDocente);
+        this.seccion = new Seccion(seccionNumero);
     }
 
     public Asignatura(String nombre, String codigo, String estado, String tipo, Integer oportunidades, Double nota) {
@@ -39,21 +80,20 @@ public class Asignatura {
         this.nota = nota;
     }
 
-    public Asignatura(Integer id, String codigo, String nombre, String profesor, String tipo, Integer seccionId, Integer seccion) {
+    public Asignatura(Integer id, String codigo, String nombre, String nombreDocente, String tipo, Integer seccionId, Integer seccionNumero) {
         this.id = id;
         this.nombre = nombre;
         this.codigo = codigo;
         this.tipo = tipo;
-        this.profesor = profesor;
-        this.seccionId = seccionId;
-        this.seccion = seccion;
+        this.docente = new Docente(nombreDocente);
+        this.seccion = new Seccion(seccionId, seccionNumero);
     }
 
-    public Integer getmId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setmId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -113,20 +153,20 @@ public class Asignatura {
         this.sala = sala;
     }
 
-    public Integer getSeccion() {
+    public Seccion getSeccion() {
         return seccion;
     }
 
-    public void setSeccion(Integer seccion) {
+    public void setSeccion(Seccion seccion) {
         this.seccion = seccion;
     }
 
-    public String getProfesor() {
-        return profesor;
+    public Docente getDocente() {
+        return docente;
     }
 
-    public void setProfesor(String profesor) {
-        this.profesor = profesor;
+    public void setDocente(Docente profesor) {
+        this.docente = profesor;
     }
 
     public Integer getOportunidades() {

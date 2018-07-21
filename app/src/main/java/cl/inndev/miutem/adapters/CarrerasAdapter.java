@@ -82,6 +82,7 @@ public class CarrerasAdapter extends BaseAdapter {
         Carrera actual = this.getItem(position);
         convertView = LayoutInflater.from(mContext).inflate(R.layout.view_carreras_carrera, null);
 
+
         TextView textCodigo = convertView.findViewById(R.id.text_codigo);
         TextView textNombre = convertView.findViewById(R.id.text_nombre);
         TextView textInicio = convertView.findViewById(R.id.text_inicio);

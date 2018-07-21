@@ -6,7 +6,7 @@
     android:background="@drawable/border_mallaitem">
 
     <LinearLayout
-        android:id="@+id/layout_left"
+        android:id="@+id/layout_izquierda"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/layout_right"
+        app:layout_constraintEnd_toStartOf="@id/layout_derecha"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="spread">
@@ -52,7 +52,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layout_right"
+        android:id="@+id/layout_derecha"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
@@ -60,10 +60,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/layout_left"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_izquierda"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/layout_left"
-        app:layout_constraintTop_toTopOf="@+id/layout_left">
+        app:layout_constraintStart_toEndOf="@+id/layout_izquierda"
+        app:layout_constraintTop_toTopOf="@+id/layout_izquierda">
 
         <LinearLayout
             android:id="@+id/layout_estado"

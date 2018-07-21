@@ -10,22 +10,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.pixplicity.easyprefs.library.Prefs;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.AsignaturaActivity;
 import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.AsignaturasAdapter;
+import cl.inndev.miutem.adapters.CarrerasAdapter;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.deserializers.AsignaturasDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +45,7 @@ public class AsignaturasFragment extends Fragment {
 
     private FirebaseAnalytics mFirebaseAnalytics;
     private ListView mListAsignaturas;
+    private AdapterView.OnItemClickListener mListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,18 +54,30 @@ public class AsignaturasFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_asignaturas, container, false);
         mListAsignaturas = view.findViewById(R.id.list_asignaturas);
 
-        final AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+        mListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long arg3) {
                 Asignatura asignatura = (Asignatura) adapter.getItemAtPosition(position);
                 Intent intent = new Intent(getActivity(), AsignaturaActivity.class);
-                intent.putExtra("ASIGNATURA_ID", asignatura.getmId());
+                intent.putExtra("ASIGNATURA_ID", asignatura.getId());
+                intent.putExtra("ASIGNATURA_INDEX", position);
                 startActivity(intent);
             }
         };
 
-        getAsignaturas();
+        Type resultType = new TypeToken<List<Asignatura>>() {}.getType();
+        Reservoir.getAsync("asignaturas", resultType, new ReservoirGetCallback<List<Asignatura>>() {
+            @Override
+            public void onSuccess(List<Asignatura> asignaturas) {
+                setLista(asignaturas);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                getAsignaturas();
+            }
+        });
 
         return view;
     }
@@ -76,7 +94,7 @@ public class AsignaturasFragment extends Fragment {
 
     private void getAsignaturas() {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(List.class, new AsignaturasDeserializer())
+                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -86,20 +104,25 @@ public class AsignaturasFragment extends Fragment {
 
         ApiUtem restClient = retrofit.create(ApiUtem.class);
 
-
-        Map<String, String> credenciales = Estudiante.getCredenciales(getContext());
-
-        Call<List<Asignatura>> call = restClient.getAsignaturas(credenciales.get("rut"), credenciales.get("token"));
+        Call<List<Asignatura>> call = restClient.getAsignaturas(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null)
+        );
 
         call.enqueue(new Callback<List<Asignatura>>() {
             @Override
             public void onResponse(Call<List<Asignatura>> call, Response<List<Asignatura>> response) {
                 switch (response.code()) {
                     case 200:
-                        mListAsignaturas.setAdapter(new AsignaturasAdapter(getContext(), response.body()));
+                        try {
+                            Reservoir.put("asignaturas", response.body());
+                            setLista(response.body());
+                        } catch (IOException e) {
+                            Toast.makeText(getContext(), "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     default:
-                        Toast.makeText(getContext(), "Error desconocido", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -109,5 +132,18 @@ public class AsignaturasFragment extends Fragment {
                 Toast.makeText(getContext(), "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setLista(List<Asignatura> datos) {
+        if (datos.size() == 1) {
+            Intent intent = new Intent(getActivity(), CarreraActivity.class);
+            intent.putExtra("ASIGNATURA_ID", datos.get(0).getId());
+            intent.putExtra("ASIGNATURA_INDEX", 0);
+            startActivity(intent);
+        } else {
+            AsignaturasAdapter adapter = new AsignaturasAdapter(getContext(), datos);
+            mListAsignaturas.setAdapter(adapter);
+            mListAsignaturas.setOnItemClickListener(mListener);
+        }
     }
 }

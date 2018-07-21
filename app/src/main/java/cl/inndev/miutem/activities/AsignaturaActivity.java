@@ -19,9 +19,17 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.anupcowkur.reservoir.Reservoir;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Objects;
 
 import cl.inndev.miutem.R;
+import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.fragments.AsignaturaFragment;
 import cl.inndev.miutem.fragments.BitacoraFragment;
 import cl.inndev.miutem.fragments.NotasFragment;
@@ -31,16 +39,18 @@ public class AsignaturaActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private long mContadorVida = 0;
     private ViewPager mViewPager;
+    private Asignatura mAsignatura;
     public Integer mId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignatura);
 
-        mId = getIntent().getIntExtra("ASIGNATURA_ID", 0);
+        mId = getIntent().getIntExtra("ASIGNATURA_ID", -1);
 
-        if (mId == 0) {
+        if (mId == -1 || getIntent().getIntExtra("ASIGNATURA_INDEX", -1) == -1) {
             finish();
         }
 
@@ -49,6 +59,15 @@ public class AsignaturaActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         TabLayout tabLayout = findViewById(R.id.tabs);
+
+        Type resultType = new TypeToken<List<Asignatura>>() {}.getType();
+        try {
+            List<Asignatura> asignaturas = Reservoir.get("asignaturas", resultType);
+            mAsignatura = asignaturas.get(getIntent().getIntExtra("ASIGNATURA_INDEX", 0));
+            toolbar.setTitle(mAsignatura.getNombre());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
@@ -71,6 +90,12 @@ public class AsignaturaActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         mContadorVida = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

@@ -25,27 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirPutCallback;
-import com.google.gson.FieldNamingPolicy;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.PreferencesManager;
 import cl.inndev.miutem.deserializers.CarrerasDeserializer;
 import cl.inndev.miutem.fragments.AsignaturasFragment;
 import cl.inndev.miutem.fragments.CarrerasFragment;
@@ -54,7 +45,6 @@ import cl.inndev.miutem.fragments.HorarioFragment;
 import cl.inndev.miutem.fragments.InicioFragment;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.fragments.MallaFragment;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -133,9 +123,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, PerfilActivity.class));
             }
         });
-        getCarreras();
-
-        mostrarInicio();
     }
 
     @Override
@@ -146,10 +133,15 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
         mContadorVida = 0;
-        Estudiante datos = new Estudiante().convertirPreferencias(this);
-        mTextNombre.setText(datos.getNombre());
-        mTextCorreo.setText(datos.getCorreoUtem());
-        new MainActivity.DownloadImageTask(mImagePerfil).execute(datos.getFotoUrl());
+        try {
+            Estudiante usuario = Reservoir.get("usuario", Estudiante.class);
+            mTextNombre.setText(usuario.getNombre().getCompleto());
+            mTextCorreo.setText(usuario.getCorreoUtem());
+            new MainActivity.DownloadImageTask(mImagePerfil).execute(usuario.getFotoUrl());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mostrarInicio();
     }
 
     @Override
@@ -196,6 +188,20 @@ public class MainActivity extends AppCompatActivity
         }
         if (count > 99)
             counter.setText("+99");
+    }
+
+    public void getEstudiante() {
+        Reservoir.getAsync("carreras", Estudiante.class, new ReservoirGetCallback<Estudiante>() {
+            @Override
+            public void onSuccess(Estudiante estudiante) {
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void setActionBarTitle(String titulo){
@@ -251,49 +257,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void getCarreras() {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(List.class, new CarrerasDeserializer())
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ApiUtem client = retrofit.create(ApiUtem.class);
-
-        Map<String, String> credenciales = Estudiante.getCredenciales(MainActivity.this);
-        Call<List<Carrera>> call = client.getCarreras(credenciales.get("rut"), credenciales.get("token"));
-
-        call.enqueue(new Callback<List<Carrera>>() {
-            @Override
-            public void onResponse(Call<List<Carrera>> call, Response<List<Carrera>> response) {
-                switch (response.code()) {
-                    case 200:
-                        try {
-                            Reservoir.put("carreras", response.body());
-                        } catch (IOException e) {
-                            Toast.makeText(MainActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    default:
-                        Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Carrera>> call, Throwable t) {
-                if (t instanceof TimeoutException) {
-                    Toast.makeText(MainActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

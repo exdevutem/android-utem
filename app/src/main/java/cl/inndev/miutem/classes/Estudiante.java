@@ -1,12 +1,15 @@
 package cl.inndev.miutem.classes;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.lang.reflect.Type;
 import java.security.Timestamp;
@@ -15,190 +18,107 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import cl.inndev.miutem.activities.LoginActivity;
+
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by mapache on 14-03-18.
  */
 
 public class Estudiante {
-    static public class Rut {
-        private Long cuerpo;
-        private Character dv;
-
-        public Rut(String rut) {
-            String auxRut = limpiar(rut);
-            if (auxRut.length() >= 8 && auxRut.length() <= 9) {
-                this.cuerpo = Long.valueOf(auxRut.substring(0, auxRut.length() - 1)).longValue();
-                this.dv = auxRut.substring(auxRut.length() - 1).charAt(0);
-                if (!this.esValido()) {
-                    this.cuerpo = null;
-                    this.dv = null;
-                }
-            } else {
-                this.cuerpo = null;
-                this.dv = null;
-            }
-        }
-
-        public Rut(Long cuerpo) {
-            Integer largo = cuerpo.toString().length();
-            if (largo >= 7 && largo <= 8) {
-                this.cuerpo = cuerpo;
-                this.dv = calcularDv(cuerpo);
-            } else {
-                this.cuerpo = null;
-                this.dv = null;
-            }
-        }
-
-        public Rut(Long cuerpo, Character dv) {
-            Integer largo = cuerpo.toString().length();
-            if (largo >= 7 && largo <= 8) {
-                this.cuerpo = cuerpo;
-                this.dv = dv;
-                if (!this.esValido()) {
-                    this.cuerpo = null;
-                    this.dv = null;
-                }
-            } else {
-                this.cuerpo = null;
-                this.dv = null;
-            }
-        }
-
-        public String getRut(Boolean conPuntos) {
-            if (conPuntos) {
-                return String.format("%.d", this.cuerpo) + "-" + dv;
-            }
-            return cuerpo + "-" + dv;
-        }
-        public Long getCuerpo() {
-            return cuerpo;
-        }
-        public Character getDv() { return dv; }
-
-
-        public Boolean esValido() {
-            if (calcularDv(this.cuerpo) == this.dv) {
-                return true;
-            }
-            return false;
-        }
-
-        static public String limpiar(String rut) {
-            String auxRut = rut.trim();
-            auxRut = rut.replaceAll("[.-]", "");
-            auxRut.toUpperCase();
-            return auxRut;
-        }
-
-        private Character calcularDv(Long rut) {
-            String auxRut = rut.toString();
-
-            Integer largo = auxRut.length();
-            Integer factor = 2;
-            Integer suma = 0;
-            Integer resultado;
-
-            for (Integer i = largo; i > 0; i--) {
-                if (factor > 7) {
-                    factor = 2;
-                }
-                suma += (Integer.parseInt(auxRut.substring((i-1), i))) * factor;
-                factor++;
-            }
-
-            resultado = 11 - suma % 11;
-
-            if (resultado == 10) {
-                return 'K';
-            } else if (resultado == 11) {
-                return '0';
-            } else {
-                return resultado.toString().charAt(0);
-            }
-        }
-    }
-
     public class Sexo {
-        String sexoTexto;
-        Integer sexoCodigo;
+        @SerializedName("_id")
+        Integer id;
+        @SerializedName("sexo")
+        String descripcion;
 
-        public Sexo() { /* void constructor */ }
+        public Sexo() {}
 
-        public Sexo(Integer sexoCodigo) {
-            switch (sexoCodigo) {
+        public Sexo(Integer id) {
+            this.id = id;
+            switch (id) {
                 case 1:
-                    this.sexoTexto = "Masculino";
-                    this.sexoCodigo = sexoCodigo;
+                    this.descripcion = "Masculino";
                     break;
                 case 2:
-                    this.sexoTexto = "Femenino";
-                    this.sexoCodigo = sexoCodigo;
+                    this.descripcion = "Femenino";
                     break;
                 case 0:
-                    this.sexoTexto = "Sin específicar";
-                    this.sexoCodigo = sexoCodigo;
+                    this.descripcion = "Sin específicar";
                     break;
                 default:
-                    this.sexoTexto = null;
-                    this.sexoCodigo = null;
+                    this.id = null;
+                    this.descripcion = null;
                     break;
             }
         }
 
-        public String getSexoTexto() {
-            return this.sexoTexto;
-        }
-        public void setSexoTexto(String sexoTexto) {
-            this.sexoTexto = sexoTexto;
+        public Integer getId() {
+            return this.id;
         }
 
-
-        public Integer getSexoCodigo() {
-            return this.sexoCodigo;
+        public void setId(Integer id) {
+            this.id = id;
         }
-        public void setSexoCodigo(Integer sexoCodigo) {
-            this.sexoCodigo = sexoCodigo;
+
+        public String getDescripcion() {
+            return this.descripcion;
+        }
+
+        public void setDescripcion(String sexoTexto) {
+            this.descripcion = sexoTexto;
         }
 
     }
 
     private class Nacionalidad {
-        String nacionalidadTexto;
-        Integer nacionalidadCodigo;
+        @SerializedName("_id")
+        Integer id;
+        @SerializedName("nacionalidad")
+        String descripcion;
 
-        public String getNacionalidadTexto() {
-            return this.nacionalidadTexto;
-        }
-        public void setNacionalidadTexto(String nacionalidadTexto) {
-            this.nacionalidadTexto = nacionalidadTexto;
-        }
+        public Nacionalidad() { }
 
-        public Integer getNacionalidadCodigo() {
-            return this.nacionalidadCodigo;
-        }
-        public void setNacionalidadCodigo(Integer nacionalidadCodigo) {
-            this.nacionalidadCodigo = nacionalidadCodigo;
+        public Integer getId() {
+            return id;
         }
 
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getDescripcion() {
+            return descripcion;
+        }
+
+        public void setDescripcion(String descripcion) {
+            this.descripcion = descripcion;
+        }
     }
 
     private class Comuna  {
-        String comunaTexto;
-        Integer comunaCódigo;
+        @SerializedName("_id")
+        Integer id;
+        @SerializedName("comuna")
+        String descripcion;
 
-        public String getComunaTexto() {
-            return this.comunaTexto;
-        }
-        public void setComunaTexto(String comunaTexto) {
-            this.comunaTexto = comunaTexto;
+        public Comuna() { }
+
+        public Integer getId() {
+            return id;
         }
 
-        public Integer getComunaCódigo() {
-            return this.comunaCódigo;
+        public void setId(Integer id) {
+            this.id = id;
         }
-        public void setComunaCódigo(Integer comunaCódigo) {
-            this.comunaCódigo = comunaCódigo;
+
+        public String getDescripcion() {
+            return descripcion;
+        }
+
+        public void setDescripcion(String descripcion) {
+            this.descripcion = descripcion;
         }
     }
 
@@ -220,48 +140,118 @@ public class Estudiante {
         }
     }
 
-    private String token;
-    private String nombre;
-    private String rut;
-    private String fotoUrl;
-    private String tipo;
-    private Integer edad;
-    //private LocalDate nacimiento;
-    private String nacimiento;
-    private Sexo sexo;
-    //private Nacionalidad nacionalidad;
-    private String correoUtem;
-    private String correoPersonal;
-    private Long telefonoMovil;
-    private Long telefonoFijo;
-    private Float puntajePsu;
-    //private Comuna comuna;
-    private String direccion;
-    private Integer anioIngreso;
-    private Integer ultimaMatricula;
-    private Integer carrerasCursadas;
+    static public class Nombre {
+        private String nombres;
+        private String apellidos;
+        private String completo;
 
-    public Estudiante() {/*void constructor*/}
+        public Nombre() {}
 
-    public String getToken() {
-        return token;
+        public Nombre(String completo) {
+            this.completo = completo;
+        }
+
+        public Nombre(String nombres, String apellidos) {
+            this.nombres = nombres;
+            this.apellidos = apellidos;
+        }
+
+        public void setNombres(String nombres) {
+            this.nombres = nombres;
+        }
+
+        public String getApellidos() {
+            return apellidos;
+        }
+
+        public void setApellidos(String apellidos) {
+            this.apellidos = apellidos;
+        }
+
+        public String getCompleto() {
+            if (completo != null && !completo.isEmpty()) {
+                return completo;
+            } else {
+                return nombres + " " + apellidos;
+            }
+        }
+
+        public void setCompleto(String completo) {
+            this.completo = completo;
+        }
+
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public static class Credenciales {
+        private String token;
+        private String correo;
+        private Long rut;
+
+        public Credenciales(String token, String correo, Long rut) {
+            this.token = token;
+            this.correo = correo;
+            this.rut = rut;
+        }
+
+        public String getToken() {
+            if (!token.startsWith("Bearer ")) {
+                token = "Bearer " + token;
+            }
+            return token;
+        }
+
+        public String getCorreo() {
+            return correo;
+        }
+
+        public Long getRut() {
+            return rut;
+        }
     }
 
-    public String getNombre() {
+    @SerializedName("_id")
+    Integer id;
+    Nombre nombre;
+    Long rut;
+    String fotoUrl;
+    String tipo;
+    Sexo sexo;
+    String correoUtem;
+    String correoPersonal;
+    Long telefonoMovil;
+    Long telefonoFijo;
+    Float puntajePsu;
+    Comuna comuna;
+    Nacionalidad nacionalidad;
+    Integer anioIngreso;
+    Integer ultimaMatricula;
+    Integer carrerasCursadas;
+
+    public Estudiante() { }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Nombre getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombreCompleto) {
+        this.nombre = new Nombre(nombreCompleto);
+    }
+
+    public void setNombre(Nombre nombre) {
         this.nombre = nombre;
     }
 
-    public String getRut() { return rut; }
+    public Long getRut() { return rut; }
 
-    public void setRut(String rut) { this.rut = rut; }
+    public void setRut(Long rut) { this.rut = rut; }
 
     public String getFotoUrl() {
         return fotoUrl;
@@ -275,27 +265,6 @@ public class Estudiante {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public Integer getEdad() {
-        return edad;
-    }
-
-    public String getStringEdad() {
-        if (edad != null) {
-            return edad.toString();
-        }
-        return null;
-    }
-
-    public void setEdad(Integer edad) { this.edad = edad; }
-
-    public String getNacimiento() {
-        return nacimiento;
-    }
-
-    public void setNacimiento(String nacimiento) {
-        this.nacimiento = nacimiento;
     }
 
     /*
@@ -337,13 +306,6 @@ public class Estudiante {
         return telefonoMovil;
     }
 
-    public String getStringTelefonoMovil() {
-        if (telefonoMovil != null) {
-            return telefonoMovil.toString();
-        }
-        return null;
-    }
-
     public void setTelefonoMovil(Long telefonoMovil) {
         this.telefonoMovil = telefonoMovil;
     }
@@ -352,26 +314,12 @@ public class Estudiante {
         return puntajePsu;
     }
 
-    public String getStringPuntajePsu() {
-        if (puntajePsu != null) {
-            return puntajePsu.toString();
-        }
-        return null;
-    }
-
     public void setPuntajePsu(Float puntajePsu) {
         this.puntajePsu = puntajePsu;
     }
 
     public Long getTelefonoFijo() {
         return telefonoFijo;
-    }
-
-    public String getStringTelefonoFijo() {
-        if (telefonoFijo != null) {
-            return telefonoFijo.toString();
-        }
-        return null;
     }
 
     public void setTelefonoFijo(Long telefonoFijo) {
@@ -390,23 +338,24 @@ public class Estudiante {
         this.sexo = new Sexo(sexo);
     }
 
-    public String getDireccion() {
-        return direccion;
+    public Comuna getComuna() {
+        return comuna;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public void setComuna(Comuna comuna) {
+        this.comuna = comuna;
+    }
+
+    public Nacionalidad getNacionalidad() {
+        return nacionalidad;
+    }
+
+    public void setNacionalidad(Nacionalidad nacionalidad) {
+        this.nacionalidad = nacionalidad;
     }
 
     public Integer getAnioIngreso() {
         return anioIngreso;
-    }
-
-    public String getStringAnioIngreso() {
-        if (anioIngreso != null) {
-            return anioIngreso.toString();
-        }
-        return null;
     }
 
     public void setAnioIngreso(Integer anioIngreso) {
@@ -417,19 +366,30 @@ public class Estudiante {
         return ultimaMatricula;
     }
 
-    public String getStringUltimaMatricula() {
-        if (ultimaMatricula != null) {
-            return ultimaMatricula.toString();
-        }
-        return null;
-    }
-
     public void setUltimaMatricula(Integer ultimaMatricula) {
         this.ultimaMatricula = ultimaMatricula;
     }
 
     public Integer getCarrerasCursadas() {
         return carrerasCursadas;
+    }
+
+    public void setCarrerasCursadas(Integer carrerasCursadas) {
+        this.carrerasCursadas = carrerasCursadas;
+    }
+
+    public String getStringAnioIngreso() {
+        if (anioIngreso != null) {
+            return anioIngreso.toString();
+        }
+        return null;
+    }
+
+    public String getStringUltimaMatricula() {
+        if (ultimaMatricula != null) {
+            return ultimaMatricula.toString();
+        }
+        return null;
     }
 
     public String getStringCarrerasCursadas() {
@@ -439,129 +399,24 @@ public class Estudiante {
         return null;
     }
 
-    public void setCarrerasCursadas(Integer carrerasCursadas) {
-        this.carrerasCursadas = carrerasCursadas;
-    }
-
-    static public Map<String, String> getCredenciales(Context contexto) {
-        Map<String, String> lista = new LinkedHashMap();
-        lista.put("rut", PreferencesManager.getCredentials(contexto, "rut"));
-        lista.put("token", PreferencesManager.getCredentials(contexto, "token"));
-        lista.put("correo", PreferencesManager.getCredentials(contexto, "correo"));
-        return lista;
-    }
-
-    static public Boolean setCredenciales(Context contexto, String token, String rut, String correo) {
-        String rutLimpio = new Estudiante.Rut(rut).getCuerpo().toString();
-        String tokenListo = token;
-
-        if (!token.startsWith("Bearer ")) {
-            tokenListo = "Bearer " + token;
-        }
-
-        Boolean resultado = PreferencesManager.setCredentials(contexto, "token", tokenListo);
-        resultado = resultado && PreferencesManager.setCredentials(contexto, "rut", rutLimpio);
-        resultado = resultado && PreferencesManager.setCredentials(contexto, "correo", correo);
-        return resultado;
-    }
-
-
-
-    public void guardarDatos(Context contexto) {
-        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(contexto);
-
-        if (nombre  != null) {
-            PreferencesManager.setUser(contexto, "nombre", nombre);
-        }
-
-        if (rut != null) {
-            PreferencesManager.setUser(contexto, "rut", rut);
-        }
-
-        if (sexo != null) {
-            // PreferencesManager.setUser(contexto, "sexo", sexo.sexoCodigo);
-            firebaseAnalytics.setUserProperty("sexo", sexo.sexoTexto);
-        }
-
-        if (correoUtem != null) {
-            PreferencesManager.setUser(contexto, "correo_utem", correoUtem);
-        }
-
-        if (correoPersonal  != null) {
-            PreferencesManager.setUser(contexto, "correo_personal", correoPersonal);
-        }
-
-        if (tipo  != null) {
-            PreferencesManager.setUser(contexto, "tipo", tipo);
-        }
-
-        if (fotoUrl  != null) {
-            PreferencesManager.setUser(contexto, "foto_url", fotoUrl);
-        }
-
-        if (direccion  != null) {
-            PreferencesManager.setUser(contexto, "direccion", direccion);
-        }
-
-        if (edad != null) {
-            PreferencesManager.setUser(contexto, "edad", edad);
-        }
-
-        if (nacimiento != null) {
-            PreferencesManager.setUser(contexto, "fecha_nacimiento", nacimiento);
-        }
-
+    public String getStringTelefonoFijo() {
         if (telefonoFijo != null) {
-            PreferencesManager.setUser(contexto, "telefono_fijo", telefonoFijo);
+            return telefonoFijo.toString();
         }
-
-        if (telefonoMovil != null) {
-            PreferencesManager.setUser(contexto, "telefono_movil", telefonoMovil);
-        }
-
-        if (puntajePsu != null) {
-            PreferencesManager.setUser(contexto, "puntaje_psu", puntajePsu);
-        }
-
-        if (anioIngreso != null) {
-            PreferencesManager.setUser(contexto, "anio_ingreso", anioIngreso);
-            firebaseAnalytics.setUserProperty("anio_ingreso", anioIngreso.toString());
-        }
-
-        if (ultimaMatricula != null) {
-            PreferencesManager.setUser(contexto, "ultima_matricula", ultimaMatricula);
-            firebaseAnalytics.setUserProperty("ultima_matricula", ultimaMatricula.toString());
-        }
-
-        if (carrerasCursadas != null) {
-            PreferencesManager.setUser(contexto, "carreras_cursadas", carrerasCursadas);
-            firebaseAnalytics.setUserProperty("carreras_cursadas", carrerasCursadas.toString());
-        }
+        return null;
     }
 
-    public Estudiante convertirPreferencias(Context context) {
-        Estudiante usuario = new Estudiante();
-        usuario.setNombre(PreferencesManager.getStringUser(context, "nombre", null));
-        usuario.setTipo(PreferencesManager.getStringUser(context, "tipo", null));
-        usuario.setFotoUrl(PreferencesManager.getStringUser(context, "foto_url", null));
-        usuario.setAnioIngreso(PreferencesManager.getIntUser(context, "anio_ingreso"));
-        usuario.setUltimaMatricula(PreferencesManager.getIntUser(context, "ultima_matricula"));
-        usuario.setCarrerasCursadas(PreferencesManager.getIntUser(context, "carreras_cursadas"));
-        usuario.setRut(PreferencesManager.getStringUser(context, "rut", null));
-        usuario.setDireccion(PreferencesManager.getStringUser(context, "direccion", null));
-        usuario.setCorreoUtem(PreferencesManager.getStringUser(context, "correo_utem", null));
-        usuario.setCorreoPersonal(PreferencesManager.getStringUser(context, "correo_personal", null));
-        usuario.setEdad(PreferencesManager.getIntUser(context, "edad"));
-        usuario.setNacimiento(PreferencesManager.getStringUser(context, "fecha_nacimiento", null));
-        //usuario.setComuna(PreferencesManager.getStringUser(context, "rut", null));
-        usuario.setTelefonoFijo(PreferencesManager.getLongUser(context, "telefono_fijo", new Long(0)));
-        usuario.setTelefonoMovil(PreferencesManager.getLongUser(context, "telefono_movil", new Long(0)));
-        if (PreferencesManager.getFloatUser(context, "puntaje_psu") != new Float(0)) {
-            usuario.setPuntajePsu(PreferencesManager.getFloatUser(context, "puntaje_psu"));
+    public String getStringTelefonoMovil() {
+        if (telefonoMovil != null) {
+            return telefonoMovil.toString();
         }
-        if (PreferencesManager.getIntUser(context, "sexo") != null) {
-            usuario.setSexo(PreferencesManager.getIntUser(context, "sexo"));
+        return null;
+    }
+
+    public String getStringPuntajePsu() {
+        if (puntajePsu != null) {
+            return puntajePsu.toString();
         }
-        return usuario;
+        return null;
     }
 }

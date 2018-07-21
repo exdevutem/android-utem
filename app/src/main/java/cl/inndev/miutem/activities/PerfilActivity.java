@@ -9,11 +9,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.anupcowkur.reservoir.Reservoir;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pixplicity.easyprefs.library.Prefs;
+
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -113,7 +118,36 @@ public class PerfilActivity extends AppCompatActivity {
     private void mostrarDatos() {
         String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
         Map<String, String> lista = new LinkedHashMap();
-        Estudiante valores = new Estudiante().convertirPreferencias(this);
+        try {
+            Estudiante usuario = Reservoir.get("usuario", Estudiante.class);
+            mTextNombre.setText(usuario.getNombre().getCompleto());
+            mTextTipo.setText(usuario.getTipo());
+            mTextMatricula.setText(usuario.getStringUltimaMatricula());
+            mTextCarreras.setText(usuario.getStringCarrerasCursadas());
+            mTextIngreso.setText(usuario.getStringAnioIngreso());
+
+            if (usuario.getRut() != null)
+                lista.put(claves[0], "" + usuario.getRut());
+            if (usuario.getCorreoUtem() != null)
+                lista.put(claves[1], usuario.getCorreoUtem());
+            if (usuario.getPuntajePsu() != null)
+                lista.put(claves[3], usuario.getStringPuntajePsu());
+
+            lista.put(claves[2], usuario.getCorreoPersonal());
+            lista.put(claves[4], usuario.getSexo().getDescripcion());
+            // lista.put(claves[5], usuario.getStringEdad());
+            lista.put(claves[6], usuario.getStringTelefonoMovil());
+            lista.put(claves[7], usuario.getStringTelefonoFijo());
+            lista.put(claves[8], null);
+            // lista.put(claves[9], null);
+            // lista.put(claves[10], null);
+            // lista.put(claves[11], null);
+            //lista.put(claves[12], usuario.getDireccion());
+
+            mListCampos.setAdapter(new CamposAdapter(this, lista));
+        } catch (IOException e) {
+            //failure
+        }
 
         /*
         mDialogSexo.setSingleChoiceItems(R.array.sexos,
@@ -124,31 +158,6 @@ public class PerfilActivity extends AppCompatActivity {
         new DownloadImageTask(mImagePerfil).execute(valores.getFotoUrl());
         */
 
-        mTextNombre.setText(valores.getNombre());
-        mTextTipo.setText(valores.getTipo());
-        mTextMatricula.setText(valores.getStringUltimaMatricula());
-        mTextCarreras.setText(valores.getStringCarrerasCursadas());
-        mTextIngreso.setText(valores.getStringAnioIngreso());
-
-        if (valores.getRut() != null)
-            lista.put(claves[0], valores.getRut());
-        if (valores.getCorreoUtem() != null)
-            lista.put(claves[1], valores.getCorreoUtem());
-        if (valores.getPuntajePsu() != null)
-            lista.put(claves[3], valores.getStringPuntajePsu());
-
-        lista.put(claves[2], valores.getCorreoPersonal());
-        lista.put(claves[4], valores.getSexo().getSexoTexto());
-        lista.put(claves[5], valores.getStringEdad());
-        lista.put(claves[6], valores.getStringTelefonoMovil());
-        lista.put(claves[7], valores.getStringTelefonoFijo());
-        lista.put(claves[8], null);
-        // lista.put(claves[9], null);
-        // lista.put(claves[10], null);
-        // lista.put(claves[11], null);
-        lista.put(claves[12], valores.getDireccion());
-
-        mListCampos.setAdapter(new CamposAdapter(this, lista));
         mSwipeContainer.setVisibility(View.VISIBLE);
 
     }
@@ -165,17 +174,20 @@ public class PerfilActivity extends AppCompatActivity {
 
         ApiUtem restClient = retrofit.create(ApiUtem.class);
 
-        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
-
-        Call<Estudiante> call = restClient.getPerfil(credenciales.get("rut"), credenciales.get("token"));
+        Call<Estudiante> call = restClient.getPerfil(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null));
 
         call.enqueue(new Callback<Estudiante>() {
             @Override
             public void onResponse(@NonNull Call<Estudiante> call, @NonNull Response<Estudiante> response) {
                 switch (response.code()) {
                     case 200:
-                        Estudiante usuario = response.body();
-                        usuario.guardarDatos(PerfilActivity.this);
+                        try {
+                            Reservoir.put("usuario", response.body());
+                        } catch (IOException e) {
+                            //failure;
+                        }
                         mostrarDatos();
                         break;
                     default:
@@ -211,14 +223,15 @@ public class PerfilActivity extends AppCompatActivity {
 
         ApiUtem restClient = retrofit.create(ApiUtem.class);
 
-        Map<String, String> credenciales = Estudiante.getCredenciales(PerfilActivity.this);
-
-        Call<Estudiante> call = restClient.actualizarPerfil(credenciales.get("rut"), credenciales.get("token"),
+        Call<Estudiante> call = restClient.actualizarPerfil(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null),
                 usuario.getCorreoPersonal(), usuario.getTelefonoMovil(),
                 usuario.getTelefonoFijo(),
-                usuario.getSexo() != null ? usuario.getSexo().getSexoCodigo() : null,
-                null, null,
-                usuario.getDireccion());
+                usuario.getSexo() != null ? usuario.getSexo().getId() : null,
+                null,
+                null,
+                null);
 
         call.enqueue(new Callback<Estudiante>() {
             @Override

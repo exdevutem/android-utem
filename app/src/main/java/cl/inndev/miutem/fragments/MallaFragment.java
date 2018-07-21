@@ -19,6 +19,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -93,13 +94,14 @@ public class MallaFragment extends Fragment {
 
         ApiUtem client = retrofit.create(ApiUtem.class);
 
-        Map<String, String> credenciales = Estudiante.getCredenciales(getActivity());
-
         CarreraActivity carreraActivity = (CarreraActivity) getActivity();
 
         Toast.makeText(carreraActivity, "" + carreraActivity.mId, Toast.LENGTH_SHORT).show();
 
-        Call<List<Carrera.Nivel>> call = client.getMalla(credenciales.get("rut"), carreraActivity.mId, credenciales.get("token"));
+        Call<List<Carrera.Nivel>> call = client.getMalla(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null),
+                carreraActivity.mId);
 
         call.enqueue(new Callback<List<Carrera.Nivel>>() {
             @Override

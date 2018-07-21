@@ -1,6 +1,6 @@
 package cl.inndev.miutem.activities;
 
-import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,17 +26,21 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.deserializers.CarrerasDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.PreferencesManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,16 +67,32 @@ public class LoginActivity extends AppCompatActivity {
 
     private int reintento = 0;
 
+    private List<Integer> mProcesos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        new Prefs.Builder()
+                .setContext(this)
+                .setMode(ContextWrapper.MODE_PRIVATE)
+                .setPrefsName(getPackageName())
+                .setUseDefaultSharedPreference(true)
+                .build();
+
         try {
-            Reservoir.init(this, 2048);
+            Reservoir.init(this, 4096);
         } catch (IOException e) {
-            Toast.makeText(this, "Error de Reservoir", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
+
+        mProcesos = new ArrayList<>();
+
+        mProcesos.add(-1);
+        mProcesos.add(-1);
+        mProcesos.add(-1);
+        mProcesos.add(0);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -99,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                             editContrasenia.getText().toString());
                 } else {
                     validarFormulario(
-                            PreferencesManager.getStringUser(getApplicationContext(), "correo_utem", null),
+                            Prefs.getString("correo", null),
                             editContrasenia.getText().toString());
                 }
             }
@@ -170,9 +190,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean esPrimeraVez() {
-        return PreferencesManager.getBoolPreference(getApplicationContext(),
-                "primera_vez",
-                true);
+        return Prefs.getBoolean("primera_vez", true);
     }
 
     private void configurarFormulario(boolean interruptor) {
@@ -186,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
             editCorreo.setVisibility(View.VISIBLE);
         } else {
             try {
-                Estudiante valores = Reservoir.get("estudiante", Estudiante.class);
+                Estudiante valores = Reservoir.get("usuario", Estudiante.class);
                 imagePerfil.setVisibility(View.VISIBLE);
                 textBienvenida.setVisibility(View.VISIBLE);
                 textNombre.setVisibility(View.VISIBLE);
@@ -195,11 +213,11 @@ public class LoginActivity extends AppCompatActivity {
                 textCorreo.setVisibility(View.GONE);
                 editCorreo.setVisibility(View.GONE);
 
-                textNombre.setText(valores.getNombre());
-                textCambiar.setText("¿No eres " + valores.getNombre().substring(0,  valores.getNombre().indexOf(' ')) + "?");
+                textNombre.setText(valores.getNombre().getCompleto());
+                //textCambiar.setText("¿No eres " + valores.getNombre().substring(0,  valores.getNombre().indexOf(' ')) + "?");
                 new DownloadImageTask(imagePerfil).execute(valores.getFotoUrl());
             } catch (IOException e) {
-                //failure
+                e.printStackTrace();
             }
         }
 
@@ -236,10 +254,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void eliminarUsuario() {
-        Context context = getApplicationContext();
-        PreferencesManager.clearAll(context);
-
-        PreferencesManager.setPreference(context,"primera_vez", true);
+        Prefs.clear();
+        Prefs.putBoolean("primera_vez", true);
     }
 
     private void iniciarSesion(final String correo, final String contrasenia) {
@@ -253,19 +269,24 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         ApiUtem restClient = retrofit.create(ApiUtem.class);
-        Call<Estudiante> call = restClient.autenticar(correo, contrasenia);
+        Call<Estudiante.Credenciales> call = restClient.autenticar(correo, contrasenia);
 
-        call.enqueue(new Callback<Estudiante>() {
+        call.enqueue(new Callback<Estudiante.Credenciales>() {
             @Override
-            public void onResponse(Call<Estudiante> call, Response<Estudiante> response) {
+            public void onResponse(Call<Estudiante.Credenciales> call, Response<Estudiante.Credenciales> response) {
                 reintento = 0;
                 switch (response.code()) {
                     case 200:
-                        Estudiante.setCredenciales(LoginActivity.this,response.body().getToken(), response.body().getRut(), correo);
+                        Prefs.putString("token", response.body().getToken());
+                        Prefs.putString("correo", response.body().getCorreo());
+                        Prefs.putLong("rut", response.body().getRut());
                         Bundle event = new Bundle();
                         event.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, "pasaporte");
                         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, event);
-                        obtenerPerfil();
+                        getPerfil();
+                        getCarreras();
+                        getAsignaturas();
+                        // getHorarios();
                         break;
                     case 401:
                         configurarFormulario(true);
@@ -279,7 +300,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Estudiante> call, Throwable t) {
+            public void onFailure(Call<Estudiante.Credenciales> call, Throwable t) {
                 configurarFormulario(true);
                 if (t instanceof SocketTimeoutException) {
                     switch (reintento) {
@@ -307,7 +328,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void obtenerPerfil() {
+    private void getPerfil() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
@@ -319,9 +340,9 @@ public class LoginActivity extends AppCompatActivity {
 
         ApiUtem client = retrofit.create(ApiUtem.class);
 
-        Map<String, String> credenciales = Estudiante.getCredenciales(LoginActivity.this);
-
-        Call<Estudiante> call = client.getPerfil(credenciales.get("rut"), credenciales.get("token"));
+        Call<Estudiante> call = client.getPerfil(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null));
 
         call.enqueue(new Callback<Estudiante>() {
             @Override
@@ -329,38 +350,34 @@ public class LoginActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Estudiante usuario = response.body();
-                        Reservoir.putAsync("estudiante", usuario, new ReservoirPutCallback() {
+                        Reservoir.putAsync("usuario", usuario, new ReservoirPutCallback() {
                             @Override
                             public void onSuccess() {
-                                PreferencesManager.setPreference(LoginActivity.this, "primera_vez", false);
+                                mProcesos.set(0, 1);
+                                Prefs.putBoolean("primera_vez", false);
+                                cambiarActivity();
                                 // Boolean eraPrimeraVez = esPrimeraVez();
-
-                                /*
-                                if (eraPrimeraVez) {
-                                    startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
-                                } else {
-                                    startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
-                                }*/
-
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                finish();
                             }
 
                             @Override
                             public void onFailure(Exception e) {
+                                mProcesos.set(0, 0);
+                                e.printStackTrace();
                                 Toast.makeText(LoginActivity.this, "Error en el caché de los datos", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
                     default:
+                        mProcesos.set(0, 0);
                         configurarFormulario(true);
-                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, response.raw().toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<Estudiante> call, Throwable t) {
+                mProcesos.set(0, 0);
                 if (t instanceof TimeoutException) {
                     Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
                 } else {
@@ -369,6 +386,118 @@ public class LoginActivity extends AppCompatActivity {
                 configurarFormulario(true);
             }
         });
+    }
+
+    private void getAsignaturas() {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem restClient = retrofit.create(ApiUtem.class);
+
+        Call<List<Asignatura>> call = restClient.getAsignaturas(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null)
+        );
+
+        call.enqueue(new Callback<List<Asignatura>>() {
+            @Override
+            public void onResponse(Call<List<Asignatura>> call, Response<List<Asignatura>> response) {
+                switch (response.code()) {
+                    case 200:
+                        mProcesos.set(1, 1);
+                        try {
+                            Reservoir.put("asignaturas", response.body());
+                        } catch (IOException e) {
+                            Toast.makeText(LoginActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:
+                        mProcesos.set(1, 0);
+                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                cambiarActivity();
+            }
+
+            @Override
+            public void onFailure(Call<List<Asignatura>> call, Throwable t) {
+                mProcesos.set(1, 0);
+                Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                cambiarActivity();
+            }
+        });
+    }
+
+    private void getCarreras() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(List.class, new CarrerasDeserializer())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem client = retrofit.create(ApiUtem.class);
+
+        Call<List<Carrera>> call = client.getCarreras(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null));
+
+        call.enqueue(new Callback<List<Carrera>>() {
+            @Override
+            public void onResponse(Call<List<Carrera>> call, Response<List<Carrera>> response) {
+                switch (response.code()) {
+                    case 200:
+                        mProcesos.set(2, 1);
+                        try {
+                            Reservoir.put("carreras", response.body());
+                        } catch (IOException e) {
+                            Toast.makeText(LoginActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:
+                        mProcesos.set(2, 0);
+                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                cambiarActivity();
+            }
+
+            @Override
+            public void onFailure(Call<List<Carrera>> call, Throwable t) {
+                mProcesos.set(2, 0);
+                if (t instanceof TimeoutException) {
+                    Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+                cambiarActivity();
+            }
+        });
+    }
+
+    private void cambiarActivity() {
+        if (mProcesos.get(0) == 1) {
+            if (mProcesos.get(1) >= 0 && mProcesos.get(2) >= 0 && mProcesos.get(3) >= 0) {
+                /*
+                if (eraPrimeraVez) {
+                    startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
+                } else {
+                    startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
+                }
+                */
+
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            }
+        }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

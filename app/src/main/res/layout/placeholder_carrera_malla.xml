@@ -12,7 +12,7 @@
         android:padding="8dp">
 
         <LinearLayout
-            android:id="@+id/layout_left"
+            android:id="@+id/layout_izquierda"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -43,7 +43,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/layout_right"
+            android:id="@id/layout_derecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

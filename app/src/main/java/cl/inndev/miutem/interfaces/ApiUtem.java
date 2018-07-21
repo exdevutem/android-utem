@@ -1,6 +1,5 @@
 package cl.inndev.miutem.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cl.inndev.miutem.classes.Asignatura;
@@ -16,7 +15,7 @@ public interface ApiUtem {
 
     @FormUrlEncoded
     @POST("token")
-    Call<Estudiante> autenticar(
+    Call<Estudiante.Credenciales> autenticar(
             @Field("correo") String correo,
             @Field("contrasenia") String contrasenia
     );
@@ -31,14 +30,14 @@ public interface ApiUtem {
 
     @GET("estudiantes/{rut}")
     Call<Estudiante> getPerfil(
-            @Path("rut") String rut,
+            @Path("rut") Long rut,
             @Header("Authorization") String auth
     );
 
     @FormUrlEncoded
     @PUT("estudiantes/{rut}")
     Call<Estudiante> actualizarPerfil(
-            @Path("rut") String rut,
+            @Path("rut") Long rut,
             @Header("Authorization") String auth,
             @Field("correo") String correo,
             @Field("movil") Long movil,
@@ -51,26 +50,26 @@ public interface ApiUtem {
 
     @GET("/estudiantes/{rut}/carreras")
     Call<List<Carrera>> getCarreras(
-            @Path("rut") String rut,
+            @Path("rut") Long rut,
             @Header("Authorization") String auth
     );
 
     @GET("/estudiantes/{rut}/carreras/{idCarrera}/malla")
     Call<List<Carrera.Nivel>> getMalla(
-            @Path("rut") String rut,
-            @Path("idCarrera") Integer idCarrera,
-            @Header("Authorization") String auth
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("idCarrera") Integer idCarrera
     );
 
     @GET("/estudiantes/{rut}/horarios")
     Call<Estudiante.Horario> getHorarios(
-            @Path("rut") String rut,
+            @Path("rut") Long rut,
             @Header("Authorization") String auth
     );
 
     @GET("/estudiantes/{rut}/asignaturas")
     Call<List<Asignatura>> getAsignaturas(
-            @Path("rut") String rut,
+            @Path("rut") Long rut,
             @Header("Authorization") String auth
     );
 }
