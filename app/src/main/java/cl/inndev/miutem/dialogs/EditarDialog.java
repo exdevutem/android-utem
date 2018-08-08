@@ -5,47 +5,108 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.hbb20.CountryCodePicker;
 
 import cl.inndev.miutem.R;
+import cl.inndev.miutem.activities.PerfilActivity;
+import cl.inndev.miutem.adapters.CamposAdapter;
+import cl.inndev.miutem.classes.Estudiante;
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class EditarDialog extends Dialog {
+    private Toolbar mToolbar;
+    private Button mButtonCancelar;
+    private Button mButtonGuardar;
+    private EditText mEditInfo;
+    private CountryCodePicker mCcpCodigo;
+    private SaveListener saveListener;
+    private Dialog mDialog;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-    Button mButtonCancelar;
-    Button mButtonGuardar;
-
-    public EditarDialog(@NonNull final Context context) {
+    public EditarDialog(@NonNull final Context context, final Integer index, String valor, SaveListener listener) {
         super(context, R.style.AppTheme);
         this.setContentView(R.layout.dialog_perfil_editar);
-        final Dialog dialog = this;
+        this.saveListener = listener;
+        mDialog = this;
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        mButtonGuardar = dialog.getWindow().getDecorView().findViewById(R.id.button_guardar);
-        mButtonCancelar = dialog.getWindow().getDecorView().findViewById(R.id.button_cancelar);
+        mToolbar = mDialog.getWindow().getDecorView().findViewById(R.id.toolbar);
+        mButtonGuardar = mDialog.getWindow().getDecorView().findViewById(R.id.button_guardar);
+        mButtonCancelar = mDialog.getWindow().getDecorView().findViewById(R.id.button_cancelar);
+        mEditInfo = mDialog.getWindow().getDecorView().findViewById(R.id.edit_info);
+        mCcpCodigo = mDialog.getWindow().getDecorView().findViewById(R.id.ccp_codigo);
 
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        mEditInfo.setText(valor);
+        mEditInfo.requestFocus();
 
-        mButtonGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
+        if (index == 6 || index == 7) {
+            mEditInfo.setInputType(InputType.TYPE_CLASS_PHONE);
+            mEditInfo.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+            mCcpCodigo.registerCarrierNumberEditText(mEditInfo);
+            mCcpCodigo.setNumberAutoFormattingEnabled(true);
+
+            if (valor != null) {
+                Estudiante.Telefono telefono = new Estudiante.Telefono(context, Long.parseLong(valor));
+                mEditInfo.setText(telefono.getNumero().toString());
+                mCcpCodigo.setCountryForPhoneCode(telefono.getCodigo());
             }
-        });
+
+            mButtonGuardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (saveListener != null)
+                        saveListener.onSaveListener(index, mCcpCodigo.getFullNumber());
+                    mDialog.dismiss();
+                }
+            });
+        } else {
+            mCcpCodigo.setVisibility(View.GONE);
+
+            if (index == 2) {
+                mEditInfo.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            } else if (index == 12) {
+                mEditInfo.setInputType(InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS);
+            }
+
+            mButtonGuardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (saveListener != null)
+                        saveListener.onSaveListener(index, mEditInfo.getText().toString());
+                    mDialog.dismiss();
+                }
+            });
+        }
 
         mButtonCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
+                mDialog.dismiss();
             }
         });
 
+    }
+
+    public void setOnSaveListener(SaveListener listener) {
+        this.saveListener = listener;
+    }
+
+    public interface SaveListener {
+        public void onSaveListener(int index, String newValue);
+        // public void onCancelListener(String title);
     }
 
 }

@@ -96,7 +96,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_restaurant_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/hardware/ic_keyboard_arrow_right_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -106,7 +106,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_restaurant" />
+                            <entry key="outputName" value="ic_keyboard_arrow_right" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="$USER_HOME$/Creative Cloud Files/SVG/mach_logo.svg" />
                           </map>

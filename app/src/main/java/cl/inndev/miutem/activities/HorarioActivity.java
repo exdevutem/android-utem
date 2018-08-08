@@ -1,49 +1,35 @@
-package cl.inndev.miutem.fragments;
+package cl.inndev.miutem.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.OnItemLongClickListener;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.AsignaturaActivity;
-import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.HorarioAdapter;
 import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.classes.Horario;
 import cl.inndev.miutem.deserializers.HorariosDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import retrofit2.Call;
@@ -54,22 +40,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
-public class HorarioFragment extends Fragment {
+public class HorarioActivity extends AppCompatActivity {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
     private AdaptiveTableLayout mTableHorario;
     private AlertDialog mDialogAsignatura;
     private ProgressBar mProgressCargando;
+    private Toolbar mToolbar;
     private List<String[]> mRowHeaderList = new ArrayList<>();
     private List<String> mColumnHeaderList = new ArrayList<>();
+    private Integer mHorarioIndex;
+    private Boolean mObteniendoHorarios = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
-        View view = inflater.inflate(R.layout.fragment_horario, container, false);
-        mTableHorario = view.findViewById(R.id.table_horario);
-        mProgressCargando = view.findViewById(R.id.progress_cargando);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_horario);
+        mTableHorario = findViewById(R.id.table_horario);
+        mProgressCargando = findViewById(R.id.progress_cargando);
+
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String[] bloque = {"8:00", "8:45","9:30"};
         mRowHeaderList.add(bloque);
@@ -97,37 +88,38 @@ public class HorarioFragment extends Fragment {
         mColumnHeaderList.add("Viernes");
         mColumnHeaderList.add("Sábado");
 
-        getHorario();
+        mHorarioIndex = getIntent().getIntExtra("HORARIO_INDEX", -1);
 
-        return view;
+        if (mHorarioIndex == -1) {
+            finish();
+        }
+
+        Type horariosType = new TypeToken<Horario>() {}.getType();
+        Reservoir.getAsync("horarios", horariosType, new ReservoirGetCallback<Horario>() {
+            @Override
+            public void onSuccess(Horario horario) {
+                setHorario(horario);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                //mShimmerViewContainer.setVisibility(View.VISIBLE);
+                //mShimmerViewContainer.startShimmer();
+                if (!mObteniendoHorarios) {
+                    mObteniendoHorarios = true;
+                    getHorarios();
+                }
+            }
+        });
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-        // Set title bar
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), HorarioFragment.class.getSimpleName(),
-                HorarioFragment.class.getSimpleName());
-        ((MainActivity) getActivity()).setActionBarTitle("Horario");
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
-    private void setDialog(Asignatura asignatura) {
-        View view = this.getLayoutInflater().inflate(R.layout.dialog_horario_asignatura, null);
-        TextView textCodigoAsignatura = view.findViewById(R.id.text_asignatura_codigo);
-        TextView textNombreAsignatura = view.findViewById(R.id.text_asignatura_nombre);
-        TextView textProfesorAsignatura = view.findViewById(R.id.text_asignatura_profesor);
-        TextView textTipoAsignatura = view.findViewById(R.id.text_asignatura_tipo);
-        TextView textSeccionAsignatura = view.findViewById(R.id.text_asignatura_seccion);
-
-        textCodigoAsignatura.setText(asignatura.getCodigo());
-        textNombreAsignatura.setText(asignatura.getNombre());
-        textProfesorAsignatura.setText(asignatura.getDocente().getNombre());
-        textTipoAsignatura.setText(asignatura.getTipo());
-        textSeccionAsignatura.setText(asignatura.getSeccion().toString());
-        mDialogAsignatura = new AlertDialog.Builder(getActivity()).setView(view).create();
-    }
-
-    private HorarioAdapter setHorarioClickListener(HorarioAdapter adapter, final Estudiante.Horario horario) {
+    private HorarioAdapter setHorarioClickListener(HorarioAdapter adapter, final Horario horario) {
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int row, int column) {
@@ -136,7 +128,7 @@ public class HorarioFragment extends Fragment {
                     //Intent intent = new Intent(getContext(), AsignaturaActivity.class);
                     //intent.putExtra("codigo", clickeada.getCodigo() + "/" + clickeada.getSeccion());
                     //startActivity(intent);
-                    Toast.makeText(getActivity(), R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HorarioActivity.this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -166,9 +158,32 @@ public class HorarioFragment extends Fragment {
         return adapter;
     }
 
-    private void getHorario() {
+    private void setDialog(Asignatura asignatura) {
+        View view = this.getLayoutInflater().inflate(R.layout.dialog_horario_asignatura, null);
+        TextView textCodigoAsignatura = view.findViewById(R.id.text_asignatura_codigo);
+        TextView textNombreAsignatura = view.findViewById(R.id.text_asignatura_nombre);
+        TextView textProfesorAsignatura = view.findViewById(R.id.text_asignatura_profesor);
+        TextView textTipoAsignatura = view.findViewById(R.id.text_asignatura_tipo);
+        TextView textSeccionAsignatura = view.findViewById(R.id.text_asignatura_seccion);
+
+        textCodigoAsignatura.setText(asignatura.getCodigo());
+        textNombreAsignatura.setText(asignatura.getNombre());
+        textProfesorAsignatura.setText(asignatura.getDocente().getNombre().getCompleto());
+        textTipoAsignatura.setText(asignatura.getTipo());
+        textSeccionAsignatura.setText(asignatura.getSeccion().toString());
+        mDialogAsignatura = new AlertDialog.Builder(HorarioActivity.this).setView(view).create();
+    }
+
+    private void setHorario(Horario horario) {
+        HorarioAdapter adapter = new HorarioAdapter(HorarioActivity.this, mRowHeaderList, mColumnHeaderList, horario);
+        adapter = setHorarioClickListener(adapter, horario);
+        mTableHorario.setAdapter(adapter);
+        mTableHorario.setVisibility(View.VISIBLE);
+    }
+
+    private void getHorarios() {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Estudiante.Horario.class, new HorariosDeserializer())
+                .registerTypeAdapter(Horario.class, new HorariosDeserializer())
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -178,31 +193,36 @@ public class HorarioFragment extends Fragment {
 
         ApiUtem client = retrofit.create(ApiUtem.class);
 
-        Call<Estudiante.Horario> call = client.getHorarios(
+        Call<Horario> call = client.getHorarios(
                 Prefs.getLong("rut", 0),
                 Prefs.getString("token", null)
         );
 
-        call.enqueue(new Callback<Estudiante.Horario>() {
+        call.enqueue(new Callback<Horario>() {
             @Override
-            public void onResponse(Call<Estudiante.Horario> call, Response<Estudiante.Horario> response) {
+            public void onResponse(Call<Horario> call, Response<Horario> response) {
+                mObteniendoHorarios = false;
                 switch (response.code()) {
                     case 200:
-                        HorarioAdapter adapter = new HorarioAdapter(getContext(), mRowHeaderList, mColumnHeaderList, response.body());
-                        adapter = setHorarioClickListener(adapter, response.body());
-                        mTableHorario.setAdapter(adapter);
-                        mTableHorario.setVisibility(View.VISIBLE);
+                        try {
+                            Reservoir.put("horarios", response.body());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        setHorario(response.body());
                         break;
                     default:
-                        Toast.makeText(getContext(), "Ocurrió un error inesperado al cargar el horario", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HorarioActivity.this, "Ocurrió un error inesperado al cargar el horario", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 mProgressCargando.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFailure(Call<Estudiante.Horario> call, Throwable t) {
-                Toast.makeText(getActivity(), "No se pudo cargar el horario", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Horario> call, Throwable t) {
+                mObteniendoHorarios = false;
+                t.printStackTrace();
+                Toast.makeText(HorarioActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
                 mProgressCargando.setVisibility(View.GONE);
             }
         });

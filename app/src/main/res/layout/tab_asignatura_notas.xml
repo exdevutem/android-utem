@@ -1,15 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.AsignaturaActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Boletín"/>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="8dp">
+
+                    <TextView
+                        android:id="@+id/text_presentacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Presentación"
+                        android:textAlignment="textEnd"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/text_valor_examen"
+                        app:layout_constraintTop_toTopOf="@+id/text_valor_presentacion" />
+
+                    <TextView
+                        android:id="@+id/text_valor_presentacion"
+                        android:layout_width="64dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:padding="8dp"
+                        app:layout_constraintStart_toEndOf="@+id/text_presentacion" />
+
+                    <TextView
+                        android:id="@+id/text_examen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Examen"
+                        android:textAlignment="textEnd"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_valor_examen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_presentacion" />
+
+                    <TextView
+                        android:id="@+id/text_valor_examen"
+                        android:layout_width="64dp"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        app:layout_constraintEnd_toEndOf="@+id/text_valor_presentacion"
+                        app:layout_constraintStart_toEndOf="@+id/text_descripcion"
+                        app:layout_constraintTop_toBottomOf="@+id/text_valor_presentacion" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/text_nota_final"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="4.3"
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="@+id/text_observacion"
+                            app:layout_constraintStart_toStartOf="@+id/text_observacion"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/text_observacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Aprobado"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/text_nota_final" />
+
+                        <TextView
+                            android:id="@+id/text_asterisco"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="*"
+                            android:textSize="20sp"
+                            app:layout_constraintStart_toEndOf="@+id/text_nota_final"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list_notas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"/>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.v4.widget.SwipeRefreshLayout>

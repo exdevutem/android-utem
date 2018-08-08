@@ -1,9 +1,12 @@
 package cl.inndev.miutem.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -26,34 +29,41 @@ import android.widget.Toast;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pixplicity.easyprefs.library.Prefs;
+import com.google.gson.reflect.TypeToken;
+import com.nytimes.android.external.store3.base.impl.BarCode;
+import com.nytimes.android.external.store3.base.impl.Store;
+import com.nytimes.android.external.store3.base.impl.StoreBuilder;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
+import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
+import cl.inndev.miutem.classes.Horario;
+import cl.inndev.miutem.classes.Noticia;
 import cl.inndev.miutem.fragments.AsignaturasFragment;
 import cl.inndev.miutem.fragments.CarrerasFragment;
 import cl.inndev.miutem.fragments.CertificadosFragment;
-import cl.inndev.miutem.fragments.HorarioFragment;
+import cl.inndev.miutem.fragments.HorariosFragment;
 import cl.inndev.miutem.fragments.InicioFragment;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.interfaces.ApiNoticiasUtem;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -67,12 +77,40 @@ public class MainActivity extends AppCompatActivity
     private ImageButton mButtonMenu;
     private long mContadorVida = 0;
     private int mContadorAtras = 0;
+    private Boolean mCargoHorario = false;
+    private Boolean mCargoAsignaturas = false;
+    private Boolean mCargoCarreras = false;
+    private Horario mHorario;
+    private List<Carrera> mCarreras;
+    private List<Asignatura> mAsignaturas;
     private Boolean mToogle = false;
+    private AccountManager mAccountManager;
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAccountManager = AccountManager.get(this);
+        mAccountManager.getAuthToken(mAccountManager.getAccounts()[0],
+                "Bearer", null, this,
+                future -> {
+                    try {
+                        mToken = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+                        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), "19649846");
+                        try {
+                            provideEstudianteStore()
+                                    .get(usuario)
+                                    .
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+                        e.printStackTrace();
+                    }
+                }, null);
+
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Window w = getWindow();
@@ -92,37 +130,35 @@ public class MainActivity extends AppCompatActivity
 
         View headerView = mNavigationView.getHeaderView(0);
 
+        mHorario = new Horario();
+        mCarreras = new ArrayList<>();
+        mAsignaturas = new ArrayList<>();
+
         mTextNombre = headerView.findViewById(R.id.text_nombre);
         mTextCorreo = headerView.findViewById(R.id.text_correo);
         mImagePerfil = headerView.findViewById(R.id.image_perfil);
         mButtonMenu = headerView.findViewById(R.id.button_menu);
 
-        mButtonMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!mToogle) {
-                    mToogle = true;
-                    mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_up);
-                    mNavigationView.getMenu().clear();
-                    mNavigationView.inflateMenu(R.menu.activity_main_drawer_secondary);
-                    mNavigationView.getMenu().getItem(0).setChecked(false);
-                } else {
-                    mToogle = false;
-                    mNavigationView.getMenu().clear();
-                    mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_down);
-                    mNavigationView.inflateMenu(R.menu.activity_main_drawer);
-                }
+        mButtonMenu.setOnClickListener(view -> {
+            if (!mToogle) {
+                mToogle = true;
+                mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_up);
+                mNavigationView.getMenu().clear();
+                mNavigationView.inflateMenu(R.menu.activity_main_drawer_secondary);
+                mNavigationView.getMenu().getItem(0).setChecked(false);
+            } else {
+                mToogle = false;
+                mNavigationView.getMenu().clear();
+                mButtonMenu.setImageResource(R.drawable.ic_arrow_drop_down);
+                mNavigationView.inflateMenu(R.menu.activity_main_drawer);
             }
         });
+
+        mostrarInicio();
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        mImagePerfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, PerfilActivity.class));
-            }
-        });
+        mImagePerfil.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, PerfilActivity.class)));
     }
 
     @Override
@@ -133,15 +169,7 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
         mContadorVida = 0;
-        try {
-            Estudiante usuario = Reservoir.get("usuario", Estudiante.class);
-            mTextNombre.setText(usuario.getNombre().getCompleto());
-            mTextCorreo.setText(usuario.getCorreoUtem());
-            new MainActivity.DownloadImageTask(mImagePerfil).execute(usuario.getFotoUrl());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mostrarInicio();
+
     }
 
     @Override
@@ -190,22 +218,8 @@ public class MainActivity extends AppCompatActivity
             counter.setText("+99");
     }
 
-    public void getEstudiante() {
-        Reservoir.getAsync("carreras", Estudiante.class, new ReservoirGetCallback<Estudiante>() {
-            @Override
-            public void onSuccess(Estudiante estudiante) {
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public void setActionBarTitle(String titulo){
-        getSupportActionBar().setTitle(titulo);
+        mToolbar.setTitle(titulo);
     }
 
     Fragment fragment = null;
@@ -227,20 +241,34 @@ public class MainActivity extends AppCompatActivity
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_alimentacion) {
-            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
+            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AlimentacionFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_horario) {
-            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorarioFragment()).commit();
+            if (mCargoHorario) {
+                Intent intent = new Intent(MainActivity.this, HorarioActivity.class);
+                intent.putExtra("HORARIO_INDEX", 0);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+                //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorariosFragment()).commit();
+            }
         } else if (id == R.id.nav_certificados) {
-            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
+            //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_asignaturas) {
-            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
-            //Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+            if (mCargoAsignaturas && mAsignaturas.size() == 1) {
+                startActivity(new Intent(MainActivity.this, AsignaturaActivity.class));
+            } else {
+                mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
+            }
         } else if (id == R.id.nav_carreras) {
-            mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
-            //startActivity(new Intent(MainActivity.this, CarreraActivity.class));
-            //Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+            if (mCargoCarreras && mCarreras.size() == 1) {
+                Intent intent = new Intent(MainActivity.this, CarreraActivity.class);
+                intent.putExtra("CARRERA_ID", mCarreras.get(0).getmId());
+                startActivity(intent);
+            } else {
+                mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
+            }
         } else if (id == R.id.nav_titulos) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
@@ -259,28 +287,21 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        CircleImageView bmImage;
+    private Store<Estudiante, BarCode> provideEstudianteStore() throws IOException {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                .create();
 
-        public DownloadImageTask(CircleImageView bmImage) {
-            this.bmImage = bmImage;
-        }
+        ApiUtem apiUtem = new Retrofit.Builder()
+                .baseUrl(ApiUtem.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+                .create(ApiUtem.class);
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
+        return StoreBuilder.<Estudiante>barcode()
+                .fetcher(barCode -> apiUtem.getPerfil(barCode.getKey(), "Bearer " + mToken))
+                .open();
     }
+
 }

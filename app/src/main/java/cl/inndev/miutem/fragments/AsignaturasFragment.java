@@ -3,6 +3,7 @@ package cl.inndev.miutem.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.pixplicity.easyprefs.library.Prefs;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.AsignaturaActivity;
@@ -32,6 +34,7 @@ import cl.inndev.miutem.adapters.CarrerasAdapter;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.interfaces.ApiUtem;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,7 +63,7 @@ public class AsignaturasFragment extends Fragment {
                                     long arg3) {
                 Asignatura asignatura = (Asignatura) adapter.getItemAtPosition(position);
                 Intent intent = new Intent(getActivity(), AsignaturaActivity.class);
-                intent.putExtra("ASIGNATURA_ID", asignatura.getId());
+                intent.putExtra("ASIGNATURA_SECCION_ID", asignatura.getSeccion().getId());
                 intent.putExtra("ASIGNATURA_INDEX", position);
                 startActivity(intent);
             }
@@ -97,8 +100,14 @@ public class AsignaturasFragment extends Fragment {
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 

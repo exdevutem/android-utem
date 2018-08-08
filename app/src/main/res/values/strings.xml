@@ -33,6 +33,8 @@
     <string name="title_activity_asignatura">AsignaturaActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <string name="nota_presentacion">Nota de\npresentación</string>
+
     <string name="anio_ingreso">Ingresó el</string>
     <string name="carreras_cursadas">Carreras</string>
     <string name="ultima_matricula">Matriculado al</string>
@@ -81,26 +83,50 @@
         <item>Femenino</item>
     </string-array>
 
+    <string-array name="bienvenidas">
+        <item>Te damos la bienvenida</item>
+        <item>Bienvenido otra vez</item>
+        <item>Bienvenida otra vez</item>
+    </string-array>
+
+    <string name="loremipsum">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+        nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</string>
+
+
     <string-array name="etiquetas_perfil">
         <item>RUT</item>
         <item>Correo UTEM</item>
         <item>Correo personal</item>
         <item>Puntaje PSU</item>
         <item>Sexo</item>
-        <item>Edad</item>
+        <item>Fecha de nacimiento</item>
         <item>Teléfono movil</item>
         <item>Teléfono fijo</item>
-        <item>Nacionalidad</item>
+        <item>País de origen</item>
         <item>Región</item>
         <item>Provincia</item>
         <item>Comuna</item>
         <item>Dirección</item>
+        <item>Previsión de salud</item>
+        <item>Etnia</item>
     </string-array>
-    <string name="title_activity_tabbed">TabbedActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
-    <string name="action_settings">Settings</string>
+
+    <string-array name="meses">
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </string-array>
+
+    <string name="sin_especificar">Sin especificar</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

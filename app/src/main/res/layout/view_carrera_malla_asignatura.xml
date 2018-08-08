@@ -1,115 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_mallaitem">
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@color/white"
+    card_view:cardPreventCornerOverlap="false">
 
-    <LinearLayout
-        android:id="@+id/layout_izquierda"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/layout_derecha"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="spread">
-
-        <TextView
-            android:id="@+id/text_codigo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAllCaps="true"
-            android:textSize="12sp"
-            android:layout_marginBottom="2dp"/>
-
-        <TextView
-            android:id="@+id/text_nombre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"/>
-
-        <TextView
-            android:id="@+id/text_tipo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:layout_marginTop="2dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_derecha"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/layout_izquierda"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/layout_izquierda"
-        app:layout_constraintTop_toTopOf="@+id/layout_izquierda">
+        android:background="@drawable/border_mallaitem">
 
         <LinearLayout
-            android:id="@+id/layout_estado"
-            android:layout_width="wrap_content"
+            android:id="@+id/layout_izquierda"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:gravity="end"
-            android:orientation="horizontal"
-            android:layout_marginBottom="2dp">
-
-            <View
-                android:id="@+id/icono_estado"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/btn_solid" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layout_derecha"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="spread">
 
             <TextView
-                android:id="@+id/text_estado"
-                android:layout_width="match_parent"
+                android:id="@+id/text_codigo"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textAllCaps="true"
                 android:textSize="12sp" />
 
+            <TextView
+                android:id="@+id/text_nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_tipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/text_nota"
+        <LinearLayout
+            android:id="@+id/layout_derecha"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"/>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_izquierda"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/layout_izquierda"
+            app:layout_constraintTop_toTopOf="@+id/layout_izquierda">
 
-        <TextView
-            android:id="@+id/text_oportunidades"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:layout_marginTop="2dp"/>
+            <LinearLayout
+                android:id="@+id/layout_estado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:layout_marginBottom="2dp">
 
-    </LinearLayout>
+                <View
+                    android:id="@+id/icono_estado"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/btn_solid" />
 
-</android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/text_estado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textAllCaps="true"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_nota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/text_oportunidades"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:background="@color/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

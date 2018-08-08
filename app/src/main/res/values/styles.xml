@@ -8,26 +8,32 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.TranslucentNavigation" parent="AppTheme">
-        <item name="android:windowTranslucentNavigation">true</item>
+    <style name="UtemTheme" parent="AppTheme" >
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="UtemTheme.AppBarLayout" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@android:color/white</item>
     </style>
 
     <!-- ToolBar -->
-    <style name="ToolBarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="UtemTheme.Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="colorControlNormal">#fff</item>
+    <style name="UtemTheme.TranslucentNavigation" parent="UtemTheme">
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="UtemTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="UtemTheme.Toolbar.ExpandedText" parent="UtemTheme.Toolbar">
+        <item name="android:textSize">22sp</item>
+    </style>
 
 </resources>

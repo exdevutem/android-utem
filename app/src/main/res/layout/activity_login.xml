@@ -23,12 +23,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:visibility="gone"
             android:id="@+id/image_perfil"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_marginBottom="8dp" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/text_bienvenida"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,6 +39,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/text_nombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,6 +80,15 @@
             android:hint="••••••••"
             android:inputType="textPassword" />
 
+        <CheckBox
+            android:visibility="gone"
+            android:id="@+id/check_recordar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Recordar contraseña" />
+
+
         <Button
             android:id="@+id/button_entrar"
             style="@style/Widget.AppCompat.Button"
@@ -99,6 +111,7 @@
     </LinearLayout>
 
     <ProgressBar
+        android:visibility="gone"
         android:id="@+id/progress_iniciando"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"
@@ -112,6 +125,7 @@
         app:layout_constraintTop_toBottomOf="@id/layout_formulario" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/text_cambiar"
         android:layout_width="match_parent"
         android:layout_height="19dp"

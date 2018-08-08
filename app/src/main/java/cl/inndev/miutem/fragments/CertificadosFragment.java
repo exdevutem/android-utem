@@ -25,7 +25,6 @@ public class CertificadosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
-        mEditarDialog = new EditarDialog(getContext());
         View view = inflater.inflate(R.layout.fragment_certificados, container, false);
         Button buttonDescargar = view.findViewById(R.id.button_descargar);
         Button buttonNoDescargar = view.findViewById(R.id.button_no_descargar);

@@ -5,7 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS"
+        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -40,13 +46,14 @@
         <activity
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/UtemTheme.NoActionBar" />
         <activity
             android:name=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/UtemTheme.NoActionBar" />
         <activity
             android:name=".activities.PerfilActivity"
-            android:label="Perfil" />
+            android:label="Perfil"
+            android:theme="@style/UtemTheme" />
         <activity android:name=".activities.BienvenidaActivity" />
         <activity
             android:name=".activities.AsignaturaActivity"
@@ -59,10 +66,22 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DonacionActivity" />
-        <activity
-            android:name=".activities.CarreraActivity"
-            android:label="@string/title_activity_tabbed"
-            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".activities.CarreraActivity" />
+        <activity android:name=".activities.NoticiaActivity" />
+        <activity android:name=".activities.HorarioActivity"></activity>
+
+        <service
+            android:name=".services.UtemAuthenticatorService"
+            android:enabled="true"
+            android:exported="true" >
+
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+
+        </service>
     </application>
 
 </manifest>

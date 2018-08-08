@@ -18,6 +18,7 @@ import java.util.List;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.classes.Horario;
 
 public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     private final int[] COLORS = new int[]{
@@ -35,7 +36,7 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     private final int mColumnHeaderHeight;
     private final int mRowHeaderWidth;
 
-    public HorarioAdapter(Context context, List<String[]> rh, List<String> ch, Estudiante.Horario c) {
+    public HorarioAdapter(Context context, List<String[]> rh, List<String> ch, Horario c) {
         mLayoutInflater = LayoutInflater.from(context);
         mTableData = c.getDatos();
         mRowHeaderData = rh;
@@ -89,14 +90,7 @@ public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
             vh.container.setBackgroundColor(color);
             vh.textNombreAsignatura.setText(itemData.getNombre());
             vh.textSalaAsignatura.setText(itemData.getSala());
-            vh.textSalaAsignatura.post(new Runnable() {
-                @Override
-                public void run() {
-                    int lineCount =  vh.textSalaAsignatura.getLineCount();
-                    vh.textTipoAsignatura.setText("" + lineCount);
-                }
-            });
-            // vh.textTipoAsignatura.setText(itemData.getTipo());
+            vh.textTipoAsignatura.setText(itemData.getTipo());
         } else {
             vh.container.setBackgroundColor(Color.WHITE);
             vh.textNombreAsignatura.setText(null);

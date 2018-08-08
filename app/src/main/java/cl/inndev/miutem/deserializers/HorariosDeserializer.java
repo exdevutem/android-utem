@@ -1,11 +1,16 @@
 package cl.inndev.miutem.deserializers;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -14,53 +19,83 @@ import java.util.List;
 import java.util.Map;
 
 import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.classes.Docente;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.classes.Horario;
 
-public class HorariosDeserializer implements JsonDeserializer<Estudiante.Horario> {
+public class HorariosDeserializer implements JsonDeserializer<Horario> {
 
-    @Override
-    public Estudiante.Horario deserialize(JsonElement json,
-                                          Type type,
-                                          JsonDeserializationContext context) throws JsonParseException {
-        Map<String, Asignatura> cursadas = new HashMap<>();
-        JsonArray carreras = (JsonArray) json;
-        // TODO: Agregar la posibilidad de multiples horarios
-        JsonObject carrera = (JsonObject) carreras.get(0);
-        JsonArray asignaturas = carrera.getAsJsonArray("asignaturas");
-        for (int j = 0; j < asignaturas.size(); j++) {
-            JsonObject asignatura = (JsonObject) asignaturas.get(j);
-            Asignatura nueva = new Asignatura(asignatura.get("nombre").getAsString(),
-                    asignatura.get("tipo").getAsString(),
-                    asignatura.get("profesor").getAsString(),
-                    asignatura.get("seccion").getAsInt());
-            cursadas.put(asignatura.get("codigo").getAsString() + "/" + nueva.getSeccion(),
-                    nueva);
+    private class Container {
+        @SerializedName("carrera")
+        @Expose
+        private Carrera carrera;
+        @SerializedName("asignaturas")
+        @Expose
+        private List<Asignatura> asignaturas;
+
+        public Carrera getCarrera() {
+            return carrera;
         }
 
+        public void setCarrera(Carrera carrera) {
+            this.carrera = carrera;
+        }
 
-        JsonObject semana = carrera.getAsJsonObject("horario");
+        public List<Asignatura> getAsignaturas() {
+            return asignaturas;
+        }
+
+        public void setAsignaturas(List<Asignatura> asignaturas) {
+            this.asignaturas = asignaturas;
+        }
+    }
+
+    @Override
+    public Horario deserialize(JsonElement json,
+                                          Type type,
+                                          JsonDeserializationContext context) throws JsonParseException {
+
+        JsonArray jsonArray = json.getAsJsonArray();
+        //TODO: Agregar posibilidad de multiples horarios
+        JsonObject elemento = (JsonObject) jsonArray.get(0);
+        Container container = new Gson().fromJson(elemento.toString(), Container.class);
+
+        JsonObject semana = elemento.getAsJsonObject("horario");
+
         List<List<Asignatura>> horario = new ArrayList<>();
+
         for (Map.Entry<String, JsonElement> dia : semana.entrySet()) {
-            JsonArray dias = (JsonArray) dia.getValue();
+            // Dias
+            JsonArray diaObject = (JsonArray) dia.getValue();
             List<Asignatura> diaHorario = new ArrayList<>();
-            for (int j = 0; j < dias.size(); j++) {
-                JsonObject periodo = (JsonObject) dias.get(j);
+            for (int j = 0; j < diaObject.size(); j++) {
+                // Bloques
+                JsonObject periodo = (JsonObject) diaObject.get(j);
                 JsonArray bloques = periodo.getAsJsonArray("bloques");
                 if (!bloques.get(0).isJsonNull()) {
                     JsonObject bloque = (JsonObject) bloques.get(0);
-                    Asignatura asignatura = cursadas.get(
-                            bloque.get("codigoAsignatura").getAsString() + "/" +
-                                    bloque.get("seccionAsignatura"));
-                    asignatura.setCodigo(bloque.get("codigoAsignatura").getAsString());
-                    asignatura.setSala(bloque.get("sala").getAsString());
-                    diaHorario.add(asignatura);
+                    Boolean encontrado = false;
+                    for (Asignatura asignatura : container.getAsignaturas()) {
+                        if (asignatura.getCodigo().equalsIgnoreCase(bloque.get("codigoAsignatura").getAsString())) {
+                            if (asignatura.getSeccion().getNumero() == bloque.get("seccionAsignatura").getAsInt()) {
+                                encontrado = true;
+                                Asignatura nuevaAsignatura = new Asignatura(asignatura);
+                                nuevaAsignatura.setCodigo(bloque.get("codigoAsignatura").getAsString());
+                                nuevaAsignatura.setSala(bloque.get("sala").getAsString());
+                                diaHorario.add(nuevaAsignatura);
+                            }
+                        }
+                    }
+                    if (!encontrado) {
+                        diaHorario.add(null);
+                    }
                 } else {
                     diaHorario.add(null);
                 }
             }
             horario.add(diaHorario);
         }
-
-        return new Estudiante.Horario(horario);
+        return new Horario(container.getCarrera(), container.getAsignaturas(), horario);
     }
 }

@@ -32,6 +32,7 @@ import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.fragments.AsignaturaFragment;
 import cl.inndev.miutem.fragments.BitacoraFragment;
+import cl.inndev.miutem.fragments.MallaFragment;
 import cl.inndev.miutem.fragments.NotasFragment;
 
 public class AsignaturaActivity extends AppCompatActivity {
@@ -40,7 +41,7 @@ public class AsignaturaActivity extends AppCompatActivity {
     private long mContadorVida = 0;
     private ViewPager mViewPager;
     private Asignatura mAsignatura;
-    public Integer mId;
+    public Integer mSeccionId;
 
 
     @Override
@@ -48,9 +49,9 @@ public class AsignaturaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignatura);
 
-        mId = getIntent().getIntExtra("ASIGNATURA_ID", -1);
+        mSeccionId = getIntent().getIntExtra("ASIGNATURA_SECCION_ID", -1);
 
-        if (mId == -1 || getIntent().getIntExtra("ASIGNATURA_INDEX", -1) == -1) {
+        if (mSeccionId == -1 || getIntent().getIntExtra("ASIGNATURA_INDEX", -1) == -1) {
             finish();
         }
 
@@ -106,13 +107,21 @@ public class AsignaturaActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("seccionId", mSeccionId);
             switch (position) {
                 case 0:
-                    return new NotasFragment();
+                    AsignaturaFragment f0 = new AsignaturaFragment();
+                    f0.setArguments(bundle);
+                    return f0;
                 case 1:
-                    return new BitacoraFragment();
+                    NotasFragment f1 = new NotasFragment();
+                    f1.setArguments(bundle);
+                    return f1;
                 case 2:
-                    return new AsignaturaFragment();
+                    BitacoraFragment f2 = new BitacoraFragment();
+                    f2.setArguments(bundle);
+                    return f2;
             }
 
             return null;

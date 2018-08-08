@@ -1,15 +1,24 @@
 package cl.inndev.miutem.classes;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Docente {
     @SerializedName("_id")
-    Integer id;
-    Long rut;
-    String nombre;
+    @Expose
+    private Integer id;
+    @SerializedName("nombre")
+    @Expose
+    private Estudiante.Nombre nombre;
+    @SerializedName("rut")
+    @Expose
+    private Long rut;
+    @SerializedName("correo")
+    @Expose
+    private String correo;
 
     public Docente(String nombre) {
-        this.nombre = nombre;
+        this.nombre = new Estudiante.Nombre(nombre);
     }
 
     public Integer getId() {
@@ -20,6 +29,22 @@ public class Docente {
         this.id = id;
     }
 
+    public Estudiante.Nombre getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(Estudiante.Nombre nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
     public Long getRut() {
         return rut;
     }
@@ -28,11 +53,4 @@ public class Docente {
         this.rut = rut;
     }
 
-    public String getNombre() {
-        return this.nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 }

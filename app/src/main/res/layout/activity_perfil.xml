@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/UtemTheme.AppBarLayout">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -24,7 +24,6 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -82,7 +81,8 @@
                             android:textColor="#212121"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@+id/layout_foto_perfil" />
+                            app:layout_constraintTop_toBottomOf="@+id/layout_foto_perfil"
+                            android:layout_marginTop="8dp"/>
 
                         <TextView
                             android:id="@+id/text_tipo"
@@ -233,63 +233,25 @@
 
                 </android.support.v7.widget.CardView>
 
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/white">
+
+                    <cl.inndev.miutem.views.NonScrollListView
+                        android:id="@+id/list_carreras"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </android.support.v7.widget.CardView>
+
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        app:shimmer_duration="2000"
-        app:shimmer_base_alpha="0.5"
-        app:shimmer_highlight_alpha="1"
-        app:shimmer_intensity="0.5">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp">
-
-                <include layout="@layout/placeholder_perfil_resumen" />
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-                    <include layout="@layout/placeholder_perfil_campos" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </LinearLayout>

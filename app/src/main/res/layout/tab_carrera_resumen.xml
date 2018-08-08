@@ -1,14 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.CarreraActivity">
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|center"
-        android:text="Resumen"/>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
+
+                    <TextView
+                        android:id="@+id/text_codigo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Codigo: 21041"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text_plan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Plan: 5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text_estado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Regular"
+                        app:layout_constraintTop_toBottomOf="@+id/text_nombre" />
+
+                    <TextView
+                        android:id="@+id/text_nombre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Ingeniería Civil En Computación Menc. Informática"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_codigo" />
+
+                    <TextView
+                        android:id="@+id/text_ingreso"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Via P.A.A. o P.S.U."
+                        android:visibility="visible"
+                        app:layout_constraintTop_toBottomOf="@+id/text_estado" />
+
+                    <TextView
+                        android:id="@+id/text_inicio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="2016 / 1"
+                        android:visibility="visible"
+                        app:layout_constraintTop_toBottomOf="@+id/text_ingreso" />
+
+                    <TextView
+                        android:id="@+id/text_termino"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2016 / 1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/text_inicio" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="16dp"
+                        android:paddingTop="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:text="Rendimiento"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"/>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ProgressBar
+                            android:id="@+id/progress_rendimiento"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|center"/>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/chart_rendimiento"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="16dp"
+                        android:paddingTop="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:text="Asignaturas por semestre"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"/>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ProgressBar
+                            android:id="@+id/progress_asignaturas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|center"/>
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/chart_asignaturas"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -1,17 +1,81 @@
 package cl.inndev.miutem.classes;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Carrera {
+    public class AsignaturasMalla {
+
+        @SerializedName("totales")
+        @Expose
+        private Integer totales;
+        @SerializedName("aprobadas")
+        @Expose
+        private Integer aprobadas;
+        @SerializedName("reprobadas")
+        @Expose
+        private Integer reprobadas;
+        @SerializedName("aprobadasHastaNivel")
+        @Expose
+        private Integer aprobadasHastaNivel;
+
+        public Integer getTotales() {
+            return totales;
+        }
+
+        public void setTotales(Integer totales) {
+            this.totales = totales;
+        }
+
+        public Integer getAprobadas() {
+            return aprobadas;
+        }
+
+        public void setAprobadas(Integer aprobadas) {
+            this.aprobadas = aprobadas;
+        }
+
+        public Integer getReprobadas() {
+            return reprobadas;
+        }
+
+        public void setReprobadas(Integer reprobadas) {
+            this.reprobadas = reprobadas;
+        }
+
+        public Integer getAprobadasHastaNivel() {
+            return aprobadasHastaNivel;
+        }
+
+        public void setAprobadasHastaNivel(Integer aprobadasHastaNivel) {
+            this.aprobadasHastaNivel = aprobadasHastaNivel;
+        }
+
+    }
+
     public static class Nivel {
         private List<Asignatura> mAsignaturas;
 
         private String mTitulo;
 
+        @SerializedName("nivel")
+        @Expose
+        private Integer numero;
+
         public Nivel() {
             mAsignaturas = new ArrayList<>();
             mTitulo = null;
+        }
+
+        public Integer getNumero() {
+            return numero;
+        }
+
+        public void setNumero(Integer numero) {
+            this.numero = numero;
         }
 
         public Nivel(List<Asignatura> asignaturas, String titulo) {
@@ -37,23 +101,71 @@ public class Carrera {
     }
 
     public class Semestre {
-        private List<Asignatura> mAsignaturas;
-        private Integer mId;
+        @SerializedName("nombre")
+        @Expose
+        private String nombre;
+        @SerializedName("asignaturasAprobadas")
+        @Expose
+        private Integer asignaturasAprobadas;
+        @SerializedName("asignaturasReprobadas")
+        @Expose
+        private Integer asignaturasReprobadas;
+        @SerializedName("asignaturasConvalidadas")
+        @Expose
+        private Integer asignaturasConvalidadas;
+        @SerializedName("promedioFinal")
+        @Expose
+        private Double promedioFinal;
+        @SerializedName("asignaturas")
+        @Expose
+        private List<Asignatura> asignaturas = null;
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
+        }
+
+        public Integer getAsignaturasAprobadas() {
+            return asignaturasAprobadas;
+        }
+
+        public void setAsignaturasAprobadas(Integer asignaturasAprobadas) {
+            this.asignaturasAprobadas = asignaturasAprobadas;
+        }
+
+        public Integer getAsignaturasReprobadas() {
+            return asignaturasReprobadas;
+        }
+
+        public void setAsignaturasReprobadas(Integer asignaturasReprobadas) {
+            this.asignaturasReprobadas = asignaturasReprobadas;
+        }
+
+        public Integer getAsignaturasConvalidadas() {
+            return asignaturasConvalidadas;
+        }
+
+        public void setAsignaturasConvalidadas(Integer asignaturasConvalidadas) {
+            this.asignaturasConvalidadas = asignaturasConvalidadas;
+        }
+
+        public Double getPromedioFinal() {
+            return promedioFinal;
+        }
+
+        public void setPromedioFinal(Double promedioFinal) {
+            this.promedioFinal = promedioFinal;
+        }
 
         public List<Asignatura> getAsignaturas() {
-            return mAsignaturas;
+            return asignaturas;
         }
 
-        public void setAsignaturas(List<Asignatura> mAsignaturas) {
-            this.mAsignaturas = mAsignaturas;
-        }
-
-        public Integer getSemestreId() {
-            return mId;
-        }
-
-        public void setSemestreId(Integer mId) {
-            this.mId = mId;
+        public void setAsignaturas(List<Asignatura> asignaturas) {
+            this.asignaturas = asignaturas;
         }
     }
 
@@ -70,6 +182,39 @@ public class Carrera {
     private Integer mAnioTermino;
     private Integer mSemestreTermino;
     private Integer mSemestreTerminoId;
+    @SerializedName("asignaturas")
+    @Expose
+    private AsignaturasMalla asignaturas;
+    @SerializedName("nivelActual")
+    @Expose
+    private Integer nivelActual;
+    @SerializedName("malla")
+    @Expose
+    private List<Nivel> malla = null;
+
+    public AsignaturasMalla getAsignaturas() {
+        return asignaturas;
+    }
+
+    public void setAsignaturas(AsignaturasMalla asignaturas) {
+        this.asignaturas = asignaturas;
+    }
+
+    public Integer getNivelActual() {
+        return nivelActual;
+    }
+
+    public void setNivelActual(Integer nivelActual) {
+        this.nivelActual = nivelActual;
+    }
+
+    public List<Nivel> getMalla() {
+        return malla;
+    }
+
+    public void setMalla(List<Nivel> malla) {
+        this.malla = malla;
+    }
 
     public Carrera() { }
 

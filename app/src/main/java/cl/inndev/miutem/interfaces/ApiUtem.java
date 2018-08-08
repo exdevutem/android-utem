@@ -5,13 +5,15 @@ import java.util.List;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
 import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.classes.Horario;
+import io.reactivex.Single;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface ApiUtem {
-    public String BASE_URL = "https://api-utem.herokuapp.com/";
+    String BASE_URL = "https://api-utem.herokuapp.com/";
 
     @FormUrlEncoded
     @POST("token")
@@ -29,8 +31,8 @@ public interface ApiUtem {
     );
 
     @GET("estudiantes/{rut}")
-    Call<Estudiante> getPerfil(
-            @Path("rut") Long rut,
+    Single<Estudiante> getPerfil(
+            @Path("rut") String rut,
             @Header("Authorization") String auth
     );
 
@@ -45,13 +47,21 @@ public interface ApiUtem {
             @Field("sexo") Integer sexo,
             @Field("comuna") Integer comuna,
             @Field("nacionalidad") Integer nacionalidad,
-            @Field("direccion") String direccion
+            @Field("direccion") String direccion,
+            @Field("nacimiento") String nacimiento
     );
 
     @GET("/estudiantes/{rut}/carreras")
     Call<List<Carrera>> getCarreras(
             @Path("rut") Long rut,
             @Header("Authorization") String auth
+    );
+
+    @GET("/estudiantes/{rut}/carreras/{idCarrera}")
+    Call<Carrera> getCarrera(
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("idCarrera") Integer idCarrera
     );
 
     @GET("/estudiantes/{rut}/carreras/{idCarrera}/malla")
@@ -61,8 +71,15 @@ public interface ApiUtem {
             @Path("idCarrera") Integer idCarrera
     );
 
+    @GET("/estudiantes/{rut}/carreras/{idCarrera}/boletin")
+    Call<List<Carrera.Semestre>> getBoletin(
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("idCarrera") Integer idCarrera
+    );
+
     @GET("/estudiantes/{rut}/horarios")
-    Call<Estudiante.Horario> getHorarios(
+    Call<Horario> getHorarios(
             @Path("rut") Long rut,
             @Header("Authorization") String auth
     );
@@ -71,5 +88,26 @@ public interface ApiUtem {
     Call<List<Asignatura>> getAsignaturas(
             @Path("rut") Long rut,
             @Header("Authorization") String auth
+    );
+
+    @GET("/estudiantes/{rut}/asignaturas/{seccionId}")
+    Call<Asignatura> getAsignatura(
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("seccionId") Integer seccionId
+    );
+
+    @GET("/estudiantes/{rut}/asignaturas/{seccionId}/bitacora")
+    Call<Asignatura.Asistencia> getBitacora(
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("seccionId") Integer seccionId
+    );
+
+    @GET("/estudiantes/{rut}/asignaturas/{seccionId}/notas")
+    Call<Asignatura> getNotas(
+            @Path("rut") Long rut,
+            @Header("Authorization") String auth,
+            @Path("seccionId") Integer seccionId
     );
 }

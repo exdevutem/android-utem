@@ -1,35 +1,52 @@
 package cl.inndev.miutem.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.pixplicity.easyprefs.library.Prefs;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+
 import cl.inndev.miutem.adapters.CamposAdapter;
+import cl.inndev.miutem.adapters.CarrerasAdapter;
+import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.deserializers.CarrerasDeserializer;
+import cl.inndev.miutem.dialogs.EditarDialog;
 import cl.inndev.miutem.dialogs.ErrorDialog;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.views.NonScrollListView;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +58,6 @@ import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 public class PerfilActivity extends AppCompatActivity {
 
     private long mContadorVida = 0;
-    private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeContainer;
     private TextView mTextNombre;
     private TextView mTextTipo;
@@ -51,10 +67,10 @@ public class PerfilActivity extends AppCompatActivity {
     private CircleImageView mImagePerfil;
     private FloatingActionButton mFabCambiarFoto;
     private NonScrollListView mListCampos;
-    private ErrorDialog mDialogError;
+    private NonScrollListView mListCarreras;
+    private AdapterView.OnItemClickListener mListener;
 
     private FirebaseAnalytics mFirebaseAnalytics;
-    private ShimmerFrameLayout mShimmerViewContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +78,6 @@ public class PerfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_perfil);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
         mSwipeContainer = findViewById(R.id.swipe_container);
         mTextNombre = findViewById(R.id.text_nombre);
         mTextTipo = findViewById(R.id.text_tipo);
@@ -71,20 +86,34 @@ public class PerfilActivity extends AppCompatActivity {
         mTextCarreras = findViewById(R.id.text_carreras);
         mImagePerfil = findViewById(R.id.image_perfil);
         mFabCambiarFoto = findViewById(R.id.fab_cambiar_foto);
-        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         mListCampos = findViewById(R.id.list_campos);
-        mToolbar = findViewById(R.id.toolbar);
-        mDialogError = new ErrorDialog(this);
-        mDialogError.show();
+        mListCarreras = findViewById(R.id.list_carreras);
+        mListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position,
+                                    long arg3) {
+                Carrera carrera = (Carrera) adapter.getItemAtPosition(position);
+                Intent intent = new Intent(PerfilActivity.this, CarreraActivity.class);
+                intent.putExtra("CARRERA_ID", carrera.getmId());
+                intent.putExtra("CARRERA_INDEX", position);
+                startActivity(intent);
+            }
+        };
 
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        setCampos();
+        setCarreras();
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                obtenerPerfil();
+                //getPerfil();
+                getCarreras();
             }
         });
     }
@@ -95,8 +124,8 @@ public class PerfilActivity extends AppCompatActivity {
         if (System.currentTimeMillis() - mContadorVida >= 60 * 1000 && mContadorVida != 0)
             finish();
         else {
-            mShimmerViewContainer.startShimmer();
-            obtenerPerfil();
+            //getPerfil();
+            getCarreras();
         }
         mContadorVida = 0;
     }
@@ -105,70 +134,86 @@ public class PerfilActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mContadorVida = System.currentTimeMillis();
-        mShimmerViewContainer.stopShimmer();
     }
 
-    // Cuando se presiona la flecha del toolbar
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
-    private void mostrarDatos() {
-        String[] claves = getResources().getStringArray(R.array.etiquetas_perfil);
-        Map<String, String> lista = new LinkedHashMap();
+    private void setCampos() {
+        LinkedHashMap<Integer, String> lista = new LinkedHashMap<>();
         try {
             Estudiante usuario = Reservoir.get("usuario", Estudiante.class);
+            Picasso.get().load(usuario.getFotoUrl()).into(mImagePerfil);
             mTextNombre.setText(usuario.getNombre().getCompleto());
-            mTextTipo.setText(usuario.getTipo());
+            mTextTipo.setText(usuario.getTipos().get(0));
             mTextMatricula.setText(usuario.getStringUltimaMatricula());
             mTextCarreras.setText(usuario.getStringCarrerasCursadas());
             mTextIngreso.setText(usuario.getStringAnioIngreso());
 
             if (usuario.getRut() != null)
-                lista.put(claves[0], "" + usuario.getRut());
+                lista.put(0, "" + usuario.getRut());
             if (usuario.getCorreoUtem() != null)
-                lista.put(claves[1], usuario.getCorreoUtem());
+                lista.put(1, usuario.getCorreoUtem());
             if (usuario.getPuntajePsu() != null)
-                lista.put(claves[3], usuario.getStringPuntajePsu());
+                lista.put(3, usuario.getStringPuntajePsu());
 
-            lista.put(claves[2], usuario.getCorreoPersonal());
-            lista.put(claves[4], usuario.getSexo().getDescripcion());
-            // lista.put(claves[5], usuario.getStringEdad());
-            lista.put(claves[6], usuario.getStringTelefonoMovil());
-            lista.put(claves[7], usuario.getStringTelefonoFijo());
-            lista.put(claves[8], null);
-            // lista.put(claves[9], null);
-            // lista.put(claves[10], null);
-            // lista.put(claves[11], null);
-            //lista.put(claves[12], usuario.getDireccion());
+            lista.put(2, usuario.getCorreoPersonal());
+            lista.put(4, usuario.getStringSexoId());
+            lista.put(5, usuario.getStringNacimiento());
+            lista.put(6, usuario.getStringTelefonoMovil());
+            lista.put(7, usuario.getStringTelefonoFijo());
+            lista.put(8, usuario.getStringNacionalidad());
+            // lista.put(9, null);
+            // lista.put(10, null);
+            // lista.put(11, null);
+            lista.put(12, usuario.getStringDireccion());
 
-            mListCampos.setAdapter(new CamposAdapter(this, lista));
+            CamposAdapter adapter = new CamposAdapter(this, lista);
+            adapter.setOnEditListener(new CamposAdapter.CamposListener() {
+                @Override
+                public void onEditListener(Estudiante nuevo) {
+                    actualizarPerfil(nuevo);
+                }
+            });
+
+            mListCampos.setAdapter(adapter);
         } catch (IOException e) {
-            //failure
+            e.printStackTrace();
         }
-
-        /*
-        mDialogSexo.setSingleChoiceItems(R.array.sexos,
-                new Estudiante()
-                        .convertirPreferencias(PerfilActivity.this)
-                        .getSexo().getSexoCodigo(), null);
-
-        new DownloadImageTask(mImagePerfil).execute(valores.getFotoUrl());
-        */
 
         mSwipeContainer.setVisibility(View.VISIBLE);
 
     }
 
-    private void obtenerPerfil() {
+    private void setCarreras() {
+        Type resultType = new TypeToken<List<Carrera>>() {}.getType();
+        try {
+            List<Carrera> carreras = Reservoir.get("carreras", resultType);
+            mListCarreras.setAdapter(new CarrerasAdapter(this, carreras));
+            mListCarreras.setOnItemClickListener(mListener);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /*
+    private void getPerfil() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -186,22 +231,20 @@ public class PerfilActivity extends AppCompatActivity {
                         try {
                             Reservoir.put("usuario", response.body());
                         } catch (IOException e) {
-                            //failure;
+                            e.printStackTrace();
                         }
-                        mostrarDatos();
+                        setCampos();
                         break;
                     default:
                         Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
                 mSwipeContainer.setRefreshing(false);
-                mShimmerViewContainer.stopShimmer();
             }
 
             @Override
             public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
                 mSwipeContainer.setRefreshing(false);
-                mShimmerViewContainer.stopShimmer();
                 if (t instanceof TimeoutException) {
                     Toast.makeText(PerfilActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
                 } else {
@@ -210,8 +253,9 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
     }
+    */
 
-    private void actualizarPerfil(Estudiante usuario) {
+    public void actualizarPerfil(Estudiante usuario) {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
@@ -226,12 +270,14 @@ public class PerfilActivity extends AppCompatActivity {
         Call<Estudiante> call = restClient.actualizarPerfil(
                 Prefs.getLong("rut", 0),
                 Prefs.getString("token", null),
-                usuario.getCorreoPersonal(), usuario.getTelefonoMovil(),
+                usuario.getCorreoPersonal(),
+                usuario.getTelefonoMovil(),
                 usuario.getTelefonoFijo(),
                 usuario.getSexo() != null ? usuario.getSexo().getId() : null,
                 null,
-                null,
-                null);
+                usuario.getNacionalidad() != null ? usuario.getNacionalidad().getId() : null,
+                usuario.getStringDireccion(),
+                usuario.getNacimiento());
 
         call.enqueue(new Callback<Estudiante>() {
             @Override
@@ -239,7 +285,7 @@ public class PerfilActivity extends AppCompatActivity {
                 switch (response.code()) {
                     case 200:
                         Toast.makeText(PerfilActivity.this, "Se actualizaron los datos correctamente", Toast.LENGTH_SHORT).show();
-                        obtenerPerfil();
+                        //getPerfil();
                         break;
                     default:
                         Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
@@ -248,7 +294,59 @@ public class PerfilActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
-                Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+                //getPerfil();
+                Toast.makeText(PerfilActivity.this, "Parece que hubo un error al actualizar tus datos" + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getCarreras() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(List.class, new CarrerasDeserializer())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem client = retrofit.create(ApiUtem.class);
+
+        Call<List<Carrera>> call = client.getCarreras(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null));
+
+        call.enqueue(new Callback<List<Carrera>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Carrera>> call, @NonNull Response<List<Carrera>> response) {
+                switch (response.code()) {
+                    case 200:
+                        try {
+                            Reservoir.put("carreras", response.body());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        setCarreras();
+                        break;
+                    default:
+                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Carrera>> call, @NonNull Throwable t) {
+                if (t instanceof TimeoutException) {
+                    Toast.makeText(PerfilActivity.this,
+                            "¡Ups! Parece que la conexión está algo lenta. " +
+                                    "Por favor inténtalo nuevamente",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PerfilActivity.this,
+                            "Error: " + t.toString(),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -508,28 +606,5 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        CircleImageView bmImage;
-
-        public DownloadImageTask(CircleImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    } */
+     */
 }

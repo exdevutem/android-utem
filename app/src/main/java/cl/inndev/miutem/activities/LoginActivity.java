@@ -1,11 +1,12 @@
 package cl.inndev.miutem.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
+import android.accounts.AccountManager;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,120 +24,142 @@ import android.widget.Toast;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
+import com.facebook.login.Login;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.nytimes.android.external.store3.base.impl.BarCode;
+import com.nytimes.android.external.store3.base.impl.MemoryPolicy;
+import com.nytimes.android.external.store3.base.impl.Store;
+import com.nytimes.android.external.store3.base.impl.StoreBuilder;
 import com.pixplicity.easyprefs.library.Prefs;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import cl.inndev.miutem.classes.AccountGeneral;
 import cl.inndev.miutem.classes.Asignatura;
 import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.classes.Horario;
+import cl.inndev.miutem.classes.Noticia;
 import cl.inndev.miutem.deserializers.CarrerasDeserializer;
+import cl.inndev.miutem.deserializers.HorariosDeserializer;
+import cl.inndev.miutem.interfaces.ApiNoticiasUtem;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.classes.Estudiante;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.Single;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.accounts.AccountManager.KEY_ACCOUNT_TYPE;
 import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AccountAuthenticatorActivity {
+
+    public static final String ARG_ACCOUNT_TYPE = "accountType";
+    public static final String ARG_AUTH_TYPE = "authTokenType";
+    public static final String ARG_IS_ADDING_NEW_ACCOUNT = "isAddingNewAccount";
+    public static final String PARAM_USER_PASS = "password";
+
+    private AccountManager mAccountManager;
+    private String mAuthTokenType;
+
     private FirebaseAnalytics mFirebaseAnalytics;
 
-    private TextView textCorreo;
-    private TextView textBienvenida;
-    private TextView textNombre;
-    private TextView textCambiar;
-    private TextView textRecuperar;
-    private EditText editCorreo;
-    private EditText editContrasenia;
-    private ProgressBar progressIniciando;
-    private Button buttonEntrar;
-    private CircleImageView imagePerfil;
-    private ConstraintLayout loginLayout;
-
-    private int reintento = 0;
-
-    private List<Integer> mProcesos;
+    private TextView mTextCorreo;
+    private TextView mTextBienvenida;
+    private TextView mTextNombre;
+    private TextView mTextCambiar;
+    private TextView mTextRecuperar;
+    private EditText mEditCorreo;
+    private EditText mEditContrasenia;
+    private CheckBox mCheckRecordar;
+    private ProgressBar mProgressIniciando;
+    private Button mButtonEntrar;
+    private CircleImageView mImagePerfil;
+    private ConstraintLayout mLayoutLogin;
+    private String mAccountType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        new Prefs.Builder()
-                .setContext(this)
-                .setMode(ContextWrapper.MODE_PRIVATE)
-                .setPrefsName(getPackageName())
-                .setUseDefaultSharedPreference(true)
-                .build();
+        mAccountManager = AccountManager.get(this);
+        mAccountType = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
+        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
 
-        try {
-            Reservoir.init(this, 4096);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mAuthTokenType == null) {
+            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_TEST;
         }
 
-        mProcesos = new ArrayList<>();
-
-        mProcesos.add(-1);
-        mProcesos.add(-1);
-        mProcesos.add(-1);
-        mProcesos.add(0);
+        if (mAccountType == null) {
+            mAccountType = AccountGeneral.ACCOUNT_TYPE;
+        }
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        loginLayout = findViewById(R.id.layout_activity_login);
-        textCorreo = findViewById(R.id.text_correo);
-        textBienvenida = findViewById(R.id.text_bienvenida);
-        textNombre = findViewById(R.id.text_nombre);
-        textCambiar = findViewById(R.id.text_cambiar);
-        textRecuperar = findViewById(R.id.text_recuperar);
-        editCorreo = findViewById(R.id.edit_correo);
-        editContrasenia = findViewById(R.id.edit_contrasenia);
-        progressIniciando = findViewById(R.id.progress_iniciando);
-        buttonEntrar = findViewById(R.id.button_entrar);
-        imagePerfil = findViewById(R.id.image_perfil);
+        mLayoutLogin = findViewById(R.id.layout_activity_login);
+        mTextCorreo = findViewById(R.id.text_correo);
+        mTextBienvenida = findViewById(R.id.text_bienvenida);
+        mTextNombre = findViewById(R.id.text_nombre);
+        mTextCambiar = findViewById(R.id.text_cambiar);
+        mTextRecuperar = findViewById(R.id.text_recuperar);
+        mEditCorreo = findViewById(R.id.edit_correo);
+        mEditContrasenia = findViewById(R.id.edit_contrasenia);
+        mCheckRecordar = findViewById(R.id.check_recordar);
+        mProgressIniciando = findViewById(R.id.progress_iniciando);
+        mButtonEntrar = findViewById(R.id.button_entrar);
+        mImagePerfil = findViewById(R.id.image_perfil);
 
-        configurarFormulario(true);
-        buttonEntrar.setEnabled(false);
+        mButtonEntrar.setEnabled(false);
+        //configurarFormulario(true);
 
-        buttonEntrar.setOnClickListener(new View.OnClickListener() {
+        mButtonEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 if (esPrimeraVez()) {
-                    validarFormulario(editCorreo.getText().toString(),
-                            editContrasenia.getText().toString());
+                    validarFormulario(mEditCorreo.getText().toString(),
+                            mEditContrasenia.getText().toString());
                 } else {
                     validarFormulario(
                             Prefs.getString("correo", null),
-                            editContrasenia.getText().toString());
+                            mEditContrasenia.getText().toString());
                 }
+                */
+                validarFormulario(mEditCorreo.getText().toString(),
+                        mEditContrasenia.getText().toString());
             }
+
         });
 
-        textCambiar.setOnClickListener(new View.OnClickListener() {
+        /*
+        mTextCambiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 eliminarUsuario();
                 configurarFormulario(true);
-                buttonEntrar.setEnabled(false);
-
+                mCheckRecordar.setChecked(false);
+                mButtonEntrar.setEnabled(false);
+                mEditContrasenia.setText("");
             }
         });
+        */
 
-        textRecuperar.setOnClickListener(new View.OnClickListener() {
+        mTextRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = "https://pasaporte.utem.cl/reset";
@@ -145,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        editCorreo.addTextChangedListener(new TextWatcher() {
+        mEditCorreo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -154,15 +178,15 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editContrasenia.getText().toString().length() > 0 && editCorreo.getText().toString().length() > 0) {
-                    buttonEntrar.setEnabled(true);
+                if (mEditContrasenia.getText().toString().length() > 0 && mEditCorreo.getText().toString().length() > 0) {
+                    mButtonEntrar.setEnabled(true);
                 } else {
-                    buttonEntrar.setEnabled(false);
+                    mButtonEntrar.setEnabled(false);
                 }
             }
         });
 
-        editContrasenia.addTextChangedListener(new TextWatcher() {
+        mEditContrasenia.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -171,84 +195,42 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (mEditContrasenia.getText().toString().length() > 0 && mEditCorreo.getText().toString().length() > 0) {
+                    mButtonEntrar.setEnabled(true);
+                } else {
+                    mButtonEntrar.setEnabled(false);
+                }
+                /*
                 if (!esPrimeraVez()) {
-                    if (editContrasenia.getText().toString().length() > 0) {
-                        buttonEntrar.setEnabled(true);
+                    if (mEditContrasenia.getText().toString().length() > 0) {
+                        mButtonEntrar.setEnabled(true);
                     } else {
-                        buttonEntrar.setEnabled(false);
+                        mButtonEntrar.setEnabled(false);
                     }
                 } else {
-                    if (editContrasenia.getText().toString().length() > 0 && editCorreo.getText().toString().length() > 0) {
-                        buttonEntrar.setEnabled(true);
+                    if (mEditContrasenia.getText().toString().length() > 0 && mEditCorreo.getText().toString().length() > 0) {
+                        mButtonEntrar.setEnabled(true);
                     } else {
-                        buttonEntrar.setEnabled(false);
+                        mButtonEntrar.setEnabled(false);
                     }
                 }
+                */
 
             }
         });
-    }
-
-    private boolean esPrimeraVez() {
-        return Prefs.getBoolean("primera_vez", true);
-    }
-
-    private void configurarFormulario(boolean interruptor) {
-        if (esPrimeraVez()) {
-            imagePerfil.setVisibility(View.GONE);
-            textBienvenida.setVisibility(View.GONE);
-            textNombre.setVisibility(View.GONE);
-            textCambiar.setVisibility(View.GONE);
-
-            textCorreo.setVisibility(View.VISIBLE);
-            editCorreo.setVisibility(View.VISIBLE);
-        } else {
-            try {
-                Estudiante valores = Reservoir.get("usuario", Estudiante.class);
-                imagePerfil.setVisibility(View.VISIBLE);
-                textBienvenida.setVisibility(View.VISIBLE);
-                textNombre.setVisibility(View.VISIBLE);
-                textCambiar.setVisibility(View.VISIBLE);
-
-                textCorreo.setVisibility(View.GONE);
-                editCorreo.setVisibility(View.GONE);
-
-                textNombre.setText(valores.getNombre().getCompleto());
-                //textCambiar.setText("¿No eres " + valores.getNombre().substring(0,  valores.getNombre().indexOf(' ')) + "?");
-                new DownloadImageTask(imagePerfil).execute(valores.getFotoUrl());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (interruptor) {
-            editCorreo.setEnabled(true);
-            editContrasenia.setEnabled(true);
-            progressIniciando.setVisibility(View.INVISIBLE);
-            buttonEntrar.setClickable(true);
-            buttonEntrar.setEnabled(true);
-        } else {
-            editCorreo.setEnabled(false);
-            editContrasenia.setEnabled(false);
-            progressIniciando.setVisibility(View.VISIBLE);
-            buttonEntrar.setClickable(false);
-            buttonEntrar.setEnabled(false);
-        }
-
     }
 
     private void validarFormulario(String valorCorreo, String valorContrasenia) {
         if ((valorCorreo == null || valorCorreo.isEmpty()) && (valorContrasenia == null || valorContrasenia.isEmpty())) {
-            editCorreo.setError("Este campo no puede estar vacío");
-            editContrasenia.setError("Este campo no puede estar vacío");
+            mEditCorreo.setError("Este campo no puede estar vacío");
+            mEditContrasenia.setError("Este campo no puede estar vacío");
         } else if (valorCorreo == null || valorCorreo.isEmpty()) {
-            editCorreo.setError("Este campo no puede estar vacío");
+            mEditCorreo.setError("Este campo no puede estar vacío");
         } else if (valorContrasenia == null || valorContrasenia.isEmpty()) {
-            editContrasenia.setError("Este campo no puede estar vacío");
+            mEditContrasenia.setError("Este campo no puede estar vacío");
         } else if (!valorCorreo.endsWith("@utem.cl")) {
-            editCorreo.setError("Debe ingresar un correo UTEM válido");
+            mEditCorreo.setError("Debe ingresar un correo UTEM válido");
         } else {
-            configurarFormulario(false);
             iniciarSesion(valorCorreo, valorContrasenia);
         }
     }
@@ -263,8 +245,14 @@ public class LoginActivity extends AppCompatActivity {
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(ApiUtem.BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -273,68 +261,80 @@ public class LoginActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<Estudiante.Credenciales>() {
             @Override
-            public void onResponse(Call<Estudiante.Credenciales> call, Response<Estudiante.Credenciales> response) {
-                reintento = 0;
+            public void onResponse(@NonNull Call<Estudiante.Credenciales> call,
+                                   @NonNull Response<Estudiante.Credenciales> response) {
                 switch (response.code()) {
                     case 200:
+                        final Intent res = new Intent();
+                        res.putExtra(AccountManager.KEY_ACCOUNT_NAME, correo);
+                        res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, mAccountType);
+                        res.putExtra(AccountManager.KEY_AUTHTOKEN, response.body().getToken());
+                        res.putExtra(PARAM_USER_PASS, contrasenia);
+
+                        finishLogin(res);
+
+                        /*
                         Prefs.putString("token", response.body().getToken());
                         Prefs.putString("correo", response.body().getCorreo());
                         Prefs.putLong("rut", response.body().getRut());
-                        Bundle event = new Bundle();
-                        event.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, "pasaporte");
-                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, event);
-                        getPerfil();
-                        getCarreras();
-                        getAsignaturas();
-                        // getHorarios();
+                        if (mCheckRecordar.isChecked()) {
+                            Prefs.putString("contrasenia", contrasenia);
+                        } else {
+                            Prefs.remove("contrasenia");
+                        }
+                        */
                         break;
                     case 401:
-                        configurarFormulario(true);
-                        Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                         break;
                     default:
-                        configurarFormulario(true);
-                        Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
 
             @Override
-            public void onFailure(Call<Estudiante.Credenciales> call, Throwable t) {
-                configurarFormulario(true);
-                if (t instanceof SocketTimeoutException) {
-                    switch (reintento) {
-                        case 0:
-                            reintento = 1;
-                            Snackbar.make(loginLayout, "Tiempo de espera agotado.", 5000)
-                                    .setAction("Reintentar", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            iniciarSesion(correo, contrasenia);
-                                            configurarFormulario(false);
-                                        }
-                                    })
-                                    .show();
-                            break;
-                        default:
-                            reintento = 0;
-                            Snackbar.make(loginLayout, "Tiempo de espera agotado.", 5000).show();
-                            break;
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                }
+            public void onFailure(@NonNull Call<Estudiante.Credenciales> call, @NonNull Throwable t) {
+                t.printStackTrace();
             }
         });
     }
+
+    private void finishLogin(Intent intent) {
+
+        String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+        String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
+        final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+
+        if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
+            String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+            String authtokenType = mAuthTokenType;
+            mAccountManager.addAccountExplicitly(account, accountPassword, null);
+            mAccountManager.setAuthToken(account, authtokenType, authtoken);
+        } else {
+            mAccountManager.setPassword(account, accountPassword);
+        }
+
+        setAccountAuthenticatorResult(intent.getExtras());
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    /*
 
     private void getPerfil() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(ApiUtem.BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -346,7 +346,7 @@ public class LoginActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<Estudiante>() {
             @Override
-            public void onResponse(Call<Estudiante> call, Response<Estudiante> response) {
+            public void onResponse(@NonNull Call<Estudiante> call, @NonNull Response<Estudiante> response) {
                 switch (response.code()) {
                     case 200:
                         Estudiante usuario = response.body();
@@ -376,7 +376,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Estudiante> call, Throwable t) {
+            public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
                 mProcesos.set(0, 0);
                 if (t instanceof TimeoutException) {
                     Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
@@ -393,8 +393,14 @@ public class LoginActivity extends AppCompatActivity {
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(ApiUtem.BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -407,14 +413,14 @@ public class LoginActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<List<Asignatura>>() {
             @Override
-            public void onResponse(Call<List<Asignatura>> call, Response<List<Asignatura>> response) {
+            public void onResponse(@NonNull Call<List<Asignatura>> call, @NonNull Response<List<Asignatura>> response) {
                 switch (response.code()) {
                     case 200:
                         mProcesos.set(1, 1);
                         try {
                             Reservoir.put("asignaturas", response.body());
                         } catch (IOException e) {
-                            Toast.makeText(LoginActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                         break;
                     default:
@@ -426,7 +432,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Asignatura>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Asignatura>> call, @NonNull Throwable t) {
                 mProcesos.set(1, 0);
                 Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
                 cambiarActivity();
@@ -440,7 +446,7 @@ public class LoginActivity extends AppCompatActivity {
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(ApiUtem.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -452,14 +458,14 @@ public class LoginActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<List<Carrera>>() {
             @Override
-            public void onResponse(Call<List<Carrera>> call, Response<List<Carrera>> response) {
+            public void onResponse(@NonNull Call<List<Carrera>> call, @NonNull Response<List<Carrera>> response) {
                 switch (response.code()) {
                     case 200:
                         mProcesos.set(2, 1);
                         try {
                             Reservoir.put("carreras", response.body());
                         } catch (IOException e) {
-                            Toast.makeText(LoginActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                         break;
                     default:
@@ -471,14 +477,64 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Carrera>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Carrera>> call, @NonNull Throwable t) {
                 mProcesos.set(2, 0);
                 if (t instanceof TimeoutException) {
-                    Toast.makeText(LoginActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,
+                            "¡Ups! Parece que la conexión está algo lenta. " +
+                                    "Por favor inténtalo nuevamente",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,
+                            "Error: " + t.toString(),
+                            Toast.LENGTH_SHORT).show();
                 }
                 cambiarActivity();
+            }
+        });
+    }
+
+    private void getHorario() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Horario.class, new HorariosDeserializer())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ApiUtem client = retrofit.create(ApiUtem.class);
+
+        Call<Horario> call = client.getHorarios(
+                Prefs.getLong("rut", 0),
+                Prefs.getString("token", null)
+        );
+
+        call.enqueue(new Callback<Horario>() {
+            @Override
+            public void onResponse(Call<Horario> call, Response<Horario> response) {
+                switch (response.code()) {
+                    case 200:
+                        mProcesos.set(3, 1);
+                        try {
+                            Reservoir.put("horarios", response.body());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
+                        mProcesos.set(3, 0);
+                        Toast.makeText(LoginActivity.this, "Ocurrió un error inesperado al cargar el horario", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Horario> call, Throwable t) {
+                t.printStackTrace();
+                mProcesos.set(3, 0);
+                Toast.makeText(LoginActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -486,42 +542,18 @@ public class LoginActivity extends AppCompatActivity {
     private void cambiarActivity() {
         if (mProcesos.get(0) == 1) {
             if (mProcesos.get(1) >= 0 && mProcesos.get(2) >= 0 && mProcesos.get(3) >= 0) {
-                /*
+
                 if (eraPrimeraVez) {
                     startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
                 } else {
                     startActivity(new Intent(LoginActivity.this, PerfilActivity.class));
                 }
-                */
+
 
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }
         }
     }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        CircleImageView bmImage;
-
-        public DownloadImageTask(CircleImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
+    */
 }

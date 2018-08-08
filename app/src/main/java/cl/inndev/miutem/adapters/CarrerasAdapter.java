@@ -88,9 +88,9 @@ public class CarrerasAdapter extends BaseAdapter {
         TextView textInicio = convertView.findViewById(R.id.text_inicio);
         TextView textEstado = convertView.findViewById(R.id.text_estado);
 
-        textCodigo.setText(actual.getCodigo());
+        textCodigo.setText(actual.getCodigo() + "/" + actual.getPlan());
         textNombre.setText(actual.getNombre());
-        textInicio.setText("Iniciada en " + actual.getAnioInicio() + "/" + actual.getSemestreInicio());
+        textInicio.setText("Desde " + actual.getAnioInicio() + "/" + actual.getSemestreInicio());
         textEstado.setText(actual.getEstado());
 
         int colorEstado;
