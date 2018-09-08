@@ -8,23 +8,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -44,11 +36,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.LoginActivity;
 import cl.inndev.miutem.adapters.DocentesAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Docente;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Docente;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -103,6 +93,7 @@ public class AsignaturaFragment extends Fragment {
         mRecyclerDocentes = view.findViewById(R.id.recycler_docentes);
 
         Type asignaturasType = new TypeToken<List<Asignatura>>() {}.getType();
+        /*
         Reservoir.getAsync("asignaturas", asignaturasType, new ReservoirGetCallback<List<Asignatura>>() {
             @Override
             public void onSuccess(List<Asignatura> asignaturas) {
@@ -119,8 +110,10 @@ public class AsignaturaFragment extends Fragment {
                 getAsignaturas();
             }
         });
+        */
 
         Type bitacoraType = new TypeToken<Asignatura.Asistencia>() {}.getType();
+        /*
         Reservoir.getAsync("asignatura" + mSeccionId + "asistencia", bitacoraType, new ReservoirGetCallback<Asignatura.Asistencia>() {
             @Override
             public void onSuccess(Asignatura.Asistencia asistencia) {
@@ -132,6 +125,7 @@ public class AsignaturaFragment extends Fragment {
                 getBitacora(mSeccionId);
             }
         });
+        */
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -192,11 +186,13 @@ public class AsignaturaFragment extends Fragment {
                 mSwipeContainer.setRefreshing(false);
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("asignaturas", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         for (Asignatura asignatura : response.body()) {
                             if (asignatura.getSeccion().getId().equals(mSeccionId)) {
                                 setDocentes(asignatura.getDocentes());
@@ -247,11 +243,13 @@ public class AsignaturaFragment extends Fragment {
                 mSwipeContainer.setRefreshing(false);
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("asignatura" + id + "asistencia", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         setAsistencia(response.body());
                         break;
                     default:

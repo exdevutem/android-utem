@@ -1,4 +1,4 @@
-package cl.inndev.miutem.classes;
+package cl.inndev.miutem.models;
 
 public class Rut {
     private Long cuerpo;

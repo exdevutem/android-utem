@@ -1,4 +1,4 @@
-package cl.inndev.miutem.classes;
+package cl.inndev.miutem.models;
 
 import java.util.List;
 

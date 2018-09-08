@@ -3,7 +3,6 @@ package cl.inndev.miutem.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -30,9 +27,7 @@ import cl.inndev.miutem.activities.AsignaturaActivity;
 import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.AsignaturasAdapter;
-import cl.inndev.miutem.adapters.CarrerasAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Asignatura;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -70,6 +65,7 @@ public class AsignaturasFragment extends Fragment {
         };
 
         Type resultType = new TypeToken<List<Asignatura>>() {}.getType();
+        /*
         Reservoir.getAsync("asignaturas", resultType, new ReservoirGetCallback<List<Asignatura>>() {
             @Override
             public void onSuccess(List<Asignatura> asignaturas) {
@@ -81,6 +77,7 @@ public class AsignaturasFragment extends Fragment {
                 getAsignaturas();
             }
         });
+        */
 
         return view;
     }
@@ -123,12 +120,14 @@ public class AsignaturasFragment extends Fragment {
             public void onResponse(Call<List<Asignatura>> call, Response<List<Asignatura>> response) {
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("asignaturas", response.body());
                             setLista(response.body());
                         } catch (IOException e) {
                             Toast.makeText(getContext(), "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
                         }
+                        */
                         break;
                     default:
                         Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();

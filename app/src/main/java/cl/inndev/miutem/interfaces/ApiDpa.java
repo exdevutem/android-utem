@@ -2,7 +2,7 @@ package cl.inndev.miutem.interfaces;
 
 import java.util.ArrayList;
 
-import cl.inndev.miutem.classes.Chile;
+import cl.inndev.miutem.models.Chile;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

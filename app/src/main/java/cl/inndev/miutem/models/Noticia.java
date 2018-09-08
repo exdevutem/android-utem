@@ -1,4 +1,4 @@
-package cl.inndev.miutem.classes;
+package cl.inndev.miutem.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

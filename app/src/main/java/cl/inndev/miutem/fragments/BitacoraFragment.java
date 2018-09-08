@@ -2,7 +2,6 @@ package cl.inndev.miutem.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -22,19 +19,12 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.AsignaturaActivity;
-import cl.inndev.miutem.activities.CarreraActivity;
-import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.BitacoraAdapter;
-import cl.inndev.miutem.adapters.NotasAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
+import cl.inndev.miutem.models.Asignatura;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -73,6 +63,7 @@ public class BitacoraFragment extends Fragment {
 
 
         Type bitacoraType = new TypeToken<Asignatura.Asistencia>() {}.getType();
+        /*
         Reservoir.getAsync("asignatura" + mSeccionId + "asistencia", bitacoraType, new ReservoirGetCallback<Asignatura.Asistencia>() {
             @Override
             public void onSuccess(Asignatura.Asistencia asistencia) {
@@ -84,6 +75,7 @@ public class BitacoraFragment extends Fragment {
                 getBitacora(mSeccionId);
             }
         });
+        */
         return view;
     }
 
@@ -125,11 +117,13 @@ public class BitacoraFragment extends Fragment {
                 mSwipeContainer.setRefreshing(false);
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("asignatura" + id + "asistencia", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         setBitacora(response.body());
                         break;
                     default:

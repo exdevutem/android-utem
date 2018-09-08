@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import cl.inndev.miutem.classes.UtemAuthenticator;
+import cl.inndev.miutem.models.UtemAuthenticator;
 
 public class UtemAuthenticatorService extends Service {
     @Nullable

@@ -10,8 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,7 +25,7 @@ import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.CarrerasAdapter;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.deserializers.CarrerasDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import retrofit2.Call;
@@ -65,6 +63,7 @@ public class CarrerasFragment extends Fragment {
         };
 
         Type resultType = new TypeToken<List<Carrera>>() {}.getType();
+        /*
         Reservoir.getAsync("carreras", resultType, new ReservoirGetCallback<List<Carrera>>() {
             @Override
             public void onSuccess(List<Carrera> carreras) {
@@ -76,6 +75,7 @@ public class CarrerasFragment extends Fragment {
                 getCarreras();
             }
         });
+        */
 
         return view;
     }
@@ -88,6 +88,8 @@ public class CarrerasFragment extends Fragment {
                 CarrerasFragment.class.getSimpleName());
         ((MainActivity) getActivity()).setActionBarTitle("Carreras");
     }
+
+    /*
 
     private void getCarreras() {
         Gson gson = new GsonBuilder()
@@ -110,12 +112,14 @@ public class CarrerasFragment extends Fragment {
             public void onResponse(Call<List<Carrera>> call, Response<List<Carrera>> response) {
                 switch (response.code()) {
                     case 200:
+
                         try {
                             Reservoir.put("carreras", response.body());
                             setLista(response.body());
                         } catch (IOException e) {
                             Toast.makeText(getContext(), "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
                         }
+
                         break;
                     default:
                         Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
@@ -133,6 +137,8 @@ public class CarrerasFragment extends Fragment {
             }
         });
     }
+
+    */
 
     private void setLista(List<Carrera> datos) {
         if (datos.size() == 1) {

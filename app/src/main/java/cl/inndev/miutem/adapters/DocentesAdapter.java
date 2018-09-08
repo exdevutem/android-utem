@@ -1,15 +1,10 @@
 package cl.inndev.miutem.adapters;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -17,9 +12,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Docente;
-import de.hdodenhof.circleimageview.CircleImageView;
+import cl.inndev.miutem.models.Docente;
 
 public class DocentesAdapter extends RecyclerView.Adapter<DocentesAdapter.ViewHolder> {
 
@@ -53,7 +46,7 @@ public class DocentesAdapter extends RecyclerView.Adapter<DocentesAdapter.ViewHo
 
         private TextView mTextNombre;
         private TextView mTextCorreo;
-        private CircleImageView mImageDocente;
+        private ImageView mImageDocente;
 
         public ViewHolder(View itemView) {
             super(itemView);

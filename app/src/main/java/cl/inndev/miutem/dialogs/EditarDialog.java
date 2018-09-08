@@ -2,30 +2,19 @@ package cl.inndev.miutem.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.PerfilActivity;
-import cl.inndev.miutem.adapters.CamposAdapter;
-import cl.inndev.miutem.classes.Estudiante;
-import io.michaelrocks.libphonenumber.android.NumberParseException;
-import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
-import io.michaelrocks.libphonenumber.android.Phonenumber;
+import cl.inndev.miutem.models.Estudiante;
 
 public class EditarDialog extends Dialog {
     private Toolbar mToolbar;

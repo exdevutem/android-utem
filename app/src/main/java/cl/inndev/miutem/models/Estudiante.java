@@ -1,46 +1,32 @@
-package cl.inndev.miutem.classes;
+package cl.inndev.miutem.models;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.pixplicity.easyprefs.library.Prefs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.security.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import cl.inndev.miutem.activities.LoginActivity;
-import cl.inndev.miutem.activities.MainActivity;
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by mapache on 14-03-18.
  */
 
 public class Estudiante {
+    @Override
+    public boolean equals(Object o) {
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public static class Telefono {
         private int codigo;
         private Long numero;
@@ -666,6 +652,13 @@ public class Estudiante {
         private String token;
         private String correo;
         private Long rut;
+        private Boolean esValido;
+
+        public JsonObject getMensaje() {
+            return mensaje;
+        }
+
+        private JsonObject mensaje;
 
         public Credenciales(String token, String correo, Long rut) {
             this.token = token;
@@ -683,6 +676,10 @@ public class Estudiante {
 
         public Long getRut() {
             return rut;
+        }
+
+        public Boolean getEsValido() {
+            return esValido;
         }
     }
 

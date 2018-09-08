@@ -1,6 +1,4 @@
-package cl.inndev.miutem.classes;
-
-import android.util.Log;
+package cl.inndev.miutem.models;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -18,9 +16,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Autenticador implements IAuthenticatorServer {
-    private final String TAG = Autenticador.class.getSimpleName();
 
-    private ApiUtem mGithubAuthService;
+    private ApiUtem mApiUtem;
 
     public Autenticador() {
         Gson gson = new GsonBuilder()
@@ -38,16 +35,15 @@ public class Autenticador implements IAuthenticatorServer {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        this.mGithubAuthService = retrofit.create(ApiUtem.class);
+        this.mApiUtem = retrofit.create(ApiUtem.class);
     }
 
     @Override
     public String getToken(String userName, String pwd) {
-        Call<Estudiante.Credenciales> credencialesCall = mGithubAuthService.autenticar(userName, pwd);
+        Call<Estudiante.Credenciales> credencialesCall = mApiUtem.autenticar(userName, pwd);
 
         try {
             Response<Estudiante.Credenciales> response = credencialesCall.execute();
-            Log.e(TAG, response.body().getToken());
             return response.body().getToken();
         } catch (IOException e) {
             e.printStackTrace();

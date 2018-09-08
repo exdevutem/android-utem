@@ -2,13 +2,14 @@ package cl.inndev.miutem.interfaces;
 
 import java.util.List;
 
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.Horario;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Carrera;
+import cl.inndev.miutem.models.Estudiante;
+import cl.inndev.miutem.models.Horario;
 import io.reactivex.Single;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.BufferedSource;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -22,6 +23,11 @@ public interface ApiUtem {
             @Field("contrasenia") String contrasenia
     );
 
+    @GET("token/placebo")
+    Call<Estudiante.Credenciales> validar(
+            @Header("Authorization") String token
+    );
+
     @Multipart
     @POST("pgai/perfil_foto.php")
     Call<ResponseBody> cambiarFoto(
@@ -31,7 +37,7 @@ public interface ApiUtem {
     );
 
     @GET("estudiantes/{rut}")
-    Single<Estudiante> getPerfil(
+    Single<BufferedSource> getBufferedEstudiante(
             @Path("rut") String rut,
             @Header("Authorization") String auth
     );
@@ -52,8 +58,8 @@ public interface ApiUtem {
     );
 
     @GET("/estudiantes/{rut}/carreras")
-    Call<List<Carrera>> getCarreras(
-            @Path("rut") Long rut,
+    Single<BufferedSource> getBufferedCarreras(
+            @Path("rut") String rut,
             @Header("Authorization") String auth
     );
 
@@ -79,8 +85,8 @@ public interface ApiUtem {
     );
 
     @GET("/estudiantes/{rut}/horarios")
-    Call<Horario> getHorarios(
-            @Path("rut") Long rut,
+    Single<BufferedSource> getBufferedHorarios(
+            @Path("rut") String rut,
             @Header("Authorization") String auth
     );
 

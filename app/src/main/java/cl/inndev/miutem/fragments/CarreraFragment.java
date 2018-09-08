@@ -13,11 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -33,7 +30,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.pixplicity.easyprefs.library.Prefs;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -41,13 +37,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.CarreraActivity;
-import cl.inndev.miutem.adapters.CamposAdapter;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Estudiante;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.deserializers.CarrerasDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import okhttp3.OkHttpClient;
@@ -108,6 +100,7 @@ public class CarreraFragment extends Fragment {
         mSwipeContainer = rootView.findViewById(R.id.swipe_container);
 
         Type carrerasType = new TypeToken<List<Carrera>>() {}.getType();
+        /*
         Reservoir.getAsync("carreras", carrerasType, new ReservoirGetCallback<List<Carrera>>() {
             @Override
             public void onSuccess(List<Carrera> carreras) {
@@ -123,8 +116,10 @@ public class CarreraFragment extends Fragment {
                 getCarreras();
             }
         });
+        */
 
         Type boletinType = new TypeToken<List<Carrera.Semestre>>() {}.getType();
+        /*
         Reservoir.getAsync("carrera" + mId +"boletin", boletinType, new ReservoirGetCallback<List<Carrera.Semestre>>() {
             @Override
             public void onSuccess(List<Carrera.Semestre> boletin) {
@@ -137,11 +132,12 @@ public class CarreraFragment extends Fragment {
                 getBoletin(mId);
             }
         });
+        */
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getCarreras();
+                //getCarreras();
                 getBoletin(mId);
             }
         });
@@ -160,6 +156,7 @@ public class CarreraFragment extends Fragment {
         }
     }
 
+    /*
     private void getCarreras() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(List.class, new CarrerasDeserializer())
@@ -172,6 +169,7 @@ public class CarreraFragment extends Fragment {
 
         ApiUtem client = retrofit.create(ApiUtem.class);
 
+
         mCallCarreras = client.getCarreras(
                 Prefs.getLong("rut", 0),
                 Prefs.getString("token", null));
@@ -181,12 +179,14 @@ public class CarreraFragment extends Fragment {
             public void onResponse(Call<List<Carrera>> call, Response<List<Carrera>> response) {
                 switch (response.code()) {
                     case 200:
+
                         try {
                             Reservoir.put("carreras", response.body());
                         } catch (IOException e) {
                             Log.d("CARRERA", e.toString());
                             e.printStackTrace();
                         }
+
                         for (Carrera carrera : response.body()) {
                             if (carrera.getmId().equals(mId)) {
                                 setCarrera(carrera);
@@ -205,6 +205,7 @@ public class CarreraFragment extends Fragment {
             }
         });
     }
+    */
 
     private void getBoletin(final Integer id) {
         Gson gson = new GsonBuilder()
@@ -234,11 +235,13 @@ public class CarreraFragment extends Fragment {
             public void onResponse(Call<List<Carrera.Semestre>> call, Response<List<Carrera.Semestre>> response) {
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("carrera" + id +"boletin", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         setRendimiento(response.body());
                         setAsignaturas(response.body());
                         break;

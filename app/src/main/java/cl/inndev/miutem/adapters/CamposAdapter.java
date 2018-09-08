@@ -4,19 +4,15 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hbb20.CountryCodePicker;
 
@@ -27,12 +23,9 @@ import java.util.Date;
 import java.util.Map;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.Rut;
+import cl.inndev.miutem.models.Estudiante;
+import cl.inndev.miutem.models.Rut;
 import cl.inndev.miutem.dialogs.EditarDialog;
-import io.michaelrocks.libphonenumber.android.NumberParseException;
-import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
-import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class CamposAdapter extends BaseAdapter {
 

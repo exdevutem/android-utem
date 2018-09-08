@@ -1,29 +1,16 @@
 package cl.inndev.miutem.fragments;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
-import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -36,21 +23,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.adapters.MallaAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.deserializers.MallaDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.items.AsignaturaItem;
 import cl.inndev.miutem.items.NivelItem;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
-import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem;
-import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
-import eu.davidea.flexibleadapter.items.IFlexible;
-import eu.davidea.viewholders.ExpandableViewHolder;
-import eu.davidea.viewholders.FlexibleViewHolder;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -94,6 +75,7 @@ public class MallaFragment extends Fragment {
                 .withSectionGapOffset(8));
 
         Type resultType = new TypeToken<List<Carrera.Nivel>>() {}.getType();
+        /*
         Reservoir.getAsync("carrera" + mId + "malla", resultType, new ReservoirGetCallback<List<Carrera.Nivel>>() {
             @Override
             public void onSuccess(List<Carrera.Nivel> malla) {
@@ -107,6 +89,7 @@ public class MallaFragment extends Fragment {
                 getMalla(mId);
             }
         });
+        */
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -155,11 +138,13 @@ public class MallaFragment extends Fragment {
                 //mShimmerViewContainer.setVisibility(View.GONE);
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("carrera" + id + "malla", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         setMalla(response.body());
                         break;
                     default:

@@ -1,18 +1,12 @@
 package cl.inndev.miutem.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,93 +18,43 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.nytimes.android.external.store3.base.impl.BarCode;
-import com.nytimes.android.external.store3.base.impl.Store;
-import com.nytimes.android.external.store3.base.impl.StoreBuilder;
-import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Horario;
-import cl.inndev.miutem.classes.Noticia;
-import cl.inndev.miutem.fragments.AsignaturasFragment;
-import cl.inndev.miutem.fragments.CarrerasFragment;
-import cl.inndev.miutem.fragments.CertificadosFragment;
-import cl.inndev.miutem.fragments.HorariosFragment;
+import cl.inndev.miutem.models.AuthPreferences;
 import cl.inndev.miutem.fragments.InicioFragment;
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.interfaces.ApiNoticiasUtem;
-import cl.inndev.miutem.interfaces.ApiUtem;
-import de.hdodenhof.circleimageview.CircleImageView;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager mFragmentManager = getSupportFragmentManager();
     private NavigationView mNavigationView;
-    private CircleImageView mImagePerfil;
-    private TextView mTextNombre;
-    private TextView mTextCorreo;
+    private ImageView mImagePerfil;
+    // private TextView mTextNombre;
+    // private TextView mTextCorreo;
     private Toolbar mToolbar;
     private ImageButton mButtonMenu;
-    private long mContadorVida = 0;
     private int mContadorAtras = 0;
-    private Boolean mCargoHorario = false;
-    private Boolean mCargoAsignaturas = false;
-    private Boolean mCargoCarreras = false;
-    private Horario mHorario;
-    private List<Carrera> mCarreras;
-    private List<Asignatura> mAsignaturas;
+    // private List<Horario> mHorarios;
+    // private List<Carrera> mCarreras;
+    // private List<Asignatura> mAsignaturas;
     private Boolean mToogle = false;
-    private AccountManager mAccountManager;
-    private String mToken;
+    // private AccountManager mAccountManager;
+    // private String mToken;
+    private static final int AUTHORIZATION_CODE = 1993;
+    private static final int ACCOUNT_CODE = 1601;
+    private AuthPreferences mAuthPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAccountManager = AccountManager.get(this);
-        mAccountManager.getAuthToken(mAccountManager.getAccounts()[0],
-                "Bearer", null, this,
-                future -> {
-                    try {
-                        mToken = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
-                        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), "19649846");
-                        try {
-                            provideEstudianteStore()
-                                    .get(usuario)
-                                    .
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (OperationCanceledException | IOException | AuthenticatorException e) {
-                        e.printStackTrace();
-                    }
-                }, null);
+        //mAccountManager = AccountManager.get(this);
 
+        mAuthPreferences = new AuthPreferences(this);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Window w = getWindow();
@@ -123,19 +67,21 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         mNavigationView = findViewById(R.id.nav_view);
 
         View headerView = mNavigationView.getHeaderView(0);
 
-        mHorario = new Horario();
+        /*
+        mHorarios = new ArrayList<>();
         mCarreras = new ArrayList<>();
         mAsignaturas = new ArrayList<>();
+        */
 
-        mTextNombre = headerView.findViewById(R.id.text_nombre);
-        mTextCorreo = headerView.findViewById(R.id.text_correo);
+        // mTextNombre = headerView.findViewById(R.id.text_nombre);
+        // mTextCorreo = headerView.findViewById(R.id.text_correo);
         mImagePerfil = headerView.findViewById(R.id.image_perfil);
         mButtonMenu = headerView.findViewById(R.id.button_menu);
 
@@ -164,18 +110,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        if (System.currentTimeMillis() - mContadorVida >= 5 * 60 * 1000 && mContadorVida != 0) {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finish();
-        }
-        mContadorVida = 0;
 
+
+        //setDrawerHeader(getEstudiante(mToken, getRut()));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mContadorVida = System.currentTimeMillis();
     }
 
     @Override
@@ -224,9 +166,8 @@ public class MainActivity extends AppCompatActivity
 
     Fragment fragment = null;
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         mNavigationView.setCheckedItem(R.id.nav_inicio);
         setMenuCounter(id, 0);
@@ -234,7 +175,6 @@ public class MainActivity extends AppCompatActivity
             mostrarInicio();
         } else if (id == R.id.nav_perfil) {
             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
-            mostrarInicio();
         } else if (id == R.id.nav_aranceles) {
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_sesaes) {
@@ -244,31 +184,31 @@ public class MainActivity extends AppCompatActivity
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AlimentacionFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_horario) {
-            if (mCargoHorario) {
-                Intent intent = new Intent(MainActivity.this, HorarioActivity.class);
-                intent.putExtra("HORARIO_INDEX", 0);
-                startActivity(intent);
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
+            //getHorarios(mToken, getRut());
+            /*
+            if (mHorarios != null) {
+                if (mHorarios.size() < 1) {
+                    Toast.makeText(this, "No hay horarios asignados a su cuenta", Toast.LENGTH_SHORT).show();
+                } else if (mHorarios.size() == 1) {
+                    Intent intent = new Intent(MainActivity.this, HorarioActivity.class);
+                    intent.putExtra("HORARIO_INDEX", 0);
+                    startActivity(intent);
+                } else {
+                    mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorariosFragment()).commit();
+                }
             } else {
-                Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
-                //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorariosFragment()).commit();
+                mFragmentManager.beginTransaction().replace(R.id.mainlayout, new HorariosFragment()).commit();
             }
+            */
+
         } else if (id == R.id.nav_certificados) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CertificadosFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_asignaturas) {
-            if (mCargoAsignaturas && mAsignaturas.size() == 1) {
-                startActivity(new Intent(MainActivity.this, AsignaturaActivity.class));
-            } else {
-                mFragmentManager.beginTransaction().replace(R.id.mainlayout, new AsignaturasFragment()).commit();
-            }
+            Toast.makeText(this, "HOLA?", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_carreras) {
-            if (mCargoCarreras && mCarreras.size() == 1) {
-                Intent intent = new Intent(MainActivity.this, CarreraActivity.class);
-                intent.putExtra("CARRERA_ID", mCarreras.get(0).getmId());
-                startActivity(intent);
-            } else {
-                mFragmentManager.beginTransaction().replace(R.id.mainlayout, new CarrerasFragment()).commit();
-            }
+            Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_titulos) {
             //mFragmentManager.beginTransaction().replace(R.id.mainlayout, new SesaesFragment()).commit();
             Toast.makeText(this, R.string.pronto_disponible, Toast.LENGTH_SHORT).show();
@@ -287,21 +227,151 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private Store<Estudiante, BarCode> provideEstudianteStore() throws IOException {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .create();
-
-        ApiUtem apiUtem = new Retrofit.Builder()
-                .baseUrl(ApiUtem.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-                .create(ApiUtem.class);
-
-        return StoreBuilder.<Estudiante>barcode()
-                .fetcher(barCode -> apiUtem.getPerfil(barCode.getKey(), "Bearer " + mToken))
-                .open();
+    /*
+    private String getRut() {
+        return mAccountManager.getUserData(mAccountManager.getAccounts()[0], LoginActivity.PARAM_USER_RUT);
     }
+
+    private Estudiante getEstudiante(String token, String rut) {
+        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), rut);
+        try {
+            Store<Estudiante, BarCode> store = StoreUtils.provideEstudianteStore(MainActivity.this, token);
+            return store.get(usuario)
+                    .subscribeOn(Schedulers.io())
+                    .blockingGet();
+        } catch (IOException e) {
+            Toast.makeText(this, "ERROR OBTENIENDO ESTUDIANTE", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private Disposable getCarreras(String token, String rut) {
+        BarCode carrerasBarCode = new BarCode(Carrera.class.getSimpleName() + "sasdsadsa", rut);
+        try {
+            return StoreUtils.provideCarrerasStore(this, token)
+                    .get(carrerasBarCode)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(carreras -> {
+                        mCarreras = carreras;
+                    });
+        } catch (IOException e) {
+            Toast.makeText(this, "ERROR OBTENIENDO CARRERAS", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private Disposable getHorarios(String token, String rut) {
+        BarCode horariosBarCode = new BarCode(Horario.class.getSimpleName() + "s", rut);
+        try {
+            return StoreUtils.provideHorariosStore(this, token)
+                    .get(horariosBarCode)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(horarios -> {
+                        mHorarios = horarios;
+                    });
+        } catch (IOException e) {
+            Toast.makeText(this, "ERROR OBTENIENDO HORARIOS", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void setDrawerHeader(Estudiante usuario) {
+        Picasso.get().load(usuario.getFotoUrl()).into(mImagePerfil);
+        mTextNombre.setText(usuario.getNombre().getNombre());
+        mTextCorreo.setText(usuario.getCorreoUtem());
+    }
+
+    private void doCoolAuthenticatedStuff() {
+        Log.d("POLLO", "hola");
+        //getCarreras(mAuthPreferences.getToken(), getRut());
+        //getEstudiante(mAuthPreferences.getToken(), getRut());
+        //getHorarios(mAuthPreferences.getToken(), getRut());
+    }
+
+    private void chooseAccount() {
+        // use https://github.com/frakbot/Android-AccountChooser for
+        // compatibility with older devices
+        Intent intent = AccountManager.newChooseAccountIntent(null, null,
+                new String[] { AuthPreferences.ACCOUNT_TYPE }, false, null, null, null, null);
+        startActivityForResult(intent, ACCOUNT_CODE);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void requestToken() {
+        Account account = mAccountManager.getAccountsByType(AuthPreferences.ACCOUNT_TYPE)[0];
+
+        String user = mAuthPreferences.getUser();
+        for (Account account : mAccountManager.getAccountsByType(AuthPreferences.ACCOUNT_TYPE)) {
+            if (account.name.equals(user)) {
+                userAccount = account;
+                break;
+            }
+        }
+
+        new AsyncTask<Void, Void, Void>() {
+            protected Void doInBackground(Void... params) {
+                mAccountManager.getAuthToken(account, "Bearer", null, MainActivity.this,
+                        new OnTokenAcquired(), null);
+                return null;
+            }
+
+        }.execute();
+
+    }
+
+    private void invalidateToken() {
+        AccountManager accountManager = AccountManager.get(this);
+        accountManager.invalidateAuthToken(AuthPreferences.ACCOUNT_TYPE, mAuthPreferences.getToken());
+        mAuthPreferences.setToken(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == AUTHORIZATION_CODE) {
+                requestToken();
+            } else if (requestCode == ACCOUNT_CODE) {
+                String accountName = data
+                        .getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                mAuthPreferences.setUser(accountName);
+
+                // invalidate old tokens which might be cached. we want a fresh
+                // one, which is guaranteed to work
+                invalidateToken();
+
+                requestToken();
+            }
+        }
+    }
+
+    private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
+
+        @Override
+        public void run(AccountManagerFuture<Bundle> result) {
+            try {
+                Bundle bundle = result.getResult();
+                Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
+                if (launch != null) {
+                    startActivityForResult(launch, AUTHORIZATION_CODE);
+                } else {
+                    String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+                    mAuthPreferences.setToken(token);
+                    Toast.makeText(MainActivity.this, mAuthPreferences.getToken(), Toast.LENGTH_SHORT).show();
+
+                    doCoolAuthenticatedStuff();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    */
 
 }

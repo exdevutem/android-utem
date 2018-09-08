@@ -5,9 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.USE_CREDENTIALS"
-        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
@@ -18,7 +16,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -68,12 +67,12 @@
         <activity android:name=".activities.DonacionActivity" />
         <activity android:name=".activities.CarreraActivity" />
         <activity android:name=".activities.NoticiaActivity" />
-        <activity android:name=".activities.HorarioActivity"></activity>
+        <activity android:name=".activities.HorarioActivity"/>
 
         <service
             android:name=".services.UtemAuthenticatorService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

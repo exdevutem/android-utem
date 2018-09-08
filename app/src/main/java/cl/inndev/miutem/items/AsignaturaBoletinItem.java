@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.models.Asignatura;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.flexibleadapter.items.IFlexible;

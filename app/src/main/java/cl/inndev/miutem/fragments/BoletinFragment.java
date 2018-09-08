@@ -6,14 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,21 +22,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.CarreraActivity;
 import cl.inndev.miutem.adapters.BoletinAdapter;
-import cl.inndev.miutem.adapters.MallaAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.items.AsignaturaBoletinItem;
-import cl.inndev.miutem.items.AsignaturaItem;
-import cl.inndev.miutem.items.NivelItem;
 import cl.inndev.miutem.items.SemestreItem;
-import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -80,6 +70,7 @@ public class BoletinFragment extends Fragment {
                 .withLeftEdge(true)
                 .withSectionGapOffset(8));
         Type boletinType = new TypeToken<List<Carrera.Semestre>>() {}.getType();
+        /*
         Reservoir.getAsync("carrera" + mId + "boletin", boletinType, new ReservoirGetCallback<List<Carrera.Semestre>>() {
             @Override
             public void onSuccess(List<Carrera.Semestre> boletin) {
@@ -93,6 +84,7 @@ public class BoletinFragment extends Fragment {
                 getBoletin(mId);
             }
         });
+        */
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -138,12 +130,14 @@ public class BoletinFragment extends Fragment {
             public void onResponse(Call<List<Carrera.Semestre>> call, Response<List<Carrera.Semestre>> response) {
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("carrera" + id +"boletin", response.body());
                             setBoletin(response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         break;
                     default:
                         Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();

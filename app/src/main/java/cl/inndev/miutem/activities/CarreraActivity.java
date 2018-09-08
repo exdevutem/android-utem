@@ -9,42 +9,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
-import com.github.mikephil.charting.charts.LineChart;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
-import cl.inndev.miutem.deserializers.MallaDeserializer;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.fragments.BoletinFragment;
 import cl.inndev.miutem.fragments.CarreraFragment;
 import cl.inndev.miutem.fragments.MallaFragment;
-import cl.inndev.miutem.interfaces.ApiUtem;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.utils.Log;
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class CarreraActivity extends AppCompatActivity  {
 
@@ -74,6 +52,7 @@ public class CarreraActivity extends AppCompatActivity  {
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         Type resultType = new TypeToken<List<Carrera>>() {}.getType();
+        /*
         try {
             List<Carrera> carreras = Reservoir.get("carreras", resultType);
             mCarrera = carreras.get(getIntent().getIntExtra("CARRERA_INDEX", 0));
@@ -81,6 +60,7 @@ public class CarreraActivity extends AppCompatActivity  {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);

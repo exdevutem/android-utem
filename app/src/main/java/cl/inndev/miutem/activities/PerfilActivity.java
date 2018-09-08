@@ -1,6 +1,8 @@
 package cl.inndev.miutem.activities;
 
-import android.content.Context;
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -8,45 +10,39 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
-import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.nytimes.android.external.store3.base.impl.BarCode;
+import com.nytimes.android.external.store3.base.impl.Store;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 
 import cl.inndev.miutem.adapters.CamposAdapter;
 import cl.inndev.miutem.adapters.CarrerasAdapter;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
-import cl.inndev.miutem.dialogs.EditarDialog;
-import cl.inndev.miutem.dialogs.ErrorDialog;
+import cl.inndev.miutem.models.Carrera;
 import cl.inndev.miutem.interfaces.ApiUtem;
+import cl.inndev.miutem.utils.StoreUtils;
 import cl.inndev.miutem.views.NonScrollListView;
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Estudiante;
-import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.OkHttpClient;
+import cl.inndev.miutem.models.Estudiante;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,18 +53,19 @@ import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class PerfilActivity extends AppCompatActivity {
 
-    private long mContadorVida = 0;
     private SwipeRefreshLayout mSwipeContainer;
     private TextView mTextNombre;
     private TextView mTextTipo;
     private TextView mTextIngreso;
     private TextView mTextMatricula;
     private TextView mTextCarreras;
-    private CircleImageView mImagePerfil;
+    private ImageView mImagePerfil;
     private FloatingActionButton mFabCambiarFoto;
     private NonScrollListView mListCampos;
     private NonScrollListView mListCarreras;
+    private AccountManager mAccountManager;
     private AdapterView.OnItemClickListener mListener;
+    private String mToken;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -78,6 +75,7 @@ public class PerfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_perfil);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mAccountManager = AccountManager.get(this);
         mSwipeContainer = findViewById(R.id.swipe_container);
         mTextNombre = findViewById(R.id.text_nombre);
         mTextTipo = findViewById(R.id.text_tipo);
@@ -88,16 +86,12 @@ public class PerfilActivity extends AppCompatActivity {
         mFabCambiarFoto = findViewById(R.id.fab_cambiar_foto);
         mListCampos = findViewById(R.id.list_campos);
         mListCarreras = findViewById(R.id.list_carreras);
-        mListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View v, int position,
-                                    long arg3) {
-                Carrera carrera = (Carrera) adapter.getItemAtPosition(position);
-                Intent intent = new Intent(PerfilActivity.this, CarreraActivity.class);
-                intent.putExtra("CARRERA_ID", carrera.getmId());
-                intent.putExtra("CARRERA_INDEX", position);
-                startActivity(intent);
-            }
+        mListener = (adapter, v, position, arg3) -> {
+            Carrera carrera = (Carrera) adapter.getItemAtPosition(position);
+            Intent intent = new Intent(PerfilActivity.this, CarreraActivity.class);
+            intent.putExtra("CARRERA_ID", carrera.getmId());
+            intent.putExtra("CARRERA_INDEX", position);
+            startActivity(intent);
         };
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -106,34 +100,32 @@ public class PerfilActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setCampos();
-        setCarreras();
+        mAccountManager.getAuthToken(mAccountManager.getAccounts()[0],
+                "Bearer", null, this,
+                future -> {
+                    try {
+                        mToken = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+                    } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+                        e.printStackTrace();
+                    }
+                }, null);
 
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //getPerfil();
-                getCarreras();
-            }
+        mSwipeContainer.setOnRefreshListener(() -> {
+            refreshEstudiante(mToken, getRut());
+            refreshCarreras(mToken, getRut());
         });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (System.currentTimeMillis() - mContadorVida >= 60 * 1000 && mContadorVida != 0)
-            finish();
-        else {
-            //getPerfil();
-            getCarreras();
-        }
-        mContadorVida = 0;
+        setCampos();
+        setCarreras();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mContadorVida = System.currentTimeMillis();
     }
 
     @Override
@@ -143,117 +135,103 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void setCampos() {
+        Estudiante usuario = getEstudiante(mToken, getRut());
         LinkedHashMap<Integer, String> lista = new LinkedHashMap<>();
+        Picasso.get().load(usuario.getFotoUrl()).into(mImagePerfil);
+        mTextNombre.setText(usuario.getNombre().getCompleto());
+        mTextTipo.setText(usuario.getTipos().get(0));
+        mTextMatricula.setText(usuario.getStringUltimaMatricula());
+        mTextCarreras.setText(usuario.getStringCarrerasCursadas());
+        mTextIngreso.setText(usuario.getStringAnioIngreso());
+
+        if (usuario.getRut() != null)
+            lista.put(0, "" + usuario.getRut());
+        if (usuario.getCorreoUtem() != null)
+            lista.put(1, usuario.getCorreoUtem());
+        if (usuario.getPuntajePsu() != null)
+            lista.put(3, usuario.getStringPuntajePsu());
+
+        lista.put(2, usuario.getCorreoPersonal());
+        lista.put(4, usuario.getStringSexoId());
+        lista.put(5, usuario.getStringNacimiento());
+        lista.put(6, usuario.getStringTelefonoMovil());
+        lista.put(7, usuario.getStringTelefonoFijo());
+        lista.put(8, usuario.getStringNacionalidad());
+        // lista.put(9, null);
+        // lista.put(10, null);
+        // lista.put(11, null);
+        lista.put(12, usuario.getStringDireccion());
+
+        CamposAdapter adapter = new CamposAdapter(this, lista);
+        adapter.setOnEditListener(nuevo -> actualizarPerfil(nuevo));
+
+        mListCampos.setAdapter(adapter);
+
+        mSwipeContainer.setVisibility(View.VISIBLE);
+    }
+
+    private Estudiante getEstudiante(String token, String rut) {
+        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), rut);
         try {
-            Estudiante usuario = Reservoir.get("usuario", Estudiante.class);
-            Picasso.get().load(usuario.getFotoUrl()).into(mImagePerfil);
-            mTextNombre.setText(usuario.getNombre().getCompleto());
-            mTextTipo.setText(usuario.getTipos().get(0));
-            mTextMatricula.setText(usuario.getStringUltimaMatricula());
-            mTextCarreras.setText(usuario.getStringCarrerasCursadas());
-            mTextIngreso.setText(usuario.getStringAnioIngreso());
+            Store<Estudiante, BarCode> store = StoreUtils.provideEstudianteStore(PerfilActivity.this, token);
+            return store.get(usuario)
+                    .subscribeOn(Schedulers.io())
+                    .blockingGet();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-            if (usuario.getRut() != null)
-                lista.put(0, "" + usuario.getRut());
-            if (usuario.getCorreoUtem() != null)
-                lista.put(1, usuario.getCorreoUtem());
-            if (usuario.getPuntajePsu() != null)
-                lista.put(3, usuario.getStringPuntajePsu());
-
-            lista.put(2, usuario.getCorreoPersonal());
-            lista.put(4, usuario.getStringSexoId());
-            lista.put(5, usuario.getStringNacimiento());
-            lista.put(6, usuario.getStringTelefonoMovil());
-            lista.put(7, usuario.getStringTelefonoFijo());
-            lista.put(8, usuario.getStringNacionalidad());
-            // lista.put(9, null);
-            // lista.put(10, null);
-            // lista.put(11, null);
-            lista.put(12, usuario.getStringDireccion());
-
-            CamposAdapter adapter = new CamposAdapter(this, lista);
-            adapter.setOnEditListener(new CamposAdapter.CamposListener() {
-                @Override
-                public void onEditListener(Estudiante nuevo) {
-                    actualizarPerfil(nuevo);
-                }
-            });
-
-            mListCampos.setAdapter(adapter);
+    private void refreshEstudiante(String token, String rut) {
+        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), rut);
+        try {
+            Store<Estudiante, BarCode> store = StoreUtils.provideEstudianteStore(PerfilActivity.this, token);
+            store.fetch(usuario)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(estudiante -> {
+                        setCampos();
+                        mSwipeContainer.setRefreshing(false);
+                    });
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        mSwipeContainer.setVisibility(View.VISIBLE);
+    private List<Carrera> getCarreras(String token, String rut) {
 
+        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), rut);
+        try {
+            Store<List<Carrera>, BarCode> store = StoreUtils.provideCarrerasStore(PerfilActivity.this, token);
+            return store.get(usuario)
+                    .subscribeOn(Schedulers.io())
+                    .blockingGet();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private void refreshCarreras(String token, String rut) {
+        BarCode usuario = new BarCode(Estudiante.class.getSimpleName(), rut);
+        try {
+            Store<List<Carrera>, BarCode> store = StoreUtils.provideCarrerasStore(PerfilActivity.this, token);
+            store.get(usuario)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(estudiante -> {
+                        setCarreras();
+                        mSwipeContainer.setRefreshing(false);
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setCarreras() {
-        Type resultType = new TypeToken<List<Carrera>>() {}.getType();
-        try {
-            List<Carrera> carreras = Reservoir.get("carreras", resultType);
-            mListCarreras.setAdapter(new CarrerasAdapter(this, carreras));
-            mListCarreras.setOnItemClickListener(mListener);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        List<Carrera> carreras = getCarreras(mToken, getRut());
+        mListCarreras.setAdapter(new CarrerasAdapter(this, carreras));
+        mListCarreras.setOnItemClickListener(mListener);
     }
-
-    /*
-    private void getPerfil() {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .create();
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(60, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ApiUtem restClient = retrofit.create(ApiUtem.class);
-
-        Call<Estudiante> call = restClient.getPerfil(
-                Prefs.getLong("rut", 0),
-                Prefs.getString("token", null));
-
-        call.enqueue(new Callback<Estudiante>() {
-            @Override
-            public void onResponse(@NonNull Call<Estudiante> call, @NonNull Response<Estudiante> response) {
-                switch (response.code()) {
-                    case 200:
-                        try {
-                            Reservoir.put("usuario", response.body());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        setCampos();
-                        break;
-                    default:
-                        Toast.makeText(PerfilActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                mSwipeContainer.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Estudiante> call, @NonNull Throwable t) {
-                mSwipeContainer.setRefreshing(false);
-                if (t instanceof TimeoutException) {
-                    Toast.makeText(PerfilActivity.this, "¡Ups! Parece que la conexión está algo lenta. Por favor inténtalo nuevamente", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PerfilActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-    */
 
     public void actualizarPerfil(Estudiante usuario) {
         Gson gson = new GsonBuilder()
@@ -300,6 +278,12 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
     }
+
+    private String getRut() {
+        return mAccountManager.getUserData(mAccountManager.getAccounts()[0], LoginActivity.PARAM_USER_RUT);
+    }
+
+    /*
 
     private void getCarreras() {
         Gson gson = new GsonBuilder()
@@ -351,9 +335,8 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    /*
 
-
+    // STORE
 
 
     private int CAMERA_REQUEST_CODE = 0;

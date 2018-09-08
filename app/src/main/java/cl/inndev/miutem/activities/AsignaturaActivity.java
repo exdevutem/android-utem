@@ -1,8 +1,6 @@
 package cl.inndev.miutem.activities;
 
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -11,15 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
-
-import com.anupcowkur.reservoir.Reservoir;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -28,11 +18,9 @@ import java.util.List;
 import java.util.Objects;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Asignatura;
 import cl.inndev.miutem.fragments.AsignaturaFragment;
 import cl.inndev.miutem.fragments.BitacoraFragment;
-import cl.inndev.miutem.fragments.MallaFragment;
 import cl.inndev.miutem.fragments.NotasFragment;
 
 public class AsignaturaActivity extends AppCompatActivity {
@@ -62,6 +50,7 @@ public class AsignaturaActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         Type resultType = new TypeToken<List<Asignatura>>() {}.getType();
+        /*
         try {
             List<Asignatura> asignaturas = Reservoir.get("asignaturas", resultType);
             mAsignatura = asignaturas.get(getIntent().getIntExtra("ASIGNATURA_INDEX", 0));
@@ -69,6 +58,7 @@ public class AsignaturaActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Carrera;
 
 public class CarrerasAdapter extends BaseAdapter {
 

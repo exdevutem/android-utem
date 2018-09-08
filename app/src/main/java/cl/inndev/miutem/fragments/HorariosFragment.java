@@ -5,27 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pixplicity.easyprefs.library.Prefs;
-
-import java.util.List;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.activities.MainActivity;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.deserializers.HorariosDeserializer;
-import cl.inndev.miutem.interfaces.ApiUtem;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
 
 public class HorariosFragment extends Fragment {
 

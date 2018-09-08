@@ -6,7 +6,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Carrera;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem;
 import eu.davidea.flexibleadapter.items.IFlexible;

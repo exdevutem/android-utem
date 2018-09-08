@@ -1,6 +1,5 @@
 package cl.inndev.miutem.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -9,20 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.pixplicity.easyprefs.library.Prefs;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -31,10 +25,8 @@ import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.AsignaturaActivity;
-import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.adapters.NotasAdapter;
-import cl.inndev.miutem.classes.Asignatura;
+import cl.inndev.miutem.models.Asignatura;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -84,6 +76,7 @@ public class NotasFragment extends Fragment {
         });
 
         Type resultType = new TypeToken<Asignatura>() {}.getType();
+        /*
         Reservoir.getAsync("asignatura" + mSeccionId + "notas", resultType, new ReservoirGetCallback<Asignatura>() {
             @Override
             public void onSuccess(Asignatura asignatura) {
@@ -95,6 +88,7 @@ public class NotasFragment extends Fragment {
                 getNotas(mSeccionId);
             }
         });
+        */
         return view;
     }
 
@@ -143,11 +137,13 @@ public class NotasFragment extends Fragment {
             public void onResponse(Call<Asignatura> call, Response<Asignatura> response) {
                 switch (response.code()) {
                     case 200:
+                        /*
                         try {
                             Reservoir.put("asignatura" + id + "notas", response.body());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                         setNotas(response.body());
                         break;
                     default:

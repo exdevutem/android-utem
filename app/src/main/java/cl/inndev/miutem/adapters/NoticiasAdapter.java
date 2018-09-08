@@ -18,8 +18,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.Noticia;
+import cl.inndev.miutem.models.Noticia;
 
 public class NoticiasAdapter extends RecyclerView.Adapter<NoticiasAdapter.ViewHolder> {
 

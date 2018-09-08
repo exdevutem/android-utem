@@ -3,59 +3,32 @@ package cl.inndev.miutem.activities;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirPutCallback;
-import com.facebook.login.Login;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nytimes.android.external.store3.base.impl.BarCode;
-import com.nytimes.android.external.store3.base.impl.MemoryPolicy;
-import com.nytimes.android.external.store3.base.impl.Store;
-import com.nytimes.android.external.store3.base.impl.StoreBuilder;
 import com.pixplicity.easyprefs.library.Prefs;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import cl.inndev.miutem.classes.AccountGeneral;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Horario;
-import cl.inndev.miutem.classes.Noticia;
-import cl.inndev.miutem.deserializers.CarrerasDeserializer;
-import cl.inndev.miutem.deserializers.HorariosDeserializer;
-import cl.inndev.miutem.interfaces.ApiNoticiasUtem;
+import cl.inndev.miutem.models.AuthPreferences;
 import cl.inndev.miutem.interfaces.ApiUtem;
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Estudiante;
-import de.hdodenhof.circleimageview.CircleImageView;
-import io.reactivex.Single;
+import cl.inndev.miutem.models.Estudiante;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,15 +36,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.accounts.AccountManager.KEY_ACCOUNT_TYPE;
-import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
-
 public class LoginActivity extends AccountAuthenticatorActivity {
 
     public static final String ARG_ACCOUNT_TYPE = "accountType";
     public static final String ARG_AUTH_TYPE = "authTokenType";
     public static final String ARG_IS_ADDING_NEW_ACCOUNT = "isAddingNewAccount";
     public static final String PARAM_USER_PASS = "password";
+    public static final String PARAM_USER_RUT = "rut";
 
     private AccountManager mAccountManager;
     private String mAuthTokenType;
@@ -88,7 +59,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     private CheckBox mCheckRecordar;
     private ProgressBar mProgressIniciando;
     private Button mButtonEntrar;
-    private CircleImageView mImagePerfil;
+    private ImageView mImagePerfil;
     private ConstraintLayout mLayoutLogin;
     private String mAccountType;
 
@@ -102,11 +73,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
 
         if (mAuthTokenType == null) {
-            mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_TEST;
+            mAuthTokenType = AuthPreferences.AUTHTOKEN_TYPE_TEST;
         }
 
         if (mAccountType == null) {
-            mAccountType = AccountGeneral.ACCOUNT_TYPE;
+            mAccountType = AuthPreferences.ACCOUNT_TYPE;
         }
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -270,7 +241,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                         res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, mAccountType);
                         res.putExtra(AccountManager.KEY_AUTHTOKEN, response.body().getToken());
                         res.putExtra(PARAM_USER_PASS, contrasenia);
-
+                        res.putExtra(PARAM_USER_RUT, response.body().getRut().toString());
                         finishLogin(res);
 
                         /*
@@ -301,18 +272,20 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     }
 
     private void finishLogin(Intent intent) {
-
-        String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-        String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
-        final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+        String correo = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+        String contrasenia = intent.getStringExtra(PARAM_USER_PASS);
+        String rut = intent.getStringExtra(PARAM_USER_RUT);
+        final Account account = new Account(correo, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
 
         if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-            String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-            String authtokenType = mAuthTokenType;
-            mAccountManager.addAccountExplicitly(account, accountPassword, null);
-            mAccountManager.setAuthToken(account, authtokenType, authtoken);
+            String token = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+            String tokenType = mAuthTokenType;
+            Bundle rutBundle = new Bundle();
+            rutBundle.putString(PARAM_USER_RUT, rut);
+            mAccountManager.addAccountExplicitly(account, contrasenia, rutBundle);
+            mAccountManager.setAuthToken(account, tokenType, token);
         } else {
-            mAccountManager.setPassword(account, accountPassword);
+            mAccountManager.setPassword(account, contrasenia);
         }
 
         setAccountAuthenticatorResult(intent.getExtras());

@@ -1,5 +1,8 @@
 package cl.inndev.miutem.activities;
 
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,14 +12,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.OnItemLongClickListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.nytimes.android.external.store3.base.impl.BarCode;
+import com.nytimes.android.external.store3.base.impl.Store;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
@@ -26,12 +29,13 @@ import java.util.List;
 
 import cl.inndev.miutem.R;
 import cl.inndev.miutem.adapters.HorarioAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.Horario;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Carrera;
+import cl.inndev.miutem.models.Horario;
 import cl.inndev.miutem.deserializers.HorariosDeserializer;
 import cl.inndev.miutem.interfaces.ApiUtem;
+import cl.inndev.miutem.utils.StoreUtils;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,7 +53,8 @@ public class HorarioActivity extends AppCompatActivity {
     private List<String[]> mRowHeaderList = new ArrayList<>();
     private List<String> mColumnHeaderList = new ArrayList<>();
     private Integer mHorarioIndex;
-    private Boolean mObteniendoHorarios = false;
+    private AccountManager mAccountManager;
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,7 @@ public class HorarioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_horario);
         mTableHorario = findViewById(R.id.table_horario);
         mProgressCargando = findViewById(R.id.progress_cargando);
+        mAccountManager = AccountManager.get(this);
 
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -94,23 +100,18 @@ public class HorarioActivity extends AppCompatActivity {
             finish();
         }
 
-        Type horariosType = new TypeToken<Horario>() {}.getType();
-        Reservoir.getAsync("horarios", horariosType, new ReservoirGetCallback<Horario>() {
-            @Override
-            public void onSuccess(Horario horario) {
-                setHorario(horario);
-            }
+        getToken();
 
-            @Override
-            public void onFailure(Exception e) {
-                //mShimmerViewContainer.setVisibility(View.VISIBLE);
-                //mShimmerViewContainer.startShimmer();
-                if (!mObteniendoHorarios) {
-                    mObteniendoHorarios = true;
-                    getHorarios();
-                }
-            }
-        });
+        BarCode barCode = new BarCode(Horario.class.getSimpleName() + "s", getRut());
+        try {
+            List<Horario> horarios = StoreUtils.provideHorariosStore(this, mToken)
+                    .get(barCode)
+                    .subscribeOn(Schedulers.io())
+                    .blockingGet();
+            setHorario(horarios.get(mHorarioIndex));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -181,50 +182,19 @@ public class HorarioActivity extends AppCompatActivity {
         mTableHorario.setVisibility(View.VISIBLE);
     }
 
-    private void getHorarios() {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Horario.class, new HorariosDeserializer())
-                .create();
+    private void getToken() {
+        mAccountManager.getAuthToken(mAccountManager.getAccounts()[0],
+                "Bearer", null, this,
+                future -> {
+                    try {
+                        mToken = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+                    } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+                        e.printStackTrace();
+                    }
+                }, null);
+    }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ApiUtem client = retrofit.create(ApiUtem.class);
-
-        Call<Horario> call = client.getHorarios(
-                Prefs.getLong("rut", 0),
-                Prefs.getString("token", null)
-        );
-
-        call.enqueue(new Callback<Horario>() {
-            @Override
-            public void onResponse(Call<Horario> call, Response<Horario> response) {
-                mObteniendoHorarios = false;
-                switch (response.code()) {
-                    case 200:
-                        try {
-                            Reservoir.put("horarios", response.body());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        setHorario(response.body());
-                        break;
-                    default:
-                        Toast.makeText(HorarioActivity.this, "Ocurrió un error inesperado al cargar el horario", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                mProgressCargando.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<Horario> call, Throwable t) {
-                mObteniendoHorarios = false;
-                t.printStackTrace();
-                Toast.makeText(HorarioActivity.this, "Error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                mProgressCargando.setVisibility(View.GONE);
-            }
-        });
+    private String getRut() {
+        return mAccountManager.getUserData(mAccountManager.getAccounts()[0], LoginActivity.PARAM_USER_RUT);
     }
 }

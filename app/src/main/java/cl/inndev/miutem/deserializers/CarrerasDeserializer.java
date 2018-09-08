@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.inndev.miutem.classes.Carrera;
+import cl.inndev.miutem.models.Carrera;
 
 public class CarrerasDeserializer implements JsonDeserializer<List<Carrera>> {
 

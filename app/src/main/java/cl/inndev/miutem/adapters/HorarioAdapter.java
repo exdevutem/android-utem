@@ -16,9 +16,8 @@ import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
 import java.util.List;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Estudiante;
-import cl.inndev.miutem.classes.Horario;
+import cl.inndev.miutem.models.Asignatura;
+import cl.inndev.miutem.models.Horario;
 
 public class HorarioAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> {
     private final int[] COLORS = new int[]{

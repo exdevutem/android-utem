@@ -2,7 +2,7 @@ package cl.inndev.miutem.interfaces;
 
 import java.util.List;
 
-import cl.inndev.miutem.classes.Noticia;
+import cl.inndev.miutem.models.Noticia;
 import io.reactivex.Single;
 import okio.BufferedSource;
 import retrofit2.Call;
@@ -13,7 +13,7 @@ public interface ApiNoticiasUtem {
     String BASE_URL = "https://www.utem.cl/wp-json/";
 
     @GET("wp/v2/posts")
-    Single<List<Noticia>> getPosts();
+    Single<BufferedSource> getPosts();
 
     @GET("wp/v2/posts/{id}")
     Single<BufferedSource> getPost(
@@ -21,11 +21,11 @@ public interface ApiNoticiasUtem {
     );
 
     @GET("wp/v2/media/")
-    Call<List<Noticia.Media>> getMedias();
+    Call<BufferedSource> getMedias();
 
     @GET("wp/v2/media/{id}")
-    Single<Noticia.Media> getMedia(
-            @Path("id") Integer id
+    Single<BufferedSource> getMedia(
+            @Path("id") String id
     );
 
 }

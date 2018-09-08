@@ -2,61 +2,50 @@ package cl.inndev.miutem.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.nytimes.android.external.fs3.SourcePersisterFactory;
+import com.nytimes.android.external.store3.base.impl.BarCode;
+import com.nytimes.android.external.store3.base.impl.MemoryPolicy;
 import com.nytimes.android.external.store3.base.impl.Store;
 import com.nytimes.android.external.store3.base.impl.StoreBuilder;
 import com.nytimes.android.external.store3.middleware.GsonParserFactory;
-import com.pixplicity.easyprefs.library.Prefs;
-import com.squareup.picasso.Picasso;
-import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cl.inndev.miutem.R;
-import cl.inndev.miutem.activities.CarreraActivity;
-import cl.inndev.miutem.activities.LoginActivity;
-import cl.inndev.miutem.activities.MainActivity;
 import cl.inndev.miutem.activities.NoticiaActivity;
 import cl.inndev.miutem.adapters.NoticiasAdapter;
-import cl.inndev.miutem.classes.Asignatura;
-import cl.inndev.miutem.classes.Carrera;
-import cl.inndev.miutem.classes.Noticia;
+import cl.inndev.miutem.models.Carrera;
+import cl.inndev.miutem.models.Noticia;
 import cl.inndev.miutem.interfaces.ApiNoticiasUtem;
-import cl.inndev.miutem.interfaces.ApiUtem;
+import cl.inndev.miutem.utils.StoreUtils;
 import io.reactivex.SingleObserver;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import okio.BufferedSource;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static cl.inndev.miutem.interfaces.ApiUtem.BASE_URL;
+import static cl.inndev.miutem.utils.StoreUtils.provideGson;
 
 
 public class InicioFragment extends Fragment {
@@ -69,31 +58,15 @@ public class InicioFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BarCode barCode = new BarCode(Noticia.class.getSimpleName() + "s", "general");
+        /*
         try {
-            provideNoticiasStore()
-                    .get(null)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::setNoticias, t -> {
-                        t.printStackTrace();
-                    });
+            provideNoticiasStore().get(barCode).subscribe(noticias -> {
+                setNoticias(noticias);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*
-        Type noticiasType = new TypeToken<List<Noticia>>() {}.getType();
-        Reservoir.getAsync("noticias", noticiasType, new ReservoirGetCallback<List<Noticia>>() {
-            @Override
-            public void onSuccess(List<Noticia> noticias) {
-                mListNoticias = noticias;
-                setNoticias(mListNoticias);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                //getPosts();
-            }
-        });
         */
     }
 
@@ -130,29 +103,15 @@ public class InicioFragment extends Fragment {
 
     private void setNoticias(List<Noticia> noticias) {
         for (Noticia noticia : noticias) {
+            BarCode barCode = new BarCode(Noticia.Media.class.getSimpleName(), noticia.getFeaturedMedia().toString());
             try {
-                provideMediaStore()
-                        .get(noticia.getFeaturedMedia())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new SingleObserver<Noticia.Media>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {}
-
-                            @Override
-                            public void onSuccess(Noticia.Media media) {
-                                noticia.setMedia(media);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                e.printStackTrace();
-                            }
-                        });
+                provideMediaStore().get(barCode)
+                        .subscribeOn(Schedulers.io());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         NoticiasAdapter adapter = new NoticiasAdapter(getContext(), noticias);
         adapter.setOnItemClickListener((view, position, noticia) -> {
             Intent intent = new Intent(getActivity(), NoticiaActivity.class);
@@ -164,28 +123,29 @@ public class InicioFragment extends Fragment {
         mScrollNoticias.setAdapter(infiniteAdapter);
     }
 
-    private void asociarMedia() {
 
-    }
-
-    private Store<List<Noticia>, Integer> provideNoticiasStore() throws IOException {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .create();
-
+    private Store<List<Noticia>, BarCode> provideNoticiasStore() throws IOException {
         ApiNoticiasUtem apiNoticiasUtem = new Retrofit.Builder()
                 .baseUrl(ApiNoticiasUtem.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(provideGson()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(ApiNoticiasUtem.class);
 
-        return StoreBuilder.<Integer, List<Noticia>>key()
+        return StoreBuilder.<BarCode, BufferedSource, List<Noticia>>parsedWithKey()
                 .fetcher(noticiaId -> apiNoticiasUtem.getPosts())
+                .parser(GsonParserFactory.createSourceParser(provideGson(), new TypeToken<List<Carrera>>() {}.getType()))
+                .persister(SourcePersisterFactory.create(getContext().getCacheDir()))
+                //.refreshOnStale()
+                .networkBeforeStale()
+                .memoryPolicy(MemoryPolicy.builder()
+                        .setExpireAfterWrite(10)
+                        .setExpireAfterTimeUnit(TimeUnit.MINUTES)
+                        .build())
                 .open();
     }
 
-    private Store<Noticia.Media, Integer> provideMediaStore() throws IOException {
+    private Store<Noticia.Media, BarCode> provideMediaStore() throws IOException {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
                 .create();
@@ -197,8 +157,16 @@ public class InicioFragment extends Fragment {
                 .build()
                 .create(ApiNoticiasUtem.class);
 
-        return StoreBuilder.<Integer, Noticia.Media>key()
-                .fetcher(mediaId -> apiNoticiasUtem.getMedia(mediaId))
+        return StoreBuilder.<BarCode, BufferedSource, Noticia.Media>parsedWithKey()
+                .fetcher(barCode -> apiNoticiasUtem.getMedia(barCode.getKey()))
+                .parser(GsonParserFactory.createSourceParser(provideGson(), Noticia.Media.class))
+                .persister(SourcePersisterFactory.create(getContext().getCacheDir()))
+                //.refreshOnStale()
+                .networkBeforeStale()
+                .memoryPolicy(MemoryPolicy.builder()
+                        .setExpireAfterWrite(10)
+                        .setExpireAfterTimeUnit(TimeUnit.MINUTES)
+                        .build())
                 .open();
     }
 
