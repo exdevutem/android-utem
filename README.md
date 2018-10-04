@@ -1,4 +1,4 @@
-# Mi UTEM para Android
+# Mi UTEM para Android [PAUSADA POR CAPTCHA]
 Aplicación **no oficial** para estudiantes de la Universidad Tecnológica Metropolitana de Chile. Puedes tener toda la información e incluso más de como lo harías en las plataformas institucionales.
 
 ## Funciones y características
